@@ -5,31 +5,34 @@ import (
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
-	"github.com/kubemq-hub/kubemq-bridges/targets/null"
-	"github.com/kubemq-hub/kubemq-bridges/types"
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/nats-io/nuid"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
-
-	"github.com/kubemq-hub/kubemq-bridges/targets"
 )
 
+type mockTarget struct {
+	setResponse interface{}
+	setError    error
+	delay       time.Duration
+}
+
+func (m *mockTarget) Do(ctx context.Context, request interface{}) (interface{}, error) {
+	time.Sleep(m.delay)
+	return m.setResponse, m.setError
+}
 func setupClient(ctx context.Context, target middleware.Middleware) (*Client, error) {
 	c := New()
-	err := c.Init(ctx, config.Metadata{
+	err := c.Init(ctx, config.Spec{
 		Name: "kubemq-rpc",
 		Kind: "",
 		Properties: map[string]string{
-			"host":                       "localhost",
-			"port":                       "50000",
+			"address":                    "localhost:50000",
 			"client_id":                  "",
 			"auth_token":                 "",
 			"channel":                    "events",
 			"group":                      "some-group",
-			"concurrency":                "1",
-			"response_channel":           "events.response",
 			"auto_reconnect":             "true",
 			"reconnect_interval_seconds": "1",
 			"max_reconnects":             "0",
@@ -45,86 +48,49 @@ func setupClient(ctx context.Context, target middleware.Middleware) (*Client, er
 	time.Sleep(time.Second)
 	return c, nil
 }
-func sendEvent(t *testing.T, ctx context.Context, req *types.Request, sendChannel, respChannel string) (*types.Response, error) {
+func sendEvent(t *testing.T, ctx context.Context, req *kubemq.Event, sendChannel string) error {
 	client, err := kubemq.NewClient(ctx,
 		kubemq.WithAddress("localhost", 50000),
 		kubemq.WithClientId(nuid.Next()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC))
 
 	if err != nil {
-		return nil, err
+		return err
 	}
-	go func() {
-		time.Sleep(time.Second)
-		err = client.SetEvent(req.ToEvent()).SetChannel(sendChannel).Send(ctx)
-		require.NoError(t, err)
-	}()
-	if respChannel != "" {
-		errCh := make(chan error, 1)
-		eventCh, err := client.SubscribeToEvents(ctx, respChannel, "", errCh)
-		if err != nil {
-			return nil, err
-		}
-		select {
-		case event := <-eventCh:
-			return types.ParseResponse(event.Body)
-		case err := <-errCh:
-			return nil, err
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		}
-	}
-	return nil, nil
+	return client.SetEvent(req).SetChannel(sendChannel).Send(ctx)
+
 }
 func TestClient_processEvent(t *testing.T) {
 	tests := []struct {
-		name     string
-		target   targets.Target
-		req      *types.Request
-		wantResp *types.Response
-		sendCh   string
-		respCh   string
+		name   string
+		target middleware.Middleware
+		req    *kubemq.Event
+		sendCh string
+		respCh string
 
 		wantErr bool
 	}{
 		{
 			name: "request",
-			target: &null.Client{
-				Delay:         0,
-				DoError:       nil,
-				ResponseError: nil,
+			target: &mockTarget{
+				setResponse: nil,
+				setError:    nil,
+				delay:       0,
 			},
-			req:      types.NewRequest().SetData([]byte("some-data")),
-			wantResp: types.NewResponse().SetData([]byte("some-data")),
-			wantErr:  false,
-			sendCh:   "events",
-			respCh:   "events.response",
+			req:     kubemq.NewEvent().SetBody([]byte("some-data")),
+			wantErr: false,
+			sendCh:  "events",
 		},
 		{
 			name: "request with target error",
-			target: &null.Client{
-				Delay:         0,
-				DoError:       nil,
-				ResponseError: fmt.Errorf("error"),
+			target: &mockTarget{
+				setResponse: nil,
+				setError:    fmt.Errorf("some-error"),
+				delay:       0,
 			},
-			req:      types.NewRequest().SetData([]byte("some-data")),
-			wantResp: types.NewResponse().SetMetadataKeyValue("error", "error"),
-			wantErr:  false,
-			sendCh:   "events",
-			respCh:   "events.response",
-		},
-		{
-			name: "request with target error 2",
-			target: &null.Client{
-				Delay:         0,
-				DoError:       fmt.Errorf("error"),
-				ResponseError: nil,
-			},
-			req:      types.NewRequest().SetData([]byte("some-data")),
-			wantResp: types.NewResponse().SetError(fmt.Errorf("error")),
-			wantErr:  false,
-			sendCh:   "events",
-			respCh:   "events.response",
+			req:     kubemq.NewEvent().SetBody([]byte("some-data")),
+			wantErr: false,
+			sendCh:  "events",
 		},
 	}
 	for _, tt := range tests {
@@ -137,12 +103,12 @@ func TestClient_processEvent(t *testing.T) {
 				_ = c.Stop()
 			}()
 
-			gotResp, err := sendEvent(t, ctx, tt.req, tt.sendCh, tt.respCh)
+			err = sendEvent(t, ctx, tt.req, tt.sendCh)
 			if tt.wantErr {
 				require.Error(t, err)
-				return
+			} else {
+				require.NoError(t, err)
 			}
-			require.EqualValues(t, tt.wantResp, gotResp)
 		})
 	}
 }
@@ -151,23 +117,20 @@ func TestClient_Init(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		cfg     config.Metadata
+		cfg     config.Spec
 		wantErr bool
 	}{
 		{
 			name: "init",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-rpc",
 				Kind: "",
 				Properties: map[string]string{
-					"host":                       "localhost",
-					"port":                       "50000",
+					"address":                    "localhost:50000",
 					"client_id":                  "",
 					"auth_token":                 "some-auth token",
 					"channel":                    "some-channel",
 					"group":                      "",
-					"concurrency":                "1",
-					"response_channel":           "",
 					"auto_reconnect":             "true",
 					"reconnect_interval_seconds": "1",
 					"max_reconnects":             "0",
@@ -177,12 +140,47 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - error",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-rpc",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "-1",
+					"address": "localhost",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad channel",
+			cfg: config.Spec{
+				Name: "kubemq-rpc",
+				Kind: "",
+				Properties: map[string]string{
+					"address":                    "localhost:50000",
+					"client_id":                  "",
+					"auth_token":                 "some-auth token",
+					"channel":                    "",
+					"group":                      "",
+					"auto_reconnect":             "true",
+					"reconnect_interval_seconds": "1",
+					"max_reconnects":             "0",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad reconnect interval",
+			cfg: config.Spec{
+				Name: "kubemq-rpc",
+				Kind: "",
+				Properties: map[string]string{
+					"address":                    "localhost:50000",
+					"client_id":                  "",
+					"auth_token":                 "some-auth token",
+					"channel":                    "some-channel",
+					"group":                      "",
+					"auto_reconnect":             "true",
+					"reconnect_interval_seconds": "-1",
+					"max_reconnects":             "0",
 				},
 			},
 			wantErr: true,
@@ -197,75 +195,6 @@ func TestClient_Init(t *testing.T) {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			require.EqualValues(t, tt.cfg.Name, c.Name())
-		})
-	}
-}
-
-func TestClient_Start(t *testing.T) {
-
-	tests := []struct {
-		name    string
-		target  targets.Target
-		cfg     config.Metadata
-		wantErr bool
-	}{
-		{
-			name: "start",
-			target: &null.Client{
-				Delay:         0,
-				DoError:       nil,
-				ResponseError: nil,
-			},
-			cfg: config.Metadata{
-				Name: "kubemq-rpc",
-				Kind: "",
-				Properties: map[string]string{
-					"host":                       "localhost",
-					"port":                       "50000",
-					"client_id":                  "",
-					"auth_token":                 "some-auth token",
-					"channel":                    "some-channel",
-					"group":                      "",
-					"concurrency":                "1",
-					"auto_reconnect":             "false",
-					"reconnect_interval_seconds": "1",
-					"max_reconnects":             "0",
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name:   "start - bad target",
-			target: nil,
-			cfg: config.Metadata{
-				Name: "kubemq-rpc",
-				Kind: "",
-				Properties: map[string]string{
-					"host":                       "localhost",
-					"port":                       "50000",
-					"client_id":                  "",
-					"auth_token":                 "some-auth token",
-					"channel":                    "some-channel",
-					"group":                      "",
-					"concurrency":                "1",
-					"auto_reconnect":             "true",
-					"reconnect_interval_seconds": "1",
-					"max_reconnects":             "0",
-				},
-			},
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
-			c := New()
-			_ = c.Init(ctx, tt.cfg)
-
-			if err := c.Start(ctx, tt.target); (err != nil) != tt.wantErr {
-				t.Errorf("Start() error = %v, wantErr %v", err, tt.wantErr)
-			}
 		})
 	}
 }

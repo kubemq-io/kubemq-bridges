@@ -2,24 +2,13 @@ package events_store
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
-	"github.com/kubemq-hub/kubemq-bridges/types"
+
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/nats-io/nuid"
-)
-
-const (
-	defaultHost          = "localhost"
-	defaultPort          = 50000
-	defaultAutoReconnect = true
-)
-
-var (
-	errInvalidTarget = errors.New("invalid target received, cannot be nil")
 )
 
 type Client struct {
@@ -37,7 +26,7 @@ func New() *Client {
 func (c *Client) Name() string {
 	return c.name
 }
-func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
+func (c *Client) Init(ctx context.Context, cfg config.Spec) error {
 	c.name = cfg.Name
 	c.log = logger.NewLogger(cfg.Name)
 	var err error
@@ -58,25 +47,23 @@ func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
 }
 
 func (c *Client) Start(ctx context.Context, target middleware.Middleware) error {
-	if target == nil {
-		return errInvalidTarget
-	} else {
-		c.target = target
-	}
+
+	c.target = target
+
 	group := nuid.Next()
 	if c.opts.group != "" {
 		group = c.opts.group
 	}
-	for i := 0; i < c.opts.concurrency; i++ {
-		errCh := make(chan error, 1)
-		eventsCh, err := c.client.SubscribeToEventsStore(ctx, c.opts.channel, group, errCh, kubemq.StartFromNewEvents())
-		if err != nil {
-			return fmt.Errorf("error on subscribing to events channel, %w", err)
-		}
-		go func(ctx context.Context, eventsCh <-chan *kubemq.EventStoreReceive, errCh chan error) {
-			c.run(ctx, eventsCh, errCh)
-		}(ctx, eventsCh, errCh)
+
+	errCh := make(chan error, 1)
+	eventsCh, err := c.client.SubscribeToEventsStore(ctx, c.opts.channel, group, errCh, kubemq.StartFromNewEvents())
+	if err != nil {
+		return fmt.Errorf("error on subscribing to events channel, %w", err)
 	}
+	go func(ctx context.Context, eventsCh <-chan *kubemq.EventStoreReceive, errCh chan error) {
+		c.run(ctx, eventsCh, errCh)
+	}(ctx, eventsCh, errCh)
+
 	return nil
 }
 
@@ -85,19 +72,9 @@ func (c *Client) run(ctx context.Context, eventsCh <-chan *kubemq.EventStoreRece
 		select {
 		case event := <-eventsCh:
 			go func(event *kubemq.EventStoreReceive) {
-				resp, err := c.processEventStore(ctx, event)
+				err := c.processEventStore(ctx, event)
 				if err != nil {
-					resp = types.NewResponse().SetError(err)
-				}
-				if c.opts.responseChannel != "" {
-					sendRes, errSend := c.client.SetEventStore(resp.ToEventStore()).SetChannel(c.opts.responseChannel).Send(ctx)
-					if errSend != nil {
-						c.log.Errorf("error sending event response %s", errSend.Error())
-					} else {
-						if !sendRes.Sent {
-							c.log.Errorf("error sending event response %s", sendRes.Err)
-						}
-					}
+					c.log.Errorf("error received from target, %w", err)
 				}
 			}(event)
 
@@ -111,16 +88,12 @@ func (c *Client) run(ctx context.Context, eventsCh <-chan *kubemq.EventStoreRece
 	}
 }
 
-func (c *Client) processEventStore(ctx context.Context, event *kubemq.EventStoreReceive) (*types.Response, error) {
-	req, err := types.ParseRequest(event.Body)
+func (c *Client) processEventStore(ctx context.Context, event *kubemq.EventStoreReceive) error {
+	_, err := c.target.Do(ctx, event)
 	if err != nil {
-		return nil, fmt.Errorf("invalid request format, %w", err)
+		return err
 	}
-	resp, err := c.target.Do(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return nil
 }
 func (c *Client) Stop() error {
 	return c.client.Close()

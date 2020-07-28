@@ -9,16 +9,15 @@ import (
 	events_store "github.com/kubemq-hub/kubemq-bridges/targets/events-store"
 	"github.com/kubemq-hub/kubemq-bridges/targets/query"
 	"github.com/kubemq-hub/kubemq-bridges/targets/queue"
-
 )
 
 type Target interface {
-	Init(ctx context.Context, cfg config.Metadata) error
+	Init(ctx context.Context, cfg config.Spec) error
 	Do(ctx context.Context, request interface{}) (interface{}, error)
 	Name() string
 }
 
-func Init(ctx context.Context, cfg config.Metadata) (Target, error) {
+func Init(ctx context.Context, cfg config.Spec) (Target, error) {
 
 	switch cfg.Kind {
 	case "target.command":

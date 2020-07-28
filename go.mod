@@ -14,6 +14,7 @@ require (
 	github.com/kubemq-io/kubemq-go v1.4.1
 	github.com/nats-io/nuid v1.0.1
 	github.com/pelletier/go-toml v1.4.0 // indirect
+	github.com/prometheus/client_golang v0.9.3
 	github.com/smartystreets/assertions v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.0

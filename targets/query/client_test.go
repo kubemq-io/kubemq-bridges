@@ -65,7 +65,7 @@ func (m *mockQueryReceiver) run(ctx context.Context, t *testing.T) error {
 func TestClient_Do(t *testing.T) {
 	tests := []struct {
 		name         string
-		cfg          config.Metadata
+		cfg          config.Spec
 		mockReceiver *mockQueryReceiver
 		req          interface{}
 		wantResp     interface{}
@@ -73,7 +73,7 @@ func TestClient_Do(t *testing.T) {
 	}{
 		{
 			name: "event-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -108,7 +108,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-store-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -148,7 +148,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "command-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -186,7 +186,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "query-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -224,7 +224,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "queue-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -259,7 +259,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-request-overwrite channel ",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -295,7 +295,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "bad request - invalid type",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -316,7 +316,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-request- query error ",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -341,7 +341,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-request - query timeout",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -390,12 +390,12 @@ func TestClient_Init(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		cfg     config.Metadata
+		cfg     config.Spec
 		wantErr bool
 	}{
 		{
 			name: "init",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -410,7 +410,7 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - error",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -421,7 +421,7 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - bad connection",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -432,7 +432,7 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - bad timeout seconds",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{

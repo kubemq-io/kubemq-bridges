@@ -49,7 +49,7 @@ func (m *mockQueueReceiver) run(ctx context.Context) (*kubemq.QueueMessage, erro
 func TestClient_Do(t *testing.T) {
 	tests := []struct {
 		name         string
-		cfg          config.Metadata
+		cfg          config.Spec
 		mockReceiver *mockQueueReceiver
 		req          interface{}
 		wantResp     *kubemq.QueueMessage
@@ -57,7 +57,7 @@ func TestClient_Do(t *testing.T) {
 	}{
 		{
 			name: "event-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -83,7 +83,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-store-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -114,7 +114,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "command-store-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -143,7 +143,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "query-store-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -172,7 +172,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "query-store-request",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -198,7 +198,7 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "bad request - invalid type",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -258,12 +258,12 @@ func TestClient_Init(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		cfg     config.Metadata
+		cfg     config.Spec
 		wantErr bool
 	}{
 		{
 			name: "init",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -281,7 +281,7 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - error",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -292,7 +292,7 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - bad connection",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -310,7 +310,7 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - bad expiration",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -328,7 +328,7 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - bad delay",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
@@ -346,7 +346,7 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - bad max receive count",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{

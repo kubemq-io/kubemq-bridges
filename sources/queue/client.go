@@ -3,24 +3,12 @@ package queue
 import (
 	"context"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
-	"github.com/kubemq-hub/kubemq-bridges/types"
+
 	"github.com/kubemq-io/kubemq-go"
 
-	"errors"
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
-)
-
-var (
-	errInvalidTarget = errors.New("invalid controller received, cannot be null")
-)
-
-const (
-	defaultHost        = "localhost"
-	defaultPort        = 50000
-	defaultBatchSize   = 1
-	defaultWaitTimeout = 60
 )
 
 type Client struct {
@@ -38,7 +26,7 @@ func New() *Client {
 func (c *Client) Name() string {
 	return c.name
 }
-func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
+func (c *Client) Init(ctx context.Context, cfg config.Spec) error {
 	c.name = cfg.Name
 	c.log = logger.NewLogger(fmt.Sprintf("kubemq-queue-source-%s", cfg.Name))
 	var err error
@@ -60,14 +48,8 @@ func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
 }
 
 func (c *Client) Start(ctx context.Context, target middleware.Middleware) error {
-	if target == nil {
-		return errInvalidTarget
-	} else {
-		c.target = target
-	}
-	for i := 0; i < c.opts.concurrency; i++ {
-		go c.run(ctx)
-	}
+	c.target = target
+	go c.run(ctx)
 	return nil
 }
 
@@ -79,12 +61,9 @@ func (c *Client) run(ctx context.Context) {
 			return
 		}
 		for _, message := range queueMessages {
-			resp := c.processQueueMessage(ctx, message)
-			if c.opts.responseChannel != "" {
-				_, errSend := c.client.SetQueueMessage(resp.ToQueueMessage()).SetChannel(c.opts.responseChannel).Send(ctx)
-				if errSend != nil {
-					c.log.Errorf("error sending response to a queue, %s", errSend.Error())
-				}
+			err := c.processQueueMessage(ctx, message)
+			if err != nil {
+				c.log.Errorf("error received from target, %w", err)
 			}
 		}
 		select {
@@ -107,16 +86,12 @@ func (c *Client) getQueueMessages(ctx context.Context) ([]*kubemq.QueueMessage, 
 	return receiveResult.Messages, nil
 }
 
-func (c *Client) processQueueMessage(ctx context.Context, msg *kubemq.QueueMessage) *types.Response {
-	req, err := types.ParseRequest(msg.Body)
+func (c *Client) processQueueMessage(ctx context.Context, msg *kubemq.QueueMessage) error {
+	_, err := c.target.Do(ctx, msg)
 	if err != nil {
-		return types.NewResponse().SetError(fmt.Errorf("invalid request format, %w", err))
+		return err
 	}
-	resp, err := c.target.Do(ctx, req)
-	if err != nil {
-		return types.NewResponse().SetError(err)
-	}
-	return resp
+	return nil
 
 }
 

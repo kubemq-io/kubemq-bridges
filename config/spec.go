@@ -8,35 +8,60 @@ import (
 	"strings"
 )
 
-type Metadata struct {
+type Spec struct {
 	Name       string            `json:"name"`
 	Kind       string            `json:"kind"`
 	Properties map[string]string `json:"properties"`
 }
 
-func (m Metadata) Validate() error {
-	if m.Name == "" {
+func (s Spec) Validate() error {
+	if s.Name == "" {
 		return fmt.Errorf("name cannot be empty")
 	}
-	if m.Kind == "" {
+	if s.Kind == "" {
 		return fmt.Errorf("kind cannot be empty")
 	}
 	return nil
 }
 
-func (m Metadata) ParseString(key, defaultValue string) string {
+func (s Spec) ParseString(key, defaultValue string) string {
 
-	if val, ok := m.Properties[key]; ok && val != "" {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		return val
 	} else {
 		return defaultValue
 	}
 }
-func (m Metadata) MustParseAddress(key, defaultValue string) (string, int, error) {
+func (s Spec) MustParseString(key string) (string, error) {
+	if val, ok := s.Properties[key]; ok && val != "" {
+		return val, nil
+	} else {
+		return "", fmt.Errorf("value of key %s cannot be empty", key)
+	}
+}
+func (s Spec) MustParseStringList(key string) ([]string, error) {
+	if val, ok := s.Properties[key]; ok && val != "" {
+		list := strings.Split(val, ",")
+		if len(list) == 0 {
+			return nil, fmt.Errorf("value of key %s cannot be empty", key)
+		}
+		return list, nil
+	} else {
+		return nil, fmt.Errorf("value of key %s cannot be empty", key)
+	}
+}
+func (s Spec) ParseStringList(key string) []string {
+	if val, ok := s.Properties[key]; ok && val != "" {
+		list := strings.Split(val, ",")
+		return list
+	}
+	return []string{}
+}
+func (s Spec) MustParseAddress(key, defaultValue string) (string, int, error) {
 	var host string
 	var port int
 	var hostPort []string
-	if val, ok := m.Properties[key]; ok && val != "" {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		hostPort = strings.Split(val, ":")
 	} else {
 		hostPort = strings.Split(defaultValue, ":")
@@ -55,42 +80,17 @@ func (m Metadata) MustParseAddress(key, defaultValue string) (string, int, error
 	}
 	return host, port, nil
 }
-func (m Metadata) MustParseString(key string) (string, error) {
-	if val, ok := m.Properties[key]; ok && val != "" {
-		return val, nil
-	} else {
-		return "", fmt.Errorf("value of key %s cannot be empty", key)
-	}
-}
-func (m Metadata) MustParseStringList(key string) ([]string, error) {
-	if val, ok := m.Properties[key]; ok && val != "" {
-		list := strings.Split(val, ",")
-		if len(list) == 0 {
-			return nil, fmt.Errorf("value of key %s cannot be empty", key)
-		}
-		return list, nil
-	} else {
-		return nil, fmt.Errorf("value of key %s cannot be empty", key)
-	}
-}
-func (m Metadata) ParseStringList(key string) []string {
-	if val, ok := m.Properties[key]; ok && val != "" {
-		list := strings.Split(val, ",")
-		return list
-	}
-	return []string{}
-}
-func (m Metadata) ParseStringMap(key string, stringMap map[string]string) (string, error) {
-	if val, ok := stringMap[m.Properties[key]]; ok {
+func (s Spec) ParseStringMap(key string, stringMap map[string]string) (string, error) {
+	if val, ok := stringMap[s.Properties[key]]; ok {
 		return val, nil
 	} else {
 		return "", fmt.Errorf("no valid key found")
 	}
 }
 
-func (m Metadata) MustParseInt(key string) (int, error) {
+func (s Spec) MustParseInt(key string) (int, error) {
 
-	if val, ok := m.Properties[key]; ok && val != "" {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		parsedVal, err := strconv.ParseInt(val, 10, 32)
 		if err != nil {
 			return 0, fmt.Errorf("invalid conversion error for value %s", val)
@@ -101,8 +101,8 @@ func (m Metadata) MustParseInt(key string) (int, error) {
 	}
 }
 
-func (m Metadata) ParseInt(key string, defaultValue int) int {
-	if val, ok := m.Properties[key]; ok && val != "" {
+func (s Spec) ParseInt(key string, defaultValue int) int {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		parsedVal, err := strconv.ParseInt(val, 10, 32)
 		if err != nil {
 			return defaultValue
@@ -113,8 +113,8 @@ func (m Metadata) ParseInt(key string, defaultValue int) int {
 		return defaultValue
 	}
 }
-func (m Metadata) ParseIntWithRange(key string, defaultValue, min, max int) (int, error) {
-	val := m.ParseInt(key, defaultValue)
+func (s Spec) ParseIntWithRange(key string, defaultValue, min, max int) (int, error) {
+	val := s.ParseInt(key, defaultValue)
 	if val < min {
 		return 0, fmt.Errorf("conversion value cannot be lower than %d", min)
 	}
@@ -124,8 +124,8 @@ func (m Metadata) ParseIntWithRange(key string, defaultValue, min, max int) (int
 	return val, nil
 }
 
-func (m Metadata) MustParseIntWithRange(key string, min, max int) (int, error) {
-	val, err := m.MustParseInt(key)
+func (s Spec) MustParseIntWithRange(key string, min, max int) (int, error) {
+	val, err := s.MustParseInt(key)
 	if err != nil {
 		return 0, err
 	}
@@ -138,8 +138,8 @@ func (m Metadata) MustParseIntWithRange(key string, min, max int) (int, error) {
 	return val, nil
 }
 
-func (m Metadata) ParseBool(key string, defaultValue bool) bool {
-	if val, ok := m.Properties[key]; ok && val != "" {
+func (s Spec) ParseBool(key string, defaultValue bool) bool {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		parsedVal, err := strconv.ParseBool(val)
 		if err != nil {
 			return defaultValue
@@ -150,9 +150,9 @@ func (m Metadata) ParseBool(key string, defaultValue bool) bool {
 		return defaultValue
 	}
 }
-func (m Metadata) MustParseBool(key string) (bool, error) {
+func (s Spec) MustParseBool(key string) (bool, error) {
 
-	if val, ok := m.Properties[key]; ok && val != "" {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		parsedVal, err := strconv.ParseBool(val)
 		if err != nil {
 			return false, fmt.Errorf("invalid bool conversion error for value %s", val)
@@ -162,8 +162,8 @@ func (m Metadata) MustParseBool(key string) (bool, error) {
 		return false, fmt.Errorf("key %s not foud for bool coneversion", val)
 	}
 }
-func (m Metadata) MustParseJsonMap(key string) (map[string]string, error) {
-	if val, ok := m.Properties[key]; ok && val != "" {
+func (s Spec) MustParseJsonMap(key string) (map[string]string, error) {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		if val == "" {
 			return map[string]string{}, nil
 		}
@@ -178,25 +178,25 @@ func (m Metadata) MustParseJsonMap(key string) (map[string]string, error) {
 	}
 }
 
-func (m Metadata) MustParseByteArray(key string) ([]byte, error) {
+func (s Spec) MustParseByteArray(key string) ([]byte, error) {
 
-	if val, ok := m.Properties[key]; ok && val != "" {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		parsedVal := []byte(val)
 		return parsedVal, nil
 	} else {
 		return nil, fmt.Errorf("key %s not found for byte coneversion", val)
 	}
 }
-func (m Metadata) MustParseEnv(key, envVar, defaultValue string) (string, error) {
+func (s Spec) MustParseEnv(key, envVar, defaultValue string) (string, error) {
 	envValue := os.Getenv(envVar)
 	if envValue != "" {
 		return envValue, nil
 	}
-	if val, ok := m.Properties[key]; ok && val != "" {
+	if val, ok := s.Properties[key]; ok && val != "" {
 		return val, nil
 	}
 	if defaultValue != "" {
 		return defaultValue, nil
 	}
-	return "", fmt.Errorf("cannot extract key %s from enviroment variable", key)
+	return "", fmt.Errorf("cannot extract key %s from environment variable", key)
 }

@@ -6,51 +6,45 @@ import (
 	"github.com/nats-io/nuid"
 )
 
+const (
+	defaultAddress     = "localhost:50000"
+	defaultBatchSize   = 1
+	defaultWaitTimeout = 60
+)
+
 type options struct {
-	host            string
-	port            int
-	clientId        string
-	authToken       string
-	channel         string
-	responseChannel string
-	concurrency     int
-	batchSize       int
-	waitTimeout     int
+	host        string
+	port        int
+	clientId    string
+	authToken   string
+	channel     string
+	batchSize   int
+	waitTimeout int
 }
 
-func parseOptions(cfg config.Metadata) (options, error) {
-	m := options{}
+func parseOptions(cfg config.Spec) (options, error) {
+	o := options{}
 	var err error
-	m.host = cfg.ParseString("host", defaultHost)
-
-	m.port, err = cfg.ParseIntWithRange("port", defaultPort, 1, 65535)
+	o.host, o.port, err = cfg.MustParseAddress("address", defaultAddress)
 	if err != nil {
-		return options{}, fmt.Errorf("error parsing port value, %w", err)
+		return options{}, fmt.Errorf("error parsing address value, %w", err)
 	}
+	o.authToken = cfg.ParseString("auth_token", "")
 
-	m.authToken = cfg.ParseString("auth_token", "")
+	o.clientId = cfg.ParseString("client_id", nuid.Next())
 
-	m.clientId = cfg.ParseString("client_id", nuid.Next())
-
-	m.channel, err = cfg.MustParseString("channel")
+	o.channel, err = cfg.MustParseString("channel")
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing channel value, %w", err)
 	}
-	m.responseChannel = cfg.ParseString("response_channel", "")
-
-	m.concurrency, err = cfg.MustParseIntWithRange("concurrency", 1, 100)
-	if err != nil {
-		return options{}, fmt.Errorf("error parsing concurrency value, %w", err)
-	}
-
-	m.batchSize, err = cfg.ParseIntWithRange("batch_size", defaultBatchSize, 1, 1024)
+	o.batchSize, err = cfg.ParseIntWithRange("batch_size", defaultBatchSize, 1, 1024)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing batch size value, %w", err)
 	}
-	m.waitTimeout, err = cfg.ParseIntWithRange("wait_timeout", defaultWaitTimeout, 1, 24*60*60)
+	o.waitTimeout, err = cfg.ParseIntWithRange("wait_timeout", defaultWaitTimeout, 1, 24*60*60)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing wait timeout value, %w", err)
 	}
 
-	return m, nil
+	return o, nil
 }

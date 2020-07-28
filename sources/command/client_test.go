@@ -5,27 +5,34 @@ import (
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
-	"github.com/kubemq-hub/kubemq-bridges/targets/null"
-	"github.com/kubemq-hub/kubemq-bridges/types"
+
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/nats-io/nuid"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
-
-	"github.com/kubemq-hub/kubemq-bridges/targets"
 )
+
+type mockTarget struct {
+	setResponse interface{}
+	setError    error
+	delay       time.Duration
+}
+
+func (m *mockTarget) Do(ctx context.Context, request interface{}) (interface{}, error) {
+	time.Sleep(m.delay)
+	return m.setResponse, m.setError
+}
 
 func setupClient(ctx context.Context, target middleware.Middleware) (*Client, error) {
 	c := New()
 
-	err := c.Init(ctx, config.Metadata{
+	err := c.Init(ctx, config.Spec{
 		Name: "kubemq-rpc",
 		Kind: "",
 		Properties: map[string]string{
-			"host":                       "localhost",
-			"port":                       "50000",
-			"client_id":                  "",
+			"address":                    "localhost:50000",
+			"client_id":                  "responseid",
 			"auth_token":                 "some-auth token",
 			"channel":                    "commands",
 			"group":                      "group",
@@ -45,82 +52,174 @@ func setupClient(ctx context.Context, target middleware.Middleware) (*Client, er
 	time.Sleep(time.Second)
 	return c, nil
 }
-func sendCommand(t *testing.T, ctx context.Context, req *types.Request, sendChannel string, timeout time.Duration) (*types.Response, error) {
+func sendCommand(t *testing.T, ctx context.Context, req *kubemq.Command, sendChannel string, timeout time.Duration) (*kubemq.CommandResponse, error) {
 	client, err := kubemq.NewClient(ctx,
 		kubemq.WithAddress("localhost", 50000),
 		kubemq.WithClientId(nuid.Next()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC))
 	require.NoError(t, err)
-	cmdResponse, err := client.SetCommand(req.ToCommand()).SetChannel(sendChannel).SetTimeout(timeout).Send(ctx)
-	require.NoError(t, err)
-	if !cmdResponse.Executed {
-		return nil, fmt.Errorf(cmdResponse.Error)
-	}
-	return types.NewResponse(), nil
+	return client.SetCommand(req).SetChannel(sendChannel).SetTimeout(timeout).Send(ctx)
 
 }
 func TestClient_processCommand(t *testing.T) {
 	tests := []struct {
 		name     string
-		target   targets.Target
-		req      *types.Request
-		wantResp *types.Response
+		target   middleware.Middleware
+		req      *kubemq.Command
+		wantResp *kubemq.CommandResponse
 		timeout  time.Duration
 		sendCh   string
 		wantErr  bool
 	}{
 		{
-			name: "request",
-			target: &null.Client{
-				Delay:         0,
-				DoError:       nil,
-				ResponseError: nil,
+			name: "request - command target - executed",
+			target: &mockTarget{
+				setResponse: &kubemq.CommandResponse{
+					CommandId:        "id",
+					ResponseClientId: "responseid",
+					Executed:         true,
+					ExecutedAt:       time.Unix(1000, 0),
+					Error:            "",
+					Tags:             nil,
+				},
+				setError: nil,
+				delay:    0,
 			},
-			req:      types.NewRequest().SetData([]byte("some-data")),
-			wantResp: types.NewResponse(),
-			timeout:  5 * time.Second,
-			sendCh:   "commands",
-			wantErr:  false,
+			req: kubemq.NewCommand().SetId("id").SetBody([]byte("some-data")),
+			wantResp: &kubemq.CommandResponse{
+				CommandId:        "id",
+				ResponseClientId: "responseid",
+				Executed:         true,
+				ExecutedAt:       time.Unix(1000, 0),
+				Error:            "",
+				Tags:             nil,
+			},
+			timeout: 5 * time.Second,
+			sendCh:  "commands",
+			wantErr: false,
 		},
 		{
-			name: "request with target do error",
-			target: &null.Client{
-				Delay:         0,
-				DoError:       fmt.Errorf("error"),
-				ResponseError: nil,
+			name: "request - command target - not executed",
+			target: &mockTarget{
+				setResponse: &kubemq.CommandResponse{
+					CommandId:        "id",
+					ResponseClientId: "responseid",
+					Executed:         false,
+					Error:            "some-error",
+					Tags:             nil,
+				},
+				setError: nil,
+				delay:    0,
 			},
-			req:      types.NewRequest().SetData([]byte("some-data")),
-			wantResp: nil,
-			timeout:  5 * time.Second,
-			sendCh:   "commands",
-
-			wantErr: true,
+			req: kubemq.NewCommand().SetId("id").SetBody([]byte("some-data")),
+			wantResp: &kubemq.CommandResponse{
+				CommandId:        "id",
+				ResponseClientId: "responseid",
+				Executed:         false,
+				ExecutedAt:       time.Time{}.In(time.Local),
+				Error:            "some-error",
+				Tags:             nil,
+			},
+			timeout: 5 * time.Second,
+			sendCh:  "commands",
+			wantErr: false,
 		},
 		{
-			name: "empty request error",
-			target: &null.Client{
-				Delay:         0,
-				DoError:       nil,
-				ResponseError: nil,
+			name: "request - query target - executed",
+			target: &mockTarget{
+				setResponse: &kubemq.QueryResponse{
+					QueryId:          "id",
+					Executed:         true,
+					ExecutedAt:       time.Unix(1000, 0),
+					Metadata:         "some-metadata",
+					ResponseClientId: "responseid",
+					Body:             nil,
+					CacheHit:         false,
+					Error:            "",
+					Tags:             nil,
+				},
+				setError: nil,
+				delay:    0,
 			},
-			req:      &types.Request{},
-			wantResp: types.NewResponse(),
-			timeout:  5 * time.Second,
-			sendCh:   "commands",
-			wantErr:  false,
+			req: kubemq.NewCommand().SetId("id").SetBody([]byte("some-data")),
+			wantResp: &kubemq.CommandResponse{
+				CommandId:        "id",
+				ResponseClientId: "responseid",
+				Executed:         true,
+				ExecutedAt:       time.Unix(1000, 0),
+				Error:            "",
+				Tags:             nil,
+			},
+			timeout: 5 * time.Second,
+			sendCh:  "commands",
+			wantErr: false,
 		},
 		{
-			name: "request with timeout error",
-			target: &null.Client{
-				Delay:         3,
-				DoError:       nil,
-				ResponseError: nil,
+			name: "request - query target - not executed",
+			target: &mockTarget{
+				setResponse: &kubemq.QueryResponse{
+					QueryId:          "id",
+					Executed:         false,
+					ExecutedAt:       time.Time{},
+					Metadata:         "some-metadata",
+					ResponseClientId: "responseid",
+					Body:             nil,
+					CacheHit:         false,
+					Error:            "some-error",
+					Tags:             nil,
+				},
 			},
-			req:      types.NewRequest().SetData([]byte("some-data")),
-			wantResp: types.NewResponse(),
-			timeout:  2 * time.Second,
-			sendCh:   "commands",
-
+			req: kubemq.NewCommand().SetId("id").SetBody([]byte("some-data")),
+			wantResp: &kubemq.CommandResponse{
+				CommandId:        "id",
+				ResponseClientId: "responseid",
+				Executed:         false,
+				ExecutedAt:       time.Time{}.In(time.Local),
+				Error:            "some-error",
+				Tags:             nil,
+			},
+			timeout: 5 * time.Second,
+			sendCh:  "commands",
+			wantErr: false,
+		},
+		{
+			name: "request - command target - error",
+			target: &mockTarget{
+				setResponse: nil,
+				setError:    fmt.Errorf("some-error"),
+				delay:       0,
+			},
+			req: kubemq.NewCommand().SetId("id").SetBody([]byte("some-data")),
+			wantResp: &kubemq.CommandResponse{
+				CommandId:        "id",
+				ResponseClientId: "responseid",
+				Executed:         false,
+				ExecutedAt:       time.Time{}.In(time.Local),
+				Error:            "some-error",
+				Tags:             nil,
+			},
+			timeout: 5 * time.Second,
+			sendCh:  "commands",
+			wantErr: false,
+		},
+		{
+			name: "request - other target type - executed",
+			target: &mockTarget{
+				setResponse: nil,
+				setError:    nil,
+				delay:       0,
+			},
+			req: kubemq.NewCommand().SetId("id").SetBody([]byte("some-data")),
+			wantResp: &kubemq.CommandResponse{
+				CommandId:        "id",
+				ResponseClientId: "responseid",
+				Executed:         true,
+				ExecutedAt:       time.Time{}.In(time.Local),
+				Error:            "",
+				Tags:             nil,
+			},
+			timeout: 5 * time.Second,
+			sendCh:  "commands",
 			wantErr: false,
 		},
 	}
@@ -144,21 +243,21 @@ func TestClient_processCommand(t *testing.T) {
 	}
 }
 
+//
 func TestClient_Init(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		cfg     config.Metadata
+		cfg     config.Spec
 		wantErr bool
 	}{
 		{
 			name: "init",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-rpc",
 				Kind: "",
 				Properties: map[string]string{
-					"host":                       "localhost",
-					"port":                       "50000",
+					"address":                    "localhost:50000",
 					"client_id":                  "",
 					"auth_token":                 "some-auth token",
 					"channel":                    "some-channel",
@@ -173,12 +272,68 @@ func TestClient_Init(t *testing.T) {
 		},
 		{
 			name: "init - error",
-			cfg: config.Metadata{
+			cfg: config.Spec{
 				Name: "kubemq-rpc",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "-1",
+					"address": "localhost",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad channel",
+			cfg: config.Spec{
+				Name: "kubemq-rpc",
+				Kind: "",
+				Properties: map[string]string{
+					"address":                    "localhost:50000",
+					"client_id":                  "",
+					"auth_token":                 "some-auth token",
+					"channel":                    "",
+					"group":                      "",
+					"concurrency":                "1",
+					"auto_reconnect":             "true",
+					"reconnect_interval_seconds": "1",
+					"max_reconnects":             "0",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad concurrency",
+			cfg: config.Spec{
+				Name: "kubemq-rpc",
+				Kind: "",
+				Properties: map[string]string{
+					"address":                    "localhost:50000",
+					"client_id":                  "",
+					"auth_token":                 "some-auth token",
+					"channel":                    "some-channel",
+					"group":                      "",
+					"concurrency":                "0",
+					"auto_reconnect":             "true",
+					"reconnect_interval_seconds": "1",
+					"max_reconnects":             "0",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad reconnect interval",
+			cfg: config.Spec{
+				Name: "kubemq-rpc",
+				Kind: "",
+				Properties: map[string]string{
+					"address":                    "localhost:50000",
+					"client_id":                  "",
+					"auth_token":                 "some-auth token",
+					"channel":                    "some-channel",
+					"group":                      "",
+					"concurrency":                "1",
+					"auto_reconnect":             "true",
+					"reconnect_interval_seconds": "-1",
+					"max_reconnects":             "0",
 				},
 			},
 			wantErr: true,
@@ -193,75 +348,6 @@ func TestClient_Init(t *testing.T) {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			require.EqualValues(t, tt.cfg.Name, c.Name())
-		})
-	}
-}
-
-func TestClient_Start(t *testing.T) {
-
-	tests := []struct {
-		name    string
-		target  targets.Target
-		cfg     config.Metadata
-		wantErr bool
-	}{
-		{
-			name: "start",
-			target: &null.Client{
-				Delay:         0,
-				DoError:       nil,
-				ResponseError: nil,
-			},
-			cfg: config.Metadata{
-				Name: "kubemq-rpc",
-				Kind: "",
-				Properties: map[string]string{
-					"host":                       "localhost",
-					"port":                       "50000",
-					"client_id":                  "",
-					"auth_token":                 "some-auth token",
-					"channel":                    "some-channel",
-					"group":                      "",
-					"concurrency":                "1",
-					"auto_reconnect":             "false",
-					"reconnect_interval_seconds": "1",
-					"max_reconnects":             "0",
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name:   "start - bad target",
-			target: nil,
-			cfg: config.Metadata{
-				Name: "kubemq-rpc",
-				Kind: "",
-				Properties: map[string]string{
-					"host":                       "localhost",
-					"port":                       "50000",
-					"client_id":                  "",
-					"auth_token":                 "some-auth token",
-					"channel":                    "some-channel",
-					"group":                      "",
-					"concurrency":                "1",
-					"auto_reconnect":             "true",
-					"reconnect_interval_seconds": "1",
-					"max_reconnects":             "0",
-				},
-			},
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
-			c := New()
-			_ = c.Init(ctx, tt.cfg)
-
-			if err := c.Start(ctx, tt.target); (err != nil) != tt.wantErr {
-				t.Errorf("Start() error = %v, wantErr %v", err, tt.wantErr)
-			}
 		})
 	}
 }

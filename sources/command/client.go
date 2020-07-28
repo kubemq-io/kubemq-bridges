@@ -2,24 +2,12 @@ package command
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
-	"github.com/kubemq-hub/kubemq-bridges/types"
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/nats-io/nuid"
-)
-
-const (
-	defaultHost          = "localhost"
-	defaultPort          = 50000
-	defaultAutoReconnect = true
-)
-
-var (
-	errInvalidTarget = errors.New("invalid target received, cannot be nil")
 )
 
 type Client struct {
@@ -37,7 +25,7 @@ func New() *Client {
 func (c *Client) Name() string {
 	return c.name
 }
-func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
+func (c *Client) Init(ctx context.Context, cfg config.Spec) error {
 	c.name = cfg.Name
 	c.log = logger.NewLogger(cfg.Name)
 	var err error
@@ -58,11 +46,7 @@ func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
 }
 
 func (c *Client) Start(ctx context.Context, target middleware.Middleware) error {
-	if target == nil {
-		return errInvalidTarget
-	} else {
-		c.target = target
-	}
+	c.target = target
 	group := nuid.Next()
 	if c.opts.group != "" {
 		group = c.opts.group
@@ -85,12 +69,17 @@ func (c *Client) run(ctx context.Context, commandCh <-chan *kubemq.CommandReceiv
 		select {
 		case command := <-commandCh:
 			go func(q *kubemq.CommandReceive) {
-				cmdResponse := c.client.R().
-					SetRequestId(command.Id).
-					SetResponseTo(command.ResponseTo)
-				_, err := c.processCommand(ctx, command)
+				var cmdResponse *kubemq.Response
+				cmdResponse, err := c.processCommand(ctx, command)
 				if err != nil {
-					cmdResponse.SetError(err)
+					cmdResponse = c.client.NewResponse().
+						SetRequestId(command.Id).
+						SetResponseTo(command.ResponseTo).
+						SetError(err)
+				} else {
+					cmdResponse.
+						SetRequestId(command.Id).
+						SetResponseTo(command.ResponseTo)
 				}
 				err = cmdResponse.Send(ctx)
 				if err != nil {
@@ -108,17 +97,40 @@ func (c *Client) run(ctx context.Context, commandCh <-chan *kubemq.CommandReceiv
 	}
 }
 
-func (c *Client) processCommand(ctx context.Context, command *kubemq.CommandReceive) (*types.Response, error) {
-	req, err := types.ParseRequest(command.Body)
-	if err != nil {
-		return nil, fmt.Errorf("invalid request format, %w", err)
-	}
-	resp, err := c.target.Do(ctx, req)
+func (c *Client) processCommand(ctx context.Context, command *kubemq.CommandReceive) (*kubemq.Response, error) {
+
+	result, err := c.target.Do(ctx, command)
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch val := result.(type) {
+	case *kubemq.CommandResponse:
+		return c.parseCommandResponse(val), nil
+	case *kubemq.QueryResponse:
+		return c.parseQueryResponse(val), nil
+	default:
+		return c.client.NewResponse(), nil
+	}
 }
 func (c *Client) Stop() error {
 	return c.client.Close()
+}
+
+func (c *Client) parseCommandResponse(cmd *kubemq.CommandResponse) *kubemq.Response {
+	resp := c.client.NewResponse().SetTags(cmd.Tags)
+	if cmd.Executed {
+		resp.SetExecutedAt(cmd.ExecutedAt)
+	} else {
+		resp.SetError(fmt.Errorf("%s", cmd.Error))
+	}
+	return resp
+}
+func (c *Client) parseQueryResponse(query *kubemq.QueryResponse) *kubemq.Response {
+	resp := c.client.NewResponse().SetTags(query.Tags)
+	if query.Executed {
+		resp.SetExecutedAt(query.ExecutedAt)
+	} else {
+		resp.SetError(fmt.Errorf("%s", query.Error))
+	}
+	return resp
 }
