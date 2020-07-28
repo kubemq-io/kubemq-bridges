@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/types"
 	"github.com/kubemq-io/kubemq-go"
 
 	"github.com/stretchr/testify/require"
@@ -20,7 +19,7 @@ type mockEventReceiver struct {
 	timeout time.Duration
 }
 
-func (m *mockEventReceiver) run(ctx context.Context) (*types.Request, error) {
+func (m *mockEventReceiver) run(ctx context.Context) (*kubemq.Event, error) {
 	client, err := kubemq.NewClient(ctx,
 		kubemq.WithAddress(m.host, m.port),
 		kubemq.WithClientId("response-id"),
@@ -36,10 +35,7 @@ func (m *mockEventReceiver) run(ctx context.Context) (*types.Request, error) {
 	}
 	select {
 	case event := <-eventCh:
-		if event == nil {
-			return nil, nil
-		}
-		return types.ParseRequestFromEvent(event)
+		return event, nil
 	case err := <-errCh:
 		return nil, err
 	case <-ctx.Done():
@@ -56,82 +52,185 @@ func TestClient_Do(t *testing.T) {
 		name         string
 		cfg          config.Metadata
 		mockReceiver *mockEventReceiver
-		sendReq      *types.Request
-		wantReq      *types.Request
-		wantResp     *types.Response
+		req          interface{}
+		wantResp     interface{}
 		wantErr      bool
 	}{
 		{
-			name: "request",
+			name: "event-request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockEventReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "events",
-				timeout: 5 * time.Second,
+				channel: "events1",
+				timeout: 10 * time.Second,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "events"),
-			wantReq: types.NewRequest().
-				SetData([]byte("data")),
-			wantResp: types.NewResponse().
-				SetMetadataKeyValue("result", "ok").
-				SetMetadataKeyValue("id", "id"),
+			req: kubemq.NewEvent().
+				SetBody([]byte("data")).
+				SetMetadata("metadata").
+				SetChannel("events1").
+				SetId("id"),
+			wantResp: &kubemq.Event{
+				Id:       "id",
+				Channel:  "events1",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
 			wantErr: false,
 		},
 		{
-			name: "request error - no data",
+			name: "event-store request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockEventReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "events",
-				timeout: 5 * time.Second,
+				channel: "events2",
+				timeout: 10 * time.Second,
 			},
-			sendReq: types.NewRequest().
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "events"),
-			wantReq:  nil,
-			wantResp: nil,
-			wantErr:  true,
+			req: &kubemq.EventStoreReceive{
+				Id:        "id",
+				Sequence:  1,
+				Timestamp: time.Time{},
+				Channel:   "events2",
+				Metadata:  "metadata",
+				Body:      []byte("data"),
+				ClientId:  "",
+				Tags:      nil,
+			},
+			wantResp: &kubemq.Event{
+				Id:       "id",
+				Channel:  "events2",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
+			wantErr: false,
 		},
 		{
-			name: "request error - bad metadata - empty channel",
+			name: "command request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
+				},
+			},
+			mockReceiver: &mockEventReceiver{
+				host:    "localhost",
+				port:    50000,
+				channel: "events3",
+				timeout: 10 * time.Second,
+			},
+			req: &kubemq.CommandReceive{
+				Id:       "id",
+				Channel:  "events3",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				Tags:     nil,
+			},
+			wantResp: &kubemq.Event{
+				Id:       "id",
+				Channel:  "events3",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "query request",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address": "localhost:50000",
+				},
+			},
+			mockReceiver: &mockEventReceiver{
+				host:    "localhost",
+				port:    50000,
+				channel: "events4",
+				timeout: 10 * time.Second,
+			},
+			req: &kubemq.QueryReceive{
+				Id:       "id",
+				Channel:  "events4",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				Tags:     nil,
+			},
+			wantResp: &kubemq.Event{
+				Id:       "id",
+				Channel:  "events4",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "queue request",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address": "localhost:50000",
+				},
+			},
+			mockReceiver: &mockEventReceiver{
+				host:    "localhost",
+				port:    50000,
+				channel: "events5",
+				timeout: 10 * time.Second,
+			},
+			req: kubemq.NewQueueMessage().
+				SetId("id").
+				SetChannel("events5").
+				SetMetadata("metadata").
+				SetBody([]byte("data")),
+			wantResp: &kubemq.Event{
+				Id:       "id",
+				Channel:  "events5",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "bad request - invalid type",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockEventReceiver{
 				host:    "localhost",
 				port:    50000,
 				channel: "events",
-				timeout: 5 * time.Second,
+				timeout: 10 * time.Second,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", ""),
-			wantReq:  nil,
+			req:      "bad-format",
 			wantResp: nil,
 			wantErr:  true,
 		},
@@ -140,7 +239,7 @@ func TestClient_Do(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
-			recRequestCh := make(chan *types.Request, 1)
+			recRequestCh := make(chan *kubemq.Event, 1)
 			recErrCh := make(chan error, 1)
 			go func() {
 				gotRequest, err := tt.mockReceiver.run(ctx)
@@ -153,16 +252,15 @@ func TestClient_Do(t *testing.T) {
 			target := New()
 			err := target.Init(ctx, tt.cfg)
 			require.NoError(t, err)
-			gotResp, err := target.Do(ctx, tt.sendReq)
+			_, err = target.Do(ctx, tt.req)
 			if tt.wantErr {
 				require.Error(t, err)
 				return
 			}
 			require.NoError(t, err)
-			require.EqualValues(t, tt.wantResp, gotResp)
 			select {
 			case gotRequest := <-recRequestCh:
-				require.EqualValues(t, tt.wantReq, gotRequest)
+				require.EqualValues(t, tt.wantResp, gotRequest)
 			case err := <-recErrCh:
 				require.NoError(t, err)
 			case <-ctx.Done():
@@ -185,11 +283,10 @@ func TestClient_Init(t *testing.T) {
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host":            "localhost",
-					"port":            "50000",
-					"client_id":       "client_id",
-					"auth_token":      "some-auth token",
-					"default_channel": "some-channel",
+					"address":    "localhost:50000",
+					"client_id":  "client_id",
+					"auth_token": "some-auth token",
+					"channels":   "some-channel",
 				},
 			},
 			wantErr: false,
@@ -200,8 +297,18 @@ func TestClient_Init(t *testing.T) {
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "-1",
+					"address": "localhost",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad connection",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address": "localhost:40000",
 				},
 			},
 			wantErr: true,

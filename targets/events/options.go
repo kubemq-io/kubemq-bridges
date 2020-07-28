@@ -7,36 +7,26 @@ import (
 )
 
 const (
-	defaultHost           = "localhost"
-	defaultPort           = 50000
-	defaultMaxConcurrency = 100
-	defaultConcurrency    = 1
+	defaultHost = "localhost:50000"
 )
 
 type options struct {
-	host           string
-	port           int
-	clientId       string
-	authToken      string
-	concurrency    int
-	defaultChannel string
+	host      string
+	port      int
+	clientId  string
+	authToken string
+	channels  []string
 }
 
 func parseOptions(cfg config.Metadata) (options, error) {
-	m := options{}
+	o := options{}
 	var err error
-	m.host = cfg.ParseString("host", defaultHost)
-
-	m.port, err = cfg.ParseIntWithRange("port", defaultPort, 1, 65535)
+	o.host, o.port, err = cfg.MustParseAddress("address", defaultHost)
 	if err != nil {
-		return options{}, fmt.Errorf("error parsing port value, %w", err)
+		return options{}, fmt.Errorf("error parsing address value, %w", err)
 	}
-	m.authToken = cfg.ParseString("auth_token", "")
-	m.clientId = cfg.ParseString("client_id", nuid.Next())
-	m.defaultChannel = cfg.ParseString("default_channel", "")
-	m.concurrency, err = cfg.ParseIntWithRange("concurrency", defaultConcurrency, 1, defaultMaxConcurrency)
-	if err != nil {
-		return options{}, fmt.Errorf("error parsing concurrency value, %w", err)
-	}
-	return m, nil
+	o.authToken = cfg.ParseString("auth_token", "")
+	o.clientId = cfg.ParseString("client_id", nuid.Next())
+	o.channels = cfg.ParseStringList("channels")
+	return o, nil
 }

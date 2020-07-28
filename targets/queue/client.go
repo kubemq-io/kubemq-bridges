@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/types"
 	"github.com/kubemq-io/kubemq-go"
 )
 
@@ -40,29 +39,128 @@ func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
 	return nil
 }
 
-func (c *Client) Do(ctx context.Context, request *types.Request) (*types.Response, error) {
-	queueMetadata, err := parseMetadata(request.Metadata, c.opts)
+func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, error) {
+	var messages []*kubemq.QueueMessage
+	switch val := request.(type) {
+	case *kubemq.CommandReceive:
+		messages = c.parseCommand(val, c.opts.channels)
+	case *kubemq.Event:
+		messages = c.parseEvent(val, c.opts.channels)
+	case *kubemq.EventStoreReceive:
+		messages = c.parseEventStore(val, c.opts.channels)
+	case *kubemq.QueryReceive:
+		messages = c.parseQuery(val, c.opts.channels)
+	case *kubemq.QueueMessage:
+		messages = c.parseQueue(val, c.opts.channels)
+	default:
+		return nil, fmt.Errorf("unknown request type")
+	}
+	results, err := c.client.SendQueueMessages(ctx, messages)
 	if err != nil {
 		return nil, err
 	}
-	queueMessage := c.client.NewQueueMessage().
-		SetId(queueMetadata.id).
-		SetChannel(queueMetadata.channel).
-		SetMetadata(queueMetadata.metadata).
-		SetBody(request.Data).
-		SetPolicyDelaySeconds(queueMetadata.delaySeconds).
-		SetPolicyExpirationSeconds(queueMetadata.expirationSeconds).
-		SetPolicyMaxReceiveCount(queueMetadata.maxReceiveCount).
-		SetPolicyMaxReceiveQueue(queueMetadata.deadLetterQueue)
-	result, err := queueMessage.Send(ctx)
-	if err != nil {
-		return nil, err
+	for _, result := range results {
+		if result.IsError {
+			return nil, fmt.Errorf(result.Error)
+		}
 	}
-	if result.IsError {
-		return nil, fmt.Errorf(result.Error)
+	return nil, nil
+}
+
+func (c *Client) parseEvent(event *kubemq.Event, channels []string) []*kubemq.QueueMessage {
+	var messages []*kubemq.QueueMessage
+	if len(channels) == 0 {
+		channels = append(channels, event.Channel)
 	}
-	return types.NewResponse().
-			SetMetadataKeyValue("id", queueMetadata.id).
-			SetMetadataKeyValue("result", "ok"),
-		nil
+	for _, channel := range channels {
+		messages = append(messages, c.client.NewQueueMessage().
+			SetChannel(channel).
+			SetBody(event.Body).
+			SetMetadata(event.Metadata).
+			SetId(event.Id).
+			SetTags(event.Tags).
+			SetPolicyDelaySeconds(c.opts.delaySeconds).
+			SetPolicyExpirationSeconds(c.opts.expirationSeconds).
+			SetPolicyMaxReceiveCount(c.opts.maxReceiveCount).
+			SetPolicyMaxReceiveQueue(c.opts.deadLetterQueue))
+	}
+	return messages
+
+}
+func (c *Client) parseEventStore(eventStore *kubemq.EventStoreReceive, channels []string) []*kubemq.QueueMessage {
+	var messages []*kubemq.QueueMessage
+	if len(channels) == 0 {
+		channels = append(channels, eventStore.Channel)
+	}
+	for _, channel := range channels {
+		messages = append(messages, c.client.NewQueueMessage().
+			SetChannel(channel).
+			SetBody(eventStore.Body).
+			SetMetadata(eventStore.Metadata).
+			SetId(eventStore.Id).
+			SetTags(eventStore.Tags).
+			SetPolicyDelaySeconds(c.opts.delaySeconds).
+			SetPolicyExpirationSeconds(c.opts.expirationSeconds).
+			SetPolicyMaxReceiveCount(c.opts.maxReceiveCount).
+			SetPolicyMaxReceiveQueue(c.opts.deadLetterQueue))
+	}
+	return messages
+}
+
+func (c *Client) parseQuery(query *kubemq.QueryReceive, channels []string) []*kubemq.QueueMessage {
+	var messages []*kubemq.QueueMessage
+	if len(channels) == 0 {
+		channels = append(channels, query.Channel)
+	}
+	for _, channel := range channels {
+		messages = append(messages, c.client.NewQueueMessage().
+			SetChannel(channel).
+			SetBody(query.Body).
+			SetMetadata(query.Metadata).
+			SetId(query.Id).
+			SetTags(query.Tags).
+			SetPolicyDelaySeconds(c.opts.delaySeconds).
+			SetPolicyExpirationSeconds(c.opts.expirationSeconds).
+			SetPolicyMaxReceiveCount(c.opts.maxReceiveCount).
+			SetPolicyMaxReceiveQueue(c.opts.deadLetterQueue))
+	}
+	return messages
+}
+func (c *Client) parseCommand(command *kubemq.CommandReceive, channels []string) []*kubemq.QueueMessage {
+	var messages []*kubemq.QueueMessage
+	if len(channels) == 0 {
+		channels = append(channels, command.Channel)
+	}
+	for _, channel := range channels {
+		messages = append(messages, c.client.NewQueueMessage().
+			SetChannel(channel).
+			SetBody(command.Body).
+			SetMetadata(command.Metadata).
+			SetId(command.Id).
+			SetTags(command.Tags).
+			SetPolicyDelaySeconds(c.opts.delaySeconds).
+			SetPolicyExpirationSeconds(c.opts.expirationSeconds).
+			SetPolicyMaxReceiveCount(c.opts.maxReceiveCount).
+			SetPolicyMaxReceiveQueue(c.opts.deadLetterQueue))
+	}
+	return messages
+}
+func (c *Client) parseQueue(message *kubemq.QueueMessage, channels []string) []*kubemq.QueueMessage {
+	var messages []*kubemq.QueueMessage
+	if len(channels) == 0 {
+		channels = append(channels, message.Channel)
+	}
+	for _, channel := range channels {
+		messages = append(messages, c.client.NewQueueMessage().
+			SetChannel(channel).
+			SetBody(message.Body).
+			SetMetadata(message.Metadata).
+			SetId(message.MessageID).
+			SetTags(message.Tags).
+			SetPolicyDelaySeconds(c.opts.delaySeconds).
+			SetPolicyExpirationSeconds(c.opts.expirationSeconds).
+			SetPolicyMaxReceiveCount(c.opts.maxReceiveCount).
+			SetPolicyMaxReceiveQueue(c.opts.deadLetterQueue))
+	}
+	return messages
 }

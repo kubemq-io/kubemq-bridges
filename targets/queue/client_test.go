@@ -3,7 +3,6 @@ package queue
 import (
 	"context"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/types"
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/nats-io/nuid"
 
@@ -20,7 +19,7 @@ type mockQueueReceiver struct {
 	timeout int32
 }
 
-func (m *mockQueueReceiver) run(ctx context.Context) (*types.Request, error) {
+func (m *mockQueueReceiver) run(ctx context.Context) (*kubemq.QueueMessage, error) {
 	client, err := kubemq.NewClient(ctx,
 		kubemq.WithAddress(m.host, m.port),
 		kubemq.WithClientId("response-id"),
@@ -44,7 +43,7 @@ func (m *mockQueueReceiver) run(ctx context.Context) (*types.Request, error) {
 	if len(queueMessages.Messages) == 0 {
 		return nil, nil
 	}
-	return types.ParseRequestFromQueueMessage(queueMessages.Messages[0])
+	return queueMessages.Messages[0], nil
 }
 
 func TestClient_Do(t *testing.T) {
@@ -52,145 +51,158 @@ func TestClient_Do(t *testing.T) {
 		name         string
 		cfg          config.Metadata
 		mockReceiver *mockQueueReceiver
-		sendReq      *types.Request
-		wantReq      *types.Request
-		wantResp     *types.Response
+		req          interface{}
+		wantResp     *kubemq.QueueMessage
 		wantErr      bool
 	}{
 		{
-			name: "request",
+			name: "event-request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "queues",
+				channel: "queues1",
 				timeout: 5,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "queues"),
-			wantReq: types.NewRequest().
-				SetData([]byte("data")),
-			wantResp: types.NewResponse().
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("result", "ok"),
-
+			req: kubemq.NewEvent().
+				SetBody([]byte("data")).
+				SetMetadata("metadata").
+				SetChannel("queues1").
+				SetId("id"),
+			wantResp: kubemq.NewQueueMessage().
+				SetMetadata("metadata").
+				SetId("id").
+				SetBody([]byte("data")),
 			wantErr: false,
 		},
 		{
-			name: "request error - bad request",
+			name: "event-store-request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "40000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "queues",
+				channel: "queues2",
 				timeout: 5,
 			},
-			sendReq: types.NewRequest().
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "**bad-channel").
-				SetMetadataKeyValue("max_receive_count", "100000"),
-			wantReq:  nil,
-			wantResp: nil,
-			wantErr:  true,
+			req: &kubemq.EventStoreReceive{
+				Id:        "id",
+				Sequence:  1,
+				Timestamp: time.Time{},
+				Channel:   "queues2",
+				Metadata:  "metadata",
+				Body:      []byte("data"),
+				ClientId:  "",
+				Tags:      nil,
+			},
+			wantResp: kubemq.NewQueueMessage().
+				SetMetadata("metadata").
+				SetId("id").
+				SetBody([]byte("data")),
+			wantErr: false,
 		},
 		{
-			name: "request error - bad metadata - empty channel",
+			name: "command-store-request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "queues",
+				channel: "queues3",
 				timeout: 5,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", ""),
-			wantReq:  nil,
-			wantResp: nil,
-			wantErr:  true,
+			req: &kubemq.CommandReceive{
+				Id:         "id",
+				ResponseTo: "some-response",
+				Channel:    "queues3",
+				Metadata:   "metadata",
+				Body:       []byte("data"),
+				Tags:       nil,
+			},
+			wantResp: kubemq.NewQueueMessage().
+				SetMetadata("metadata").
+				SetId("id").
+				SetBody([]byte("data")),
+			wantErr: false,
 		},
 		{
-			name: "request error - bad metadata - expiration seconds",
+			name: "query-store-request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "queues",
+				channel: "queues4",
 				timeout: 5,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "queues").
-				SetMetadataKeyValue("expiration_seconds", "-1"),
-			wantReq:  nil,
-			wantResp: nil,
-			wantErr:  true,
+			req: &kubemq.QueryReceive{
+				Id:         "id",
+				ResponseTo: "some-response",
+				Channel:    "queues4",
+				Metadata:   "metadata",
+				Body:       []byte("data"),
+				Tags:       nil,
+			},
+			wantResp: kubemq.NewQueueMessage().
+				SetMetadata("metadata").
+				SetId("id").
+				SetBody([]byte("data")),
+			wantErr: false,
 		},
 		{
-			name: "request error - bad metadata - delay seconds",
+			name: "query-store-request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "queues",
+				channel: "queues5",
 				timeout: 5,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "queues").
-				SetMetadataKeyValue("delay_seconds", "-1"),
-			wantReq:  nil,
-			wantResp: nil,
-			wantErr:  true,
+			req: kubemq.NewQueueMessage().
+				SetId("id").
+				SetChannel("queues5").
+				SetMetadata("metadata").
+				SetBody([]byte("data")),
+			wantResp: kubemq.NewQueueMessage().
+				SetMetadata("metadata").
+				SetId("id").
+				SetBody([]byte("data")),
+			wantErr: false,
 		},
 		{
-			name: "request error - bad metadata - max receive count",
+			name: "bad request - invalid type",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockQueueReceiver{
@@ -199,21 +211,16 @@ func TestClient_Do(t *testing.T) {
 				channel: "queues",
 				timeout: 5,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "queues").
-				SetMetadataKeyValue("max_receive_count", "-1"),
-			wantReq:  nil,
+			req:      "bad-format",
 			wantResp: nil,
 			wantErr:  true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
-			recRequestCh := make(chan *types.Request, 1)
+			recRequestCh := make(chan *kubemq.QueueMessage, 1)
 			recErrCh := make(chan error, 1)
 			go func() {
 				gotRequest, err := tt.mockReceiver.run(ctx)
@@ -226,16 +233,18 @@ func TestClient_Do(t *testing.T) {
 			target := New()
 			err := target.Init(ctx, tt.cfg)
 			require.NoError(t, err)
-			gotResp, err := target.Do(ctx, tt.sendReq)
+			_, err = target.Do(ctx, tt.req)
 			if tt.wantErr {
 				require.Error(t, err)
 				return
 			}
 			require.NoError(t, err)
-			require.EqualValues(t, tt.wantResp, gotResp)
+
 			select {
 			case gotRequest := <-recRequestCh:
-				require.EqualValues(t, tt.wantReq, gotRequest)
+				require.EqualValues(t, tt.wantResp.MessageID, gotRequest.MessageID)
+				require.EqualValues(t, tt.wantResp.Metadata, gotRequest.Metadata)
+				require.EqualValues(t, tt.wantResp.Body, gotRequest.Body)
 			case err := <-recErrCh:
 				require.NoError(t, err)
 			case <-ctx.Done():
@@ -258,11 +267,14 @@ func TestClient_Init(t *testing.T) {
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host":            "localhost",
-					"port":            "50000",
-					"client_id":       "client_id",
-					"auth_token":      "some-auth token",
-					"default_channel": "some-channel",
+					"address":            "localhost:50000",
+					"client_id":          "client_id",
+					"auth_token":         "some-auth token",
+					"channels":           "some-channel",
+					"expiration_seconds": "0",
+					"delay_seconds":      "0",
+					"max_receive_count":  "1",
+					"dead_letter_queue":  "",
 				},
 			},
 			wantErr: false,
@@ -273,8 +285,79 @@ func TestClient_Init(t *testing.T) {
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "-1",
+					"address": "localhost",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad connection",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address":            "localhost:40000",
+					"client_id":          "client_id",
+					"auth_token":         "some-auth token",
+					"channels":           "some-channel",
+					"expiration_seconds": "-1",
+					"delay_seconds":      "0",
+					"max_receive_count":  "0",
+					"dead_letter_queue":  "",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad expiration",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address":            "localhost:50000",
+					"client_id":          "client_id",
+					"auth_token":         "some-auth token",
+					"channels":           "some-channel",
+					"expiration_seconds": "-1",
+					"delay_seconds":      "0",
+					"max_receive_count":  "0",
+					"dead_letter_queue":  "",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad delay",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address":            "localhost:50000",
+					"client_id":          "client_id",
+					"auth_token":         "some-auth token",
+					"channels":           "some-channel",
+					"expiration_seconds": "0",
+					"delay_seconds":      "-1",
+					"max_receive_count":  "0",
+					"dead_letter_queue":  "",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad max receive count",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address":            "localhost:50000",
+					"client_id":          "client_id",
+					"auth_token":         "some-auth token",
+					"channels":           "some-channel",
+					"expiration_seconds": "0",
+					"delay_seconds":      "0",
+					"max_receive_count":  "-1",
+					"dead_letter_queue":  "",
 				},
 			},
 			wantErr: true,

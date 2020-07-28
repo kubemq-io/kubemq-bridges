@@ -32,6 +32,29 @@ func (m Metadata) ParseString(key, defaultValue string) string {
 		return defaultValue
 	}
 }
+func (m Metadata) MustParseAddress(key, defaultValue string) (string, int, error) {
+	var host string
+	var port int
+	var hostPort []string
+	if val, ok := m.Properties[key]; ok && val != "" {
+		hostPort = strings.Split(val, ":")
+	} else {
+		hostPort = strings.Split(defaultValue, ":")
+	}
+	if len(hostPort) >= 1 {
+		host = hostPort[0]
+	}
+	if len(hostPort) >= 2 {
+		port, _ = strconv.Atoi(hostPort[1])
+	}
+	if host == "" {
+		return "", 0, fmt.Errorf("no valid host found")
+	}
+	if port == 0 {
+		return "", 0, fmt.Errorf("no valid port found")
+	}
+	return host, port, nil
+}
 func (m Metadata) MustParseString(key string) (string, error) {
 	if val, ok := m.Properties[key]; ok && val != "" {
 		return val, nil
@@ -50,7 +73,13 @@ func (m Metadata) MustParseStringList(key string) ([]string, error) {
 		return nil, fmt.Errorf("value of key %s cannot be empty", key)
 	}
 }
-
+func (m Metadata) ParseStringList(key string) []string {
+	if val, ok := m.Properties[key]; ok && val != "" {
+		list := strings.Split(val, ",")
+		return list
+	}
+	return []string{}
+}
 func (m Metadata) ParseStringMap(key string, stringMap map[string]string) (string, error) {
 	if val, ok := stringMap[m.Properties[key]]; ok {
 		return val, nil

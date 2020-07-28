@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/types"
 	"github.com/kubemq-io/kubemq-go"
+	"time"
 )
 
 type Client struct {
@@ -41,27 +41,77 @@ func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
 	return nil
 }
 
-func (c *Client) Do(ctx context.Context, request *types.Request) (*types.Response, error) {
-	cmdMetadata, err := parseMetadata(request.Metadata, c.opts)
-	if err != nil {
-		return nil, err
+func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, error) {
+
+	var cmd *kubemq.Command
+	switch val := request.(type) {
+	case *kubemq.CommandReceive:
+		cmd = c.parseCommand(val)
+	case *kubemq.Event:
+		cmd = c.parseEvent(val)
+	case *kubemq.EventStoreReceive:
+		cmd = c.parseEventStore(val)
+	case *kubemq.QueryReceive:
+		cmd = c.parseQuery(val)
+	case *kubemq.QueueMessage:
+		cmd = c.parseQueue(val)
+	default:
+		return nil, fmt.Errorf("unknown request type")
 	}
-	cmdResponse, err := c.client.C().
-		SetId(cmdMetadata.id).
-		SetTimeout(cmdMetadata.timeout).
-		SetChannel(cmdMetadata.channel).
-		SetMetadata(cmdMetadata.metadata).
-		SetBody(request.Data).
-		Send(ctx)
+	if c.opts.defaultChannel != "" {
+		cmd.SetChannel(c.opts.defaultChannel)
+	}
+	cmd.SetTimeout(time.Duration(c.opts.timeoutSeconds) * time.Second)
+	cmdResponse, err := c.client.SetCommand(cmd).Send(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if !cmdResponse.Executed {
 		return nil, fmt.Errorf(cmdResponse.Error)
 	}
+	return cmdResponse, nil
 
-	return types.NewResponse().
-			SetMetadataKeyValue("id", cmdResponse.CommandId).
-			SetMetadataKeyValue("result", "ok"),
-		nil
+}
+
+func (c *Client) parseEvent(event *kubemq.Event) *kubemq.Command {
+	return kubemq.NewCommand().
+		SetBody(event.Body).
+		SetMetadata(event.Metadata).
+		SetId(event.Id).
+		SetTags(event.Tags).
+		SetChannel(event.Channel)
+
+}
+func (c *Client) parseEventStore(eventStore *kubemq.EventStoreReceive) *kubemq.Command {
+	return kubemq.NewCommand().
+		SetBody(eventStore.Body).
+		SetMetadata(eventStore.Metadata).
+		SetId(eventStore.Id).
+		SetTags(eventStore.Tags).
+		SetChannel(eventStore.Channel)
+}
+
+func (c *Client) parseQuery(query *kubemq.QueryReceive) *kubemq.Command {
+	return kubemq.NewCommand().
+		SetBody(query.Body).
+		SetMetadata(query.Metadata).
+		SetId(query.Id).
+		SetTags(query.Tags).
+		SetChannel(query.Channel)
+}
+func (c *Client) parseCommand(command *kubemq.CommandReceive) *kubemq.Command {
+	return kubemq.NewCommand().
+		SetBody(command.Body).
+		SetMetadata(command.Metadata).
+		SetId(command.Id).
+		SetTags(command.Tags).
+		SetChannel(command.Channel)
+}
+func (c *Client) parseQueue(message *kubemq.QueueMessage) *kubemq.Command {
+	return kubemq.NewCommand().
+		SetBody(message.Body).
+		SetMetadata(message.Metadata).
+		SetId(message.MessageID).
+		SetTags(message.Tags).
+		SetChannel(message.Channel)
 }

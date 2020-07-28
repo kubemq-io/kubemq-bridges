@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/types"
 	"github.com/kubemq-io/kubemq-go"
 
 	"github.com/stretchr/testify/require"
@@ -20,7 +19,7 @@ type mockEventStoreReceiver struct {
 	timeout time.Duration
 }
 
-func (m *mockEventStoreReceiver) run(ctx context.Context) (*types.Request, error) {
+func (m *mockEventStoreReceiver) run(ctx context.Context) (*kubemq.EventStoreReceive, error) {
 	client, err := kubemq.NewClient(ctx,
 		kubemq.WithAddress(m.host, m.port),
 		kubemq.WithClientId("response-id"),
@@ -36,10 +35,7 @@ func (m *mockEventStoreReceiver) run(ctx context.Context) (*types.Request, error
 	}
 	select {
 	case eventStore := <-eventStoreCh:
-		if eventStore == nil {
-			return nil, nil
-		}
-		return types.ParseRequestFromEventStoreReceive(eventStore)
+		return eventStore, nil
 	case err := <-errCh:
 		return nil, err
 	case <-ctx.Done():
@@ -52,86 +48,190 @@ func (m *mockEventStoreReceiver) run(ctx context.Context) (*types.Request, error
 }
 
 func TestClient_Do(t *testing.T) {
+
 	tests := []struct {
 		name         string
 		cfg          config.Metadata
 		mockReceiver *mockEventStoreReceiver
-		sendReq      *types.Request
-		wantReq      *types.Request
-		wantResp     *types.Response
+		req          interface{}
+		wantResp     *kubemq.EventStoreReceive
 		wantErr      bool
 	}{
 		{
-			name: "request",
+			name: "event-request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockEventStoreReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "event_stores",
-				timeout: 5 * time.Second,
+				channel: "events_store1",
+				timeout: 10 * time.Second,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "event_stores"),
-			wantReq: types.NewRequest().
-				SetData([]byte("data")),
-			wantResp: types.NewResponse().
-				SetMetadataKeyValue("result", "ok").
-				SetMetadataKeyValue("id", "id"),
+			req: kubemq.NewEvent().
+				SetBody([]byte("data")).
+				SetMetadata("metadata").
+				SetChannel("events_store1").
+				SetId("id"),
+			wantResp: &kubemq.EventStoreReceive{
+				Id:       "id",
+				Channel:  "events_store1",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
 			wantErr: false,
 		},
 		{
-			name: "request error - no data",
+			name: "event-store request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockEventStoreReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "event_stores",
-				timeout: 5 * time.Second,
+				channel: "events_store2",
+				timeout: 10 * time.Second,
 			},
-			sendReq: types.NewRequest().
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", "event_stores"),
-			wantReq:  nil,
-			wantResp: nil,
-			wantErr:  true,
+			req: &kubemq.EventStoreReceive{
+				Id:        "id",
+				Sequence:  1,
+				Timestamp: time.Time{},
+				Channel:   "events_store2",
+				Metadata:  "metadata",
+				Body:      []byte("data"),
+				ClientId:  "",
+				Tags:      nil,
+			},
+			wantResp: &kubemq.EventStoreReceive{
+				Id:       "id",
+				Channel:  "events_store2",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
+			wantErr: false,
 		},
 		{
-			name: "request error - bad metadata - empty channel",
+			name: "command request",
 			cfg: config.Metadata{
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "50000",
+					"address": "localhost:50000",
 				},
 			},
 			mockReceiver: &mockEventStoreReceiver{
 				host:    "localhost",
 				port:    50000,
-				channel: "event_stores",
-				timeout: 5 * time.Second,
+				channel: "events_store3",
+				timeout: 10 * time.Second,
 			},
-			sendReq: types.NewRequest().
-				SetData([]byte("data")).
-				SetMetadataKeyValue("id", "id").
-				SetMetadataKeyValue("channel", ""),
-			wantReq:  nil,
+			req: &kubemq.CommandReceive{
+				Id:       "id",
+				Channel:  "events_store3",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				Tags:     nil,
+			},
+			wantResp: &kubemq.EventStoreReceive{
+				Id:       "id",
+				Channel:  "events_store3",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "query request",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address": "localhost:50000",
+				},
+			},
+			mockReceiver: &mockEventStoreReceiver{
+				host:    "localhost",
+				port:    50000,
+				channel: "events_store4",
+				timeout: 10 * time.Second,
+			},
+			req: &kubemq.QueryReceive{
+				Id:       "id",
+				Channel:  "events_store4",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				Tags:     nil,
+			},
+			wantResp: &kubemq.EventStoreReceive{
+				Id:       "id",
+				Channel:  "events_store4",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "queue request",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address": "localhost:50000",
+				},
+			},
+			mockReceiver: &mockEventStoreReceiver{
+				host:    "localhost",
+				port:    50000,
+				channel: "events_store5",
+				timeout: 10 * time.Second,
+			},
+			req: kubemq.NewQueueMessage().
+				SetId("id").
+				SetChannel("events_store5").
+				SetMetadata("metadata").
+				SetBody([]byte("data")),
+			wantResp: &kubemq.EventStoreReceive{
+				Id:       "id",
+				Channel:  "events_store5",
+				Metadata: "metadata",
+				Body:     []byte("data"),
+				ClientId: "response-id",
+				Tags:     nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "bad request - invalid type",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address": "localhost:50000",
+				},
+			},
+			mockReceiver: &mockEventStoreReceiver{
+				host:    "localhost",
+				port:    50000,
+				channel: "events_store",
+				timeout: 10 * time.Second,
+			},
+			req:      "bad-format",
 			wantResp: nil,
 			wantErr:  true,
 		},
@@ -140,7 +240,7 @@ func TestClient_Do(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
-			recRequestCh := make(chan *types.Request, 1)
+			recRequestCh := make(chan *kubemq.EventStoreReceive, 1)
 			recErrCh := make(chan error, 1)
 			go func() {
 				gotRequest, err := tt.mockReceiver.run(ctx)
@@ -153,16 +253,17 @@ func TestClient_Do(t *testing.T) {
 			target := New()
 			err := target.Init(ctx, tt.cfg)
 			require.NoError(t, err)
-			gotResp, err := target.Do(ctx, tt.sendReq)
+			_, err = target.Do(ctx, tt.req)
 			if tt.wantErr {
 				require.Error(t, err)
 				return
 			}
 			require.NoError(t, err)
-			require.EqualValues(t, tt.wantResp, gotResp)
 			select {
 			case gotRequest := <-recRequestCh:
-				require.EqualValues(t, tt.wantReq, gotRequest)
+				require.EqualValues(t, tt.wantResp.Id, gotRequest.Id)
+				require.EqualValues(t, tt.wantResp.Metadata, gotRequest.Metadata)
+				require.EqualValues(t, tt.wantResp.Body, gotRequest.Body)
 			case err := <-recErrCh:
 				require.NoError(t, err)
 			case <-ctx.Done():
@@ -185,11 +286,10 @@ func TestClient_Init(t *testing.T) {
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host":            "localhost",
-					"port":            "50000",
-					"client_id":       "client_id",
-					"auth_token":      "some-auth token",
-					"default_channel": "some-channel",
+					"address":    "localhost:50000",
+					"client_id":  "client_id",
+					"auth_token": "some-auth token",
+					"channels":   "some-channel",
 				},
 			},
 			wantErr: false,
@@ -200,8 +300,18 @@ func TestClient_Init(t *testing.T) {
 				Name: "kubemq-target",
 				Kind: "",
 				Properties: map[string]string{
-					"host": "localhost",
-					"port": "-1",
+					"address": "localhost",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad connection",
+			cfg: config.Metadata{
+				Name: "kubemq-target",
+				Kind: "",
+				Properties: map[string]string{
+					"address": "localhost:40000",
 				},
 			},
 			wantErr: true,

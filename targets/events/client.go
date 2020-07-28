@@ -2,15 +2,22 @@ package events
 
 import (
 	"context"
+	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/types"
 	"github.com/kubemq-io/kubemq-go"
+	"time"
+)
+
+const (
+	defaultSendTimeout     = 10 * time.Second
+	defaultStreamReconnect = 1 * time.Second
 )
 
 type Client struct {
 	name   string
 	opts   options
 	client *kubemq.Client
+	sendCh chan *kubemq.Event
 }
 
 func New() *Client {
@@ -38,26 +45,130 @@ func (c *Client) Init(ctx context.Context, cfg config.Metadata) error {
 	if err != nil {
 		return err
 	}
-
+	c.sendCh = make(chan *kubemq.Event, 1)
+	go c.runStreamProcessing(ctx)
 	return nil
 }
 
-func (c *Client) Do(ctx context.Context, request *types.Request) (*types.Response, error) {
-	eventMetadata, err := parseMetadata(request.Metadata, c.opts)
-	if err != nil {
-		return nil, err
+func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, error) {
+	var events []*kubemq.Event
+	switch val := request.(type) {
+	case *kubemq.CommandReceive:
+		events = c.parseCommand(val, c.opts.channels)
+	case *kubemq.Event:
+		events = c.parseEvent(val, c.opts.channels)
+	case *kubemq.EventStoreReceive:
+		events = c.parseEventStore(val, c.opts.channels)
+	case *kubemq.QueryReceive:
+		events = c.parseQuery(val, c.opts.channels)
+	case *kubemq.QueueMessage:
+		events = c.parseQueue(val, c.opts.channels)
+	default:
+		return nil, fmt.Errorf("unknown request type")
 	}
-	err = c.client.E().
-		SetId(eventMetadata.id).
-		SetChannel(eventMetadata.channel).
-		SetMetadata(eventMetadata.metadata).
-		SetBody(request.Data).
-		Send(ctx)
-	if err != nil {
-		return nil, err
+	for _, es := range events {
+		select {
+		case c.sendCh <- es:
+			return nil, nil
+		case <-time.After(defaultSendTimeout):
+			return nil, fmt.Errorf("error timeout on sending event")
+		}
 	}
-	return types.NewResponse().
-			SetMetadataKeyValue("result", "ok").
-			SetMetadataKeyValue("id", eventMetadata.id),
-		nil
+	return nil, nil
+}
+
+func (c *Client) runStreamProcessing(ctx context.Context) {
+	for {
+		errCh := make(chan error, 1)
+		go func() {
+			c.client.StreamEvents(ctx, c.sendCh, errCh)
+		}()
+		select {
+		case <-errCh:
+			time.Sleep(defaultStreamReconnect)
+			return
+		case <-ctx.Done():
+			goto done
+		}
+	}
+done:
+}
+
+func (c *Client) parseEvent(event *kubemq.Event, channels []string) []*kubemq.Event {
+	var events []*kubemq.Event
+	if len(channels) == 0 {
+		channels = append(channels, event.Channel)
+	}
+	for _, channel := range channels {
+		events = append(events, kubemq.NewEvent().
+			SetChannel(channel).
+			SetBody(event.Body).
+			SetMetadata(event.Metadata).
+			SetId(event.Id).
+			SetTags(event.Tags))
+	}
+	return events
+
+}
+func (c *Client) parseEventStore(eventStore *kubemq.EventStoreReceive, channels []string) []*kubemq.Event {
+	var events []*kubemq.Event
+	if len(channels) == 0 {
+		channels = append(channels, eventStore.Channel)
+	}
+	for _, channel := range channels {
+		events = append(events, kubemq.NewEvent().
+			SetChannel(channel).
+			SetBody(eventStore.Body).
+			SetMetadata(eventStore.Metadata).
+			SetId(eventStore.Id).
+			SetTags(eventStore.Tags))
+	}
+	return events
+}
+
+func (c *Client) parseQuery(query *kubemq.QueryReceive, channels []string) []*kubemq.Event {
+	var events []*kubemq.Event
+	if len(channels) == 0 {
+		channels = append(channels, query.Channel)
+	}
+	for _, channel := range channels {
+		events = append(events, kubemq.NewEvent().
+			SetChannel(channel).
+			SetBody(query.Body).
+			SetMetadata(query.Metadata).
+			SetId(query.Id).
+			SetTags(query.Tags))
+	}
+	return events
+}
+func (c *Client) parseCommand(command *kubemq.CommandReceive, channels []string) []*kubemq.Event {
+	var events []*kubemq.Event
+	if len(channels) == 0 {
+		channels = append(channels, command.Channel)
+	}
+
+	for _, channel := range channels {
+		events = append(events, kubemq.NewEvent().
+			SetChannel(channel).
+			SetBody(command.Body).
+			SetMetadata(command.Metadata).
+			SetId(command.Id).
+			SetTags(command.Tags))
+	}
+	return events
+}
+func (c *Client) parseQueue(message *kubemq.QueueMessage, channels []string) []*kubemq.Event {
+	var events []*kubemq.Event
+	if len(channels) == 0 {
+		channels = append(channels, message.Channel)
+	}
+	for _, channel := range channels {
+		events = append(events, kubemq.NewEvent().
+			SetChannel(channel).
+			SetBody(message.Body).
+			SetMetadata(message.Metadata).
+			SetId(message.MessageID).
+			SetTags(message.Tags))
+	}
+	return events
 }
