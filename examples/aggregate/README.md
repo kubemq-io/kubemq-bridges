@@ -1,11 +1,12 @@
 # KubeMQ Bridges - Aggregate Example
 
-In this example we demonstrate how to aggregate data from multiple clusters as sources (in this case events) and send all the events to single cluster for further processing.
+In this example we demonstrate how to aggregate data from multiple clusters as sources (in this case events) and send all the events to single cluster as targets for further processing.
 
 ![aggregate-example](../../.github/assets/aggregate-example.jpeg)
 
 ## Configuration
 
+### KubeMQ Bridges Configuration
 ```yaml
 apiPort: 8081
 bindings:
@@ -83,4 +84,51 @@ bindings:
       log_level: "debug" 
 ```
 
+### KubeMQ clusters configuration
+
+```yaml
+apiVersion: core.k8s.kubemq.io/v1alpha1
+kind: KubemqCluster
+metadata:
+  name: kubemq-cluster-a
+  namespace: kubemq
+spec:
+  replicas: 3
+  grpc:
+    expose: NodePort
+    nodePort: 30501
+---
+apiVersion: core.k8s.kubemq.io/v1alpha1
+kind: KubemqCluster
+metadata:
+  name: kubemq-cluster-b
+  namespace: kubemq
+spec:
+  replicas: 3
+  grpc:
+    expose: NodePort
+    nodePort: 30502
+---
+apiVersion: core.k8s.kubemq.io/v1alpha1
+kind: KubemqCluster
+metadata:
+  name: kubemq-cluster-c
+  namespace: kubemq
+spec:
+  replicas: 3
+  grpc:
+    expose: NodePort
+    nodePort: 30503
+---
+apiVersion: core.k8s.kubemq.io/v1alpha1
+kind: KubemqCluster
+metadata:
+  name: kubemq-cluster-d
+  namespace: kubemq
+spec:
+  replicas: 3
+  grpc:
+    expose: NodePort
+    nodePort: 30504
+```
 
