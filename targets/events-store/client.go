@@ -70,7 +70,7 @@ func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, erro
 	for _, es := range eventsStore {
 		select {
 		case c.sendCh <- es:
-			return nil, nil
+
 		case <-time.After(defaultSendTimeout):
 			return nil, fmt.Errorf("error timeout on sending event store")
 		}

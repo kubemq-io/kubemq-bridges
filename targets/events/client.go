@@ -66,10 +66,10 @@ func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, erro
 	default:
 		return nil, fmt.Errorf("unknown request type")
 	}
-	for _, es := range events {
+	for _, event := range events {
 		select {
-		case c.sendCh <- es:
-			return nil, nil
+		case c.sendCh <- event:
+
 		case <-time.After(defaultSendTimeout):
 			return nil, fmt.Errorf("error timeout on sending event")
 		}
@@ -99,6 +99,7 @@ func (c *Client) parseEvent(event *kubemq.Event, channels []string) []*kubemq.Ev
 	if len(channels) == 0 {
 		channels = append(channels, event.Channel)
 	}
+
 	for _, channel := range channels {
 		events = append(events, kubemq.NewEvent().
 			SetChannel(channel).

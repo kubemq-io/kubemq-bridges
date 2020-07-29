@@ -1,0 +1,77 @@
+apiPort: 8081
+bindings:
+  - name: cluster-a-b-query
+    source:
+      kind: source.query
+      name: cluster-a-query-source
+      properties:
+        address: "localhost:30501"
+        client_id: "cluster-a-query-source"
+        auth_token: ""
+        channel: "queries"
+        group:   ""
+        concurrency: "1"
+        auto_reconnect: "true"
+        reconnect_interval_seconds: "1"
+        max_reconnects: "0"
+    target:
+      kind: target.query
+      name: cluster-b-query-target
+      properties:
+        address: "localhost:30502"
+        client_id: "cluster-b-query-target"
+        auth_token: ""
+        default_channel: "queries"
+        timeout_seconds: 3600
+    properties:
+      log_level: "debug"
+  - name: cluster-a-c-query
+    source:
+      kind: source.query
+      name: cluster-a-query-source
+      properties:
+        address: "localhost:30501"
+        client_id: "cluster-a-query-source"
+        auth_token: ""
+        channel: "queries"
+        group:   ""
+        concurrency: "1"
+        auto_reconnect: "true"
+        reconnect_interval_seconds: "1"
+        max_reconnects: "0"
+    target:
+      kind: target.query
+      name: cluster-c-query-target
+      properties:
+        address: "localhost:30503"
+        client_id: "cluster-c-query-target"
+        auth_token: ""
+        default_channel: "queries"
+        timeout_seconds: 3600
+    properties:
+      log_level: "debug"
+  - name: cluster-a-d-query
+    source:
+      kind: source.query
+      name: cluster-a-query-source
+      properties:
+        address: "localhost:30501"
+        client_id: "cluster-a-query-source"
+        auth_token: ""
+        channel: "queries"
+        group:   ""
+        concurrency: "1"
+        auto_reconnect: "true"
+        reconnect_interval_seconds: "1"
+        max_reconnects: "0"
+    target:
+      kind: target.query
+      name: cluster-d-query-target
+      properties:
+        address: "localhost:30504"
+        client_id: "cluster-c-query-target"
+        auth_token: ""
+        default_channel: "queries"
+        timeout_seconds: 3600
+    properties:
+      log_level: "debug"
