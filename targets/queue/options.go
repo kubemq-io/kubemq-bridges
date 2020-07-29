@@ -8,8 +8,7 @@ import (
 )
 
 const (
-	defaultHost = "localhost"
-	defaultPort = 50000
+	defaultHost = "localhost:50000"
 )
 
 type options struct {
@@ -24,7 +23,7 @@ type options struct {
 	deadLetterQueue   string
 }
 
-func parseOptions(cfg config.Spec) (options, error) {
+func parseOptions(cfg config.Metadata) (options, error) {
 	o := options{}
 	var err error
 	o.host, o.port, err = cfg.MustParseAddress("address", defaultHost)

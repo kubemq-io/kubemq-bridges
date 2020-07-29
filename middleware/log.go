@@ -27,7 +27,7 @@ type LogMiddleware struct {
 	*logger.Logger
 }
 
-func NewLogMiddleware(name string, meta config.Spec) (*LogMiddleware, error) {
+func NewLogMiddleware(name string, meta config.Metadata) (*LogMiddleware, error) {
 	lm := &LogMiddleware{
 		minLevel: LogLevelTypeNoLog,
 		Logger:   logger.NewLogger(name),

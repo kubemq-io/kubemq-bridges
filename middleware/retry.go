@@ -21,7 +21,7 @@ type RetryMiddleware struct {
 	opts []retry.Option
 }
 
-func parseRetryOptions(meta config.Spec) ([]retry.Option, error) {
+func parseRetryOptions(meta config.Metadata) ([]retry.Option, error) {
 	var opts []retry.Option
 	attempts, err := meta.ParseIntWithRange("retry_attempts", 1, 1, math.MaxInt32)
 	if err != nil {
@@ -56,7 +56,7 @@ func parseRetryOptions(meta config.Spec) ([]retry.Option, error) {
 	return opts, nil
 }
 
-func NewRetryMiddleware(meta config.Spec, log *logger.Logger) (*RetryMiddleware, error) {
+func NewRetryMiddleware(meta config.Metadata, log *logger.Logger) (*RetryMiddleware, error) {
 	opts, err := parseRetryOptions(meta)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing retry options, %w", err)

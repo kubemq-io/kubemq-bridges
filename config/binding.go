@@ -5,10 +5,10 @@ import (
 )
 
 type BindingConfig struct {
-	Name       string `json:"name"`
-	Source     Spec   `json:"source"`
-	Target     Spec   `json:"target"`
-	Properties Spec   `json:"properties"`
+	Name       string   `json:"name"`
+	Source     Spec     `json:"source"`
+	Target     Spec     `json:"target"`
+	Properties Metadata `json:"properties"`
 }
 
 func (b BindingConfig) Validate() error {

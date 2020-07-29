@@ -28,7 +28,7 @@ func TestClient_RateLimiter(t *testing.T) {
 	tests := []struct {
 		name             string
 		mock             *mockTarget
-		meta             config.Spec
+		meta             config.Metadata
 		timeToRun        time.Duration
 		wantMaxExecution int
 		wantErr          bool
@@ -41,12 +41,8 @@ func TestClient_RateLimiter(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"rate_per_seconds": "100",
-				},
+			meta: map[string]string{
+				"rate_per_seconds": "100",
 			},
 			timeToRun:        time.Second,
 			wantMaxExecution: 110,
@@ -60,11 +56,8 @@ func TestClient_RateLimiter(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name:       "",
-				Kind:       "",
-				Properties: map[string]string{},
-			},
+			meta: map[string]string{},
+
 			timeToRun:        time.Second,
 			wantMaxExecution: math.MaxInt32,
 			wantErr:          false,
@@ -77,12 +70,8 @@ func TestClient_RateLimiter(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"rate_per_seconds": "-100",
-				},
+			meta: map[string]string{
+				"rate_per_seconds": "-100",
 			},
 			timeToRun:        time.Second,
 			wantMaxExecution: 0,
@@ -122,7 +111,7 @@ func TestClient_Retry(t *testing.T) {
 	tests := []struct {
 		name        string
 		mock        *mockTarget
-		meta        config.Spec
+		meta        config.Metadata
 		wantRetries int
 		wantErr     bool
 	}{
@@ -134,11 +123,7 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    1,
 			},
-			meta: config.Spec{
-				Name:       "",
-				Kind:       "",
-				Properties: map[string]string{},
-			},
+			meta:        map[string]string{},
 			wantRetries: 1,
 			wantErr:     false,
 		},
@@ -150,11 +135,7 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    1,
 			},
-			meta: config.Spec{
-				Name:       "",
-				Kind:       "",
-				Properties: map[string]string{},
-			},
+			meta:        map[string]string{},
 			wantRetries: 1,
 			wantErr:     false,
 		},
@@ -166,15 +147,12 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    3,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"retry_attempts":           "3",
-					"retry_delay_milliseconds": "100",
-					"retry_delay_type":         "fixed",
-				},
+			meta: map[string]string{
+				"retry_attempts":           "3",
+				"retry_delay_milliseconds": "100",
+				"retry_delay_type":         "fixed",
 			},
+
 			wantRetries: 3,
 			wantErr:     false,
 		},
@@ -186,14 +164,10 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    3,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"retry_attempts":           "3",
-					"retry_delay_milliseconds": "100",
-					"retry_delay_type":         "back-off",
-				},
+			meta: map[string]string{
+				"retry_attempts":           "3",
+				"retry_delay_milliseconds": "100",
+				"retry_delay_type":         "back-off",
 			},
 			wantRetries: 3,
 			wantErr:     false,
@@ -206,14 +180,10 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    3,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"retry_attempts":           "3",
-					"retry_delay_milliseconds": "200",
-					"retry_delay_type":         "random",
-				},
+			meta: map[string]string{
+				"retry_attempts":           "3",
+				"retry_delay_milliseconds": "200",
+				"retry_delay_type":         "random",
 			},
 			wantRetries: 3,
 			wantErr:     false,
@@ -226,15 +196,11 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    3,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"retry_attempts":                "3",
-					"retry_delay_milliseconds":      "200",
-					"retry_max_jitter_milliseconds": "200",
-					"retry_delay_type":              "random",
-				},
+			meta: map[string]string{
+				"retry_attempts":                "3",
+				"retry_delay_milliseconds":      "200",
+				"retry_max_jitter_milliseconds": "200",
+				"retry_delay_type":              "random",
 			},
 			wantRetries: 3,
 			wantErr:     false,
@@ -247,15 +213,11 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    3,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"retry_attempts":                "-3",
-					"retry_delay_milliseconds":      "200",
-					"retry_max_jitter_milliseconds": "200",
-					"retry_delay_type":              "random",
-				},
+			meta: map[string]string{
+				"retry_attempts":                "-3",
+				"retry_delay_milliseconds":      "200",
+				"retry_max_jitter_milliseconds": "200",
+				"retry_delay_type":              "random",
 			},
 			wantRetries: 3,
 			wantErr:     true,
@@ -268,15 +230,11 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    3,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"retry_attempts":                "3",
-					"retry_delay_milliseconds":      "-200",
-					"retry_max_jitter_milliseconds": "200",
-					"retry_delay_type":              "random",
-				},
+			meta: map[string]string{
+				"retry_attempts":                "3",
+				"retry_delay_milliseconds":      "-200",
+				"retry_max_jitter_milliseconds": "200",
+				"retry_delay_type":              "random",
 			},
 			wantRetries: 3,
 			wantErr:     true,
@@ -289,15 +247,11 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    3,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"retry_attempts":                "3",
-					"retry_delay_milliseconds":      "200",
-					"retry_max_jitter_milliseconds": "-200",
-					"retry_delay_type":              "random",
-				},
+			meta: map[string]string{
+				"retry_attempts":                "3",
+				"retry_delay_milliseconds":      "200",
+				"retry_max_jitter_milliseconds": "-200",
+				"retry_delay_type":              "random",
 			},
 			wantRetries: 3,
 			wantErr:     true,
@@ -310,15 +264,11 @@ func TestClient_Retry(t *testing.T) {
 				delay:       0,
 				executed:    3,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"retry_attempts":                "3",
-					"retry_delay_milliseconds":      "200",
-					"retry_max_jitter_milliseconds": "200",
-					"retry_delay_type":              "bad-type",
-				},
+			meta: map[string]string{
+				"retry_attempts":                "3",
+				"retry_delay_milliseconds":      "200",
+				"retry_max_jitter_milliseconds": "200",
+				"retry_delay_type":              "bad-type",
 			},
 			wantRetries: 3,
 			wantErr:     true,
@@ -383,7 +333,7 @@ func TestClient_Metric(t *testing.T) {
 					Kind:       "tk",
 					Properties: nil,
 				},
-				Properties: config.Spec{},
+				Properties: map[string]string{},
 			},
 			wantReport: &metrics.Report{
 				Key:            "b-1-sn-sk-tn-tk",
@@ -420,7 +370,7 @@ func TestClient_Metric(t *testing.T) {
 					Kind:       "tk",
 					Properties: nil,
 				},
-				Properties: config.Spec{},
+				Properties: map[string]string{},
 			},
 			wantReport: &metrics.Report{
 				Key:            "b-2-sn-sk-tn-tk",
@@ -463,7 +413,7 @@ func TestClient_Log(t *testing.T) {
 	tests := []struct {
 		name    string
 		mock    *mockTarget
-		meta    config.Spec
+		meta    config.Metadata
 		wantErr bool
 	}{
 		{
@@ -474,11 +424,7 @@ func TestClient_Log(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name:       "",
-				Kind:       "",
-				Properties: map[string]string{},
-			},
+			meta:    map[string]string{},
 			wantErr: false,
 		},
 		{
@@ -489,14 +435,9 @@ func TestClient_Log(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"log_level": "debug",
-				},
+			meta: map[string]string{
+				"log_level": "debug",
 			},
-
 			wantErr: false,
 		},
 		{
@@ -507,12 +448,8 @@ func TestClient_Log(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"log_level": "info",
-				},
+			meta: map[string]string{
+				"log_level": "info",
 			},
 			wantErr: false,
 		},
@@ -524,12 +461,8 @@ func TestClient_Log(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"log_level": "info",
-				},
+			meta: map[string]string{
+				"log_level": "info",
 			},
 			wantErr: false,
 		},
@@ -541,12 +474,8 @@ func TestClient_Log(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"log_level": "error",
-				},
+			meta: map[string]string{
+				"log_level": "error",
 			},
 			wantErr: false,
 		},
@@ -558,12 +487,8 @@ func TestClient_Log(t *testing.T) {
 				delay:       0,
 				executed:    0,
 			},
-			meta: config.Spec{
-				Name: "",
-				Kind: "",
-				Properties: map[string]string{
-					"log_level": "bad-level",
-				},
+			meta: map[string]string{
+				"log_level": "bad-level",
 			},
 			wantErr: true,
 		},
@@ -595,17 +520,13 @@ func TestClient_Chain(t *testing.T) {
 		delay:       0,
 		executed:    0,
 	}
-	meta := config.Spec{
-		Name: "",
-		Kind: "",
-		Properties: map[string]string{
-			"log_level":                     "debug",
-			"rate_per_seconds":              "1",
-			"retry_attempts":                "3",
-			"retry_delay_milliseconds":      "100",
-			"retry_max_jitter_milliseconds": "100",
-			"retry_delay_type":              "fixed",
-		},
+	meta := map[string]string{
+		"log_level":                     "debug",
+		"rate_per_seconds":              "1",
+		"retry_attempts":                "3",
+		"retry_delay_milliseconds":      "100",
+		"retry_max_jitter_milliseconds": "100",
+		"retry_delay_type":              "fixed",
 	}
 	log, err := NewLogMiddleware("test", meta)
 	require.NoError(t, err)
