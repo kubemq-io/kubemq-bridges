@@ -21,7 +21,7 @@ COPY licenses /licenses
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:$PATH
 RUN mkdir /kubemq-bridges
-COPY --from=builder $GOPATH/github.com/kubemq-hub/kubemq-bridges/kubemq-bridges-run ./kubemq-bridges-run
+COPY --from=builder $GOPATH/github.com/kubemq-hub/kubemq-bridges/kubemq-bridges-run ./kubemq-bridges
 RUN chown -R 1001:root  /kubemq-bridges && chmod g+rwX  /kubemq-bridges
 WORKDIR kubemq-bridges
 USER 1001

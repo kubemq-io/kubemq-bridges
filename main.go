@@ -6,7 +6,6 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/binding"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
-
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,6 +31,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
+
 	err = cfg.Validate()
 	if err != nil {
 		return err
