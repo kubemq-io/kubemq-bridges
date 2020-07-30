@@ -62,7 +62,7 @@ func TestClient_Do(t *testing.T) {
 	defer leaktest.Check(t)()
 	tests := []struct {
 		name         string
-		cfg          config.Spec
+		connection   config.Metadata
 		mockReceiver *mockCommandReceiver
 		req          interface{}
 		wantResp     interface{}
@@ -70,12 +70,8 @@ func TestClient_Do(t *testing.T) {
 	}{
 		{
 			name: "event-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -102,12 +98,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-store-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -139,12 +131,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "command-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -174,12 +162,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "query-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -209,12 +193,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "queue-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -241,13 +221,9 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-request-overwrite channel ",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":         "localhost:50000",
-					"default_channel": "commands6",
-				},
+			connection: map[string]string{
+				"address":         "localhost:50000",
+				"default_channel": "commands6",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -274,12 +250,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "bad request - invalid type",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -295,13 +267,9 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-request- command error ",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":         "localhost:50000",
-					"default_channel": "commands",
-				},
+			connection: map[string]string{
+				"address":         "localhost:50000",
+				"default_channel": "commands",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -321,13 +289,9 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-request - command error timeout",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":         "localhost:50000",
-					"timeout_seconds": "1",
-				},
+			connection: map[string]string{
+				"address":         "localhost:50000",
+				"timeout_seconds": "1",
 			},
 			mockReceiver: &mockCommandReceiver{
 				host:           "localhost",
@@ -353,7 +317,7 @@ func TestClient_Do(t *testing.T) {
 			err := tt.mockReceiver.run(ctx, t)
 			require.NoError(t, err)
 			target := New()
-			err = target.Init(ctx, tt.cfg)
+			err = target.Init(ctx, tt.connection)
 			require.NoError(t, err)
 			gotResp, err := target.Do(ctx, tt.req)
 			if tt.wantErr {
@@ -369,56 +333,40 @@ func TestClient_Do(t *testing.T) {
 func TestClient_Init(t *testing.T) {
 
 	tests := []struct {
-		name    string
-		cfg     config.Spec
-		wantErr bool
+		name       string
+		connection config.Metadata
+		wantErr    bool
 	}{
 		{
 			name: "init",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":         "localhost:50000",
-					"client_id":       "client_id",
-					"auth_token":      "some-auth token",
-					"default_channel": "some-channel",
-					"timeout_seconds": "100",
-				},
+			connection: map[string]string{
+				"address":         "localhost:50000",
+				"client_id":       "client_id",
+				"auth_token":      "some-auth token",
+				"default_channel": "some-channel",
+				"timeout_seconds": "100",
 			},
 			wantErr: false,
 		},
 		{
 			name: "init - error",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:asd",
-				},
+			connection: map[string]string{
+				"address": "localhost:asd",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad connection",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:40000",
-				},
+			connection: map[string]string{
+				"address": "localhost:40000",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad timeout seconds",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":         "localhost:50000",
-					"timeout_seconds": "-1",
-				},
+			connection: map[string]string{
+				"address":         "localhost:50000",
+				"timeout_seconds": "-1",
 			},
 			wantErr: true,
 		},
@@ -428,11 +376,10 @@ func TestClient_Init(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 			c := New()
-			if err := c.Init(ctx, tt.cfg); (err != nil) != tt.wantErr {
+			if err := c.Init(ctx, tt.connection); (err != nil) != tt.wantErr {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			require.EqualValues(t, tt.cfg.Name, c.Name())
 		})
 	}
 }

@@ -49,7 +49,7 @@ func (m *mockQueueReceiver) run(ctx context.Context) (*kubemq.QueueMessage, erro
 func TestClient_Do(t *testing.T) {
 	tests := []struct {
 		name         string
-		cfg          config.Spec
+		connection   config.Metadata
 		mockReceiver *mockQueueReceiver
 		req          interface{}
 		wantResp     *kubemq.QueueMessage
@@ -57,12 +57,8 @@ func TestClient_Do(t *testing.T) {
 	}{
 		{
 			name: "event-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
@@ -83,12 +79,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "event-store-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
@@ -114,12 +106,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "command-store-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
@@ -143,12 +131,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "query-store-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
@@ -172,12 +156,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "query-store-request",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
@@ -198,12 +178,8 @@ func TestClient_Do(t *testing.T) {
 		},
 		{
 			name: "bad request - invalid type",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost:50000",
-				},
+			connection: map[string]string{
+				"address": "localhost:50000",
 			},
 			mockReceiver: &mockQueueReceiver{
 				host:    "localhost",
@@ -231,7 +207,7 @@ func TestClient_Do(t *testing.T) {
 			}()
 			time.Sleep(time.Second)
 			target := New()
-			err := target.Init(ctx, tt.cfg)
+			err := target.Init(ctx, tt.connection)
 			require.NoError(t, err)
 			_, err = target.Do(ctx, tt.req)
 			if tt.wantErr {
@@ -257,108 +233,84 @@ func TestClient_Do(t *testing.T) {
 func TestClient_Init(t *testing.T) {
 
 	tests := []struct {
-		name    string
-		cfg     config.Spec
-		wantErr bool
+		name       string
+		connection config.Metadata
+		wantErr    bool
 	}{
 		{
 			name: "init",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":            "localhost:50000",
-					"client_id":          "client_id",
-					"auth_token":         "some-auth token",
-					"channels":           "some-channel",
-					"expiration_seconds": "0",
-					"delay_seconds":      "0",
-					"max_receive_count":  "1",
-					"dead_letter_queue":  "",
-				},
+			connection: map[string]string{
+				"address":            "localhost:50000",
+				"client_id":          "client_id",
+				"auth_token":         "some-auth token",
+				"channels":           "some-channel",
+				"expiration_seconds": "0",
+				"delay_seconds":      "0",
+				"max_receive_count":  "1",
+				"dead_letter_queue":  "",
 			},
 			wantErr: false,
 		},
 		{
 			name: "init - error",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost",
-				},
+			connection: map[string]string{
+				"address": "localhost",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad connection",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":            "localhost:40000",
-					"client_id":          "client_id",
-					"auth_token":         "some-auth token",
-					"channels":           "some-channel",
-					"expiration_seconds": "-1",
-					"delay_seconds":      "0",
-					"max_receive_count":  "0",
-					"dead_letter_queue":  "",
-				},
+			connection: map[string]string{
+				"address":            "localhost:40000",
+				"client_id":          "client_id",
+				"auth_token":         "some-auth token",
+				"channels":           "some-channel",
+				"expiration_seconds": "-1",
+				"delay_seconds":      "0",
+				"max_receive_count":  "0",
+				"dead_letter_queue":  "",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad expiration",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":            "localhost:50000",
-					"client_id":          "client_id",
-					"auth_token":         "some-auth token",
-					"channels":           "some-channel",
-					"expiration_seconds": "-1",
-					"delay_seconds":      "0",
-					"max_receive_count":  "0",
-					"dead_letter_queue":  "",
-				},
+			connection: map[string]string{
+				"address":            "localhost:50000",
+				"client_id":          "client_id",
+				"auth_token":         "some-auth token",
+				"channels":           "some-channel",
+				"expiration_seconds": "-1",
+				"delay_seconds":      "0",
+				"max_receive_count":  "0",
+				"dead_letter_queue":  "",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad delay",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":            "localhost:50000",
-					"client_id":          "client_id",
-					"auth_token":         "some-auth token",
-					"channels":           "some-channel",
-					"expiration_seconds": "0",
-					"delay_seconds":      "-1",
-					"max_receive_count":  "0",
-					"dead_letter_queue":  "",
-				},
+			connection: map[string]string{
+				"address":            "localhost:50000",
+				"client_id":          "client_id",
+				"auth_token":         "some-auth token",
+				"channels":           "some-channel",
+				"expiration_seconds": "0",
+				"delay_seconds":      "-1",
+				"max_receive_count":  "0",
+				"dead_letter_queue":  "",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad max receive count",
-			cfg: config.Spec{
-				Name: "kubemq-target",
-				Kind: "",
-				Properties: map[string]string{
-					"address":            "localhost:50000",
-					"client_id":          "client_id",
-					"auth_token":         "some-auth token",
-					"channels":           "some-channel",
-					"expiration_seconds": "0",
-					"delay_seconds":      "0",
-					"max_receive_count":  "-1",
-					"dead_letter_queue":  "",
-				},
+			connection: map[string]string{
+				"address":            "localhost:50000",
+				"client_id":          "client_id",
+				"auth_token":         "some-auth token",
+				"channels":           "some-channel",
+				"expiration_seconds": "0",
+				"delay_seconds":      "0",
+				"max_receive_count":  "-1",
+				"dead_letter_queue":  "",
 			},
 			wantErr: true,
 		},
@@ -369,11 +321,10 @@ func TestClient_Init(t *testing.T) {
 			defer cancel()
 			c := New()
 
-			if err := c.Init(ctx, tt.cfg); (err != nil) != tt.wantErr {
+			if err := c.Init(ctx, tt.connection); (err != nil) != tt.wantErr {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			require.EqualValues(t, tt.cfg.Name, c.Name())
 		})
 	}
 }

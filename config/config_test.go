@@ -18,17 +18,17 @@ func TestConfig_Validate(t *testing.T) {
 			Bindings: []BindingConfig{
 				{
 					Name: "binding-1",
-					Source: Spec{
-						Name:       "source-1",
-						Kind:       "source-1",
-						Properties: nil,
+					Sources: Spec{
+						Name:        "source-1",
+						Kind:        "source-1",
+						Connections: nil,
 					},
 
-					Target: Spec{
+					Targets: Spec{
 
-						Name:       "target-1",
-						Kind:       "target-1",
-						Properties: nil,
+						Name:        "target-1",
+						Kind:        "target-1",
+						Connections: nil,
 					},
 				},
 			},
@@ -43,17 +43,17 @@ func TestConfig_Validate(t *testing.T) {
 			name: "invalid config - binding no name",
 			Bindings: []BindingConfig{
 				{
-					Source: Spec{
-						Name:       "source-1",
-						Kind:       "source-1",
-						Properties: nil,
+					Sources: Spec{
+						Name:        "source-1",
+						Kind:        "source-1",
+						Connections: nil,
 					},
 
-					Target: Spec{
+					Targets: Spec{
 
-						Name:       "target-1",
-						Kind:       "target-1",
-						Properties: nil,
+						Name:        "target-1",
+						Kind:        "target-1",
+						Connections: nil,
 					},
 				},
 			},
@@ -64,16 +64,16 @@ func TestConfig_Validate(t *testing.T) {
 			Bindings: []BindingConfig{
 				{
 					Name: "binding-1",
-					Source: Spec{
-						Kind:       "source-1",
-						Properties: nil,
+					Sources: Spec{
+						Kind:        "source-1",
+						Connections: nil,
 					},
 
-					Target: Spec{
+					Targets: Spec{
 
-						Name:       "target-1",
-						Kind:       "target-1",
-						Properties: nil,
+						Name:        "target-1",
+						Kind:        "target-1",
+						Connections: nil,
 					},
 				},
 			},
@@ -84,15 +84,15 @@ func TestConfig_Validate(t *testing.T) {
 			Bindings: []BindingConfig{
 				{
 					Name: "binding-1",
-					Source: Spec{
-						Name:       "source-1",
-						Kind:       "source-1",
-						Properties: nil,
+					Sources: Spec{
+						Name:        "source-1",
+						Kind:        "source-1",
+						Connections: nil,
 					},
 
-					Target: Spec{
-						Kind:       "target-1",
-						Properties: nil,
+					Targets: Spec{
+						Kind:        "target-1",
+						Connections: nil,
 					},
 				},
 			},
@@ -140,17 +140,17 @@ bindings:
 				Bindings: []BindingConfig{
 					{
 						Name: "binding-1",
-						Source: Spec{
-							Name:       "source-1",
-							Kind:       "source-1",
-							Properties: nil,
+						Sources: Spec{
+							Name:        "source-1",
+							Kind:        "source-1",
+							Connections: nil,
 						},
 
-						Target: Spec{
+						Targets: Spec{
 
-							Name:       "target-1",
-							Kind:       "target-1",
-							Properties: nil,
+							Name:        "target-1",
+							Kind:        "target-1",
+							Connections: nil,
 						},
 					},
 				},

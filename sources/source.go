@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
 	"github.com/kubemq-hub/kubemq-bridges/sources/command"
 	"github.com/kubemq-hub/kubemq-bridges/sources/events"
 	events_store "github.com/kubemq-hub/kubemq-bridges/sources/events-store"
@@ -13,49 +14,46 @@ import (
 )
 
 type Source interface {
-	Init(ctx context.Context, cfg config.Spec) error
-	Start(ctx context.Context, target middleware.Middleware) error
+	Init(ctx context.Context, connection config.Metadata) error
+	Start(ctx context.Context, target []middleware.Middleware, log *logger.Logger) error
 	Stop() error
-	Name() string
 }
 
-func Init(ctx context.Context, cfg config.Spec) (Source, error) {
-
-	switch cfg.Kind {
-
+func Init(ctx context.Context, kind string, connection config.Metadata) (Source, error) {
+	switch kind {
 	case "source.command":
 		source := command.New()
-		if err := source.Init(ctx, cfg); err != nil {
+		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
 		return source, nil
 	case "source.query":
-		target := query.New()
-		if err := target.Init(ctx, cfg); err != nil {
+		source := query.New()
+		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
-		return target, nil
+		return source, nil
 	case "source.events":
 		source := events.New()
-		if err := source.Init(ctx, cfg); err != nil {
+		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
 		return source, nil
 	case "source.events-store":
 		source := events_store.New()
-		if err := source.Init(ctx, cfg); err != nil {
+		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
 		return source, nil
 	case "source.queue":
 		source := queue.New()
-		if err := source.Init(ctx, cfg); err != nil {
+		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
 		return source, nil
 
 	default:
-		return nil, fmt.Errorf("invalid kind %s for source %s", cfg.Kind, cfg.Name)
+		return nil, fmt.Errorf("invalid kind %s for source", kind)
 	}
 
 }

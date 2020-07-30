@@ -323,15 +323,15 @@ func TestClient_Metric(t *testing.T) {
 			cfg: config.BindingConfig{
 
 				Name: "b-1",
-				Source: config.Spec{
-					Name:       "sn",
-					Kind:       "sk",
-					Properties: nil,
+				Sources: config.Spec{
+					Name:        "sn",
+					Kind:        "sk",
+					Connections: nil,
 				},
-				Target: config.Spec{
-					Name:       "tn",
-					Kind:       "tk",
-					Properties: nil,
+				Targets: config.Spec{
+					Name:        "tn",
+					Kind:        "tk",
+					Connections: nil,
 				},
 				Properties: map[string]string{},
 			},
@@ -360,15 +360,15 @@ func TestClient_Metric(t *testing.T) {
 			},
 			cfg: config.BindingConfig{
 				Name: "b-2",
-				Source: config.Spec{
-					Name:       "sn",
-					Kind:       "sk",
-					Properties: nil,
+				Sources: config.Spec{
+					Name:        "sn",
+					Kind:        "sk",
+					Connections: nil,
 				},
-				Target: config.Spec{
-					Name:       "tn",
-					Kind:       "tk",
-					Properties: nil,
+				Targets: config.Spec{
+					Name:        "tn",
+					Kind:        "tk",
+					Connections: nil,
 				},
 				Properties: map[string]string{},
 			},

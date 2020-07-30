@@ -15,7 +15,7 @@ import (
 
 const defaultApiPort = 8080
 
-var configFile = pflag.String("config", "", "set config file name")
+var configFile = pflag.String("config", "config.yaml", "set config file name")
 
 type Config struct {
 	Bindings []BindingConfig `json:"bindings"`
@@ -111,6 +111,7 @@ func getConfigFile() (string, error) {
 func Load() (*Config, error) {
 	pflag.Parse()
 	viper.AddConfigPath("./")
+	viper.AddConfigPath("./config")
 	loadedConfigFile, err := getConfigFile()
 	if err != nil {
 		return nil, fmt.Errorf("error loading configuration, %w", err)

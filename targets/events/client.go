@@ -14,7 +14,6 @@ const (
 )
 
 type Client struct {
-	name   string
 	opts   options
 	client *kubemq.Client
 	sendCh chan *kubemq.Event
@@ -24,14 +23,10 @@ func New() *Client {
 	return &Client{}
 
 }
-func (c *Client) Name() string {
-	return c.name
-}
-func (c *Client) Init(ctx context.Context, cfg config.Spec) error {
-	c.name = cfg.Name
 
+func (c *Client) Init(ctx context.Context, connection config.Metadata) error {
 	var err error
-	c.opts, err = parseOptions(cfg.Properties)
+	c.opts, err = parseOptions(connection)
 	if err != nil {
 		return err
 	}
@@ -69,7 +64,6 @@ func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, erro
 	for _, event := range events {
 		select {
 		case c.sendCh <- event:
-
 		case <-time.After(defaultSendTimeout):
 			return nil, fmt.Errorf("error timeout on sending event")
 		}

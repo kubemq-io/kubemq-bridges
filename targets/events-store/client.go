@@ -15,7 +15,6 @@ const (
 )
 
 type Client struct {
-	name   string
 	opts   options
 	client *kubemq.Client
 	sendCh chan *kubemq.EventStore
@@ -25,13 +24,10 @@ func New() *Client {
 	return &Client{}
 
 }
-func (c *Client) Name() string {
-	return c.name
-}
-func (c *Client) Init(ctx context.Context, cfg config.Spec) error {
-	c.name = cfg.Name
+
+func (c *Client) Init(ctx context.Context, connection config.Metadata) error {
 	var err error
-	c.opts, err = parseOptions(cfg.Properties)
+	c.opts, err = parseOptions(connection)
 	if err != nil {
 		return err
 	}

@@ -12,17 +12,16 @@ import (
 )
 
 type Binder struct {
-	name   string
-	log    *logger.Logger
-	source sources.Source
-	target targets.Target
-	md     middleware.Middleware
+	name    string
+	log     *logger.Logger
+	sources []sources.Source
+	targets []middleware.Middleware
 }
 
 func NewBinder() *Binder {
 	return &Binder{}
 }
-func (b *Binder) buildMiddleware(cfg config.BindingConfig, exporter *metrics.Exporter) (middleware.Middleware, error) {
+func (b *Binder) buildMiddleware(target targets.Target, cfg config.BindingConfig, exporter *metrics.Exporter) (middleware.Middleware, error) {
 	log, err := middleware.NewLogMiddleware(cfg.Name, cfg.Properties)
 	if err != nil {
 		return nil, err
@@ -39,48 +38,59 @@ func (b *Binder) buildMiddleware(cfg config.BindingConfig, exporter *metrics.Exp
 	if err != nil {
 		return nil, err
 	}
-	md := middleware.Chain(b.target, middleware.RateLimiter(rateLimiter), middleware.Retry(retry), middleware.Metric(met), middleware.Log(log))
+	md := middleware.Chain(target, middleware.RateLimiter(rateLimiter), middleware.Retry(retry), middleware.Metric(met), middleware.Log(log))
 	return md, nil
 }
 func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *metrics.Exporter) error {
-	var err error
 	b.name = cfg.Name
 	b.log = logger.NewLogger(b.name)
-	b.target, err = targets.Init(ctx, cfg.Target)
-	if err != nil {
-		return fmt.Errorf("error loading target conntector %s on binding %s, %w", cfg.Target.Name, b.name, err)
+	for _, connection := range cfg.Targets.Connections {
+		target, err := targets.Init(ctx, cfg.Targets.Kind, connection)
+		if err != nil {
+			return fmt.Errorf("error loading targets conntector %s on binding %s, %w", cfg.Targets.Name, b.name, err)
+		}
+		md, err := b.buildMiddleware(target, cfg, exporter)
+		if err != nil {
+			return fmt.Errorf("error loading middlewares %s on binding %s, %w", cfg.Targets.Name, b.name, err)
+		}
+		b.targets = append(b.targets, md)
 	}
 
-	b.md, err = b.buildMiddleware(cfg, exporter)
-	if err != nil {
-		return fmt.Errorf("error loading middlewares %s on binding %s, %w", cfg.Target.Name, b.name, err)
-	}
-	b.source, err = sources.Init(ctx, cfg.Source)
-	if err != nil {
-		return fmt.Errorf("error loading source conntector %s on binding %s, %w", cfg.Source.Name, b.name, err)
+	for _, connection := range cfg.Sources.Connections {
+		source, err := sources.Init(ctx, cfg.Sources.Kind, connection)
+		if err != nil {
+			return fmt.Errorf("error loading sources conntector %s on binding %s, %w", cfg.Sources.Name, b.name, err)
+		}
+		b.sources = append(b.sources, source)
 	}
 	b.log.Infof("binding %s initialized successfully", b.name)
 	return nil
 }
 
 func (b *Binder) Start(ctx context.Context) error {
-	if b.md == nil {
-		return fmt.Errorf("error starting binding connector %s,no valid initialzed target middleware found", b.name)
+	if b.targets == nil {
+		return fmt.Errorf("error starting binding connector %s,no valid initialzed targets middleware found", b.name)
 	}
-	if b.source == nil {
-		return fmt.Errorf("error starting binding connector %s,no valid initialzed source found", b.name)
+	if b.sources == nil {
+		return fmt.Errorf("error starting binding connector %s,no valid initialzed sources found", b.name)
 	}
-	err := b.source.Start(ctx, b.md)
-	if err != nil {
-		return err
+
+	for _, source := range b.sources {
+		err := source.Start(ctx, b.targets, b.log)
+		if err != nil {
+			return err
+		}
 	}
+
 	b.log.Infof("binding %s started successfully", b.name)
 	return nil
 }
 func (b *Binder) Stop() error {
-	err := b.source.Stop()
-	if err != nil {
-		return err
+	for _, source := range b.sources {
+		err := source.Stop()
+		if err != nil {
+			return err
+		}
 	}
 	b.log.Infof("binding %s stopped successfully", b.name)
 	return nil

@@ -19,7 +19,6 @@ type options struct {
 	authToken                string
 	channel                  string
 	group                    string
-	concurrency              int
 	autoReconnect            bool
 	reconnectIntervalSeconds time.Duration
 	maxReconnects            int
@@ -42,10 +41,6 @@ func parseOptions(cfg config.Metadata) (options, error) {
 	}
 
 	o.group = cfg.ParseString("group", "")
-	o.concurrency, err = cfg.MustParseIntWithRange("concurrency", 1, 100)
-	if err != nil {
-		return o, fmt.Errorf("error parsing concurrency value, %w", err)
-	}
 
 	o.autoReconnect = cfg.ParseBool("auto_reconnect", defaultAutoReconnect)
 	interval, err := cfg.MustParseIntWithRange("reconnect_interval_seconds", 1, 1000000)

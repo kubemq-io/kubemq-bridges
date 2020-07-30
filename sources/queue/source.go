@@ -6,31 +6,24 @@ import (
 
 	"github.com/kubemq-io/kubemq-go"
 
-	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
 )
 
-type Client struct {
-	name   string
-	opts   options
-	client *kubemq.Client
-	log    *logger.Logger
-	target middleware.Middleware
+type Source struct {
+	opts    options
+	client  *kubemq.Client
+	log     *logger.Logger
+	targets []middleware.Middleware
 }
 
-func New() *Client {
-	return &Client{}
+func New() *Source {
+	return &Source{}
 
 }
-func (c *Client) Name() string {
-	return c.name
-}
-func (c *Client) Init(ctx context.Context, cfg config.Spec) error {
-	c.name = cfg.Name
-	c.log = logger.NewLogger(fmt.Sprintf("kubemq-queue-source-%s", cfg.Name))
+func (c *Source) Init(ctx context.Context, connection config.Metadata) error {
 	var err error
-	c.opts, err = parseOptions(cfg.Properties)
+	c.opts, err = parseOptions(connection)
 	if err != nil {
 		return err
 	}
@@ -47,13 +40,14 @@ func (c *Client) Init(ctx context.Context, cfg config.Spec) error {
 	return nil
 }
 
-func (c *Client) Start(ctx context.Context, target middleware.Middleware) error {
-	c.target = target
+func (c *Source) Start(ctx context.Context, targets []middleware.Middleware, log *logger.Logger) error {
+	c.log = log
+	c.targets = targets
 	go c.run(ctx)
 	return nil
 }
 
-func (c *Client) run(ctx context.Context) {
+func (c *Source) run(ctx context.Context) {
 	for {
 		queueMessages, err := c.getQueueMessages(ctx)
 		if err != nil {
@@ -61,10 +55,13 @@ func (c *Client) run(ctx context.Context) {
 			return
 		}
 		for _, message := range queueMessages {
-			err := c.processQueueMessage(ctx, message)
-			if err != nil {
-				c.log.Errorf("error received from target, %w", err)
+			for _, target := range c.targets {
+				err := c.processQueueMessage(ctx, message, target)
+				if err != nil {
+					c.log.Errorf("error received from target, %w", err)
+				}
 			}
+
 		}
 		select {
 		case <-ctx.Done():
@@ -74,7 +71,7 @@ func (c *Client) run(ctx context.Context) {
 		}
 	}
 }
-func (c *Client) getQueueMessages(ctx context.Context) ([]*kubemq.QueueMessage, error) {
+func (c *Source) getQueueMessages(ctx context.Context) ([]*kubemq.QueueMessage, error) {
 	receiveResult, err := c.client.NewReceiveQueueMessagesRequest().
 		SetChannel(c.opts.channel).
 		SetMaxNumberOfMessages(c.opts.batchSize).
@@ -86,8 +83,8 @@ func (c *Client) getQueueMessages(ctx context.Context) ([]*kubemq.QueueMessage, 
 	return receiveResult.Messages, nil
 }
 
-func (c *Client) processQueueMessage(ctx context.Context, msg *kubemq.QueueMessage) error {
-	_, err := c.target.Do(ctx, msg)
+func (c *Source) processQueueMessage(ctx context.Context, msg *kubemq.QueueMessage, target middleware.Middleware) error {
+	_, err := target.Do(ctx, msg)
 	if err != nil {
 		return err
 	}
@@ -95,6 +92,6 @@ func (c *Client) processQueueMessage(ctx context.Context, msg *kubemq.QueueMessa
 
 }
 
-func (c *Client) Stop() error {
+func (c *Source) Stop() error {
 	return c.client.Close()
 }

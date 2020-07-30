@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/nats-io/nuid"
 	"github.com/stretchr/testify/require"
@@ -22,31 +23,28 @@ func (m *mockTarget) Do(ctx context.Context, request interface{}) (interface{}, 
 	time.Sleep(m.delay)
 	return m.setResponse, m.setError
 }
-func setupClient(ctx context.Context, target middleware.Middleware) (*Client, error) {
-	c := New()
-	err := c.Init(ctx, config.Spec{
-		Name: "kubemq-rpc",
-		Kind: "",
-		Properties: map[string]string{
-			"address":                    "localhost:50000",
-			"client_id":                  "",
-			"auth_token":                 "",
-			"channel":                    "events",
-			"group":                      "some-group",
-			"auto_reconnect":             "true",
-			"reconnect_interval_seconds": "1",
-			"max_reconnects":             "0",
-		},
+func setupSource(ctx context.Context, targets []middleware.Middleware) (*Source, error) {
+	s := New()
+	err := s.Init(ctx, config.Metadata{
+		"address":                    "localhost:50000",
+		"client_id":                  "",
+		"auth_token":                 "",
+		"channel":                    "events",
+		"group":                      "some-group",
+		"auto_reconnect":             "true",
+		"reconnect_interval_seconds": "1",
+		"max_reconnects":             "0",
 	})
 	if err != nil {
 		return nil, err
 	}
-	err = c.Start(ctx, target)
+
+	err = s.Start(ctx, targets, logger.NewLogger("source"))
 	if err != nil {
 		return nil, err
 	}
 	time.Sleep(time.Second)
-	return c, nil
+	return s, nil
 }
 func sendEvent(t *testing.T, ctx context.Context, req *kubemq.Event, sendChannel string) error {
 	client, err := kubemq.NewClient(ctx,
@@ -97,7 +95,7 @@ func TestClient_processEvent(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
-			c, err := setupClient(ctx, tt.target)
+			c, err := setupSource(ctx, []middleware.Middleware{tt.target})
 			require.NoError(t, err)
 			defer func() {
 				_ = c.Stop()
@@ -116,72 +114,70 @@ func TestClient_processEvent(t *testing.T) {
 func TestClient_Init(t *testing.T) {
 
 	tests := []struct {
-		name    string
-		cfg     config.Spec
-		wantErr bool
+		name       string
+		connection config.Metadata
+		wantErr    bool
 	}{
 		{
 			name: "init",
-			cfg: config.Spec{
-				Name: "kubemq-rpc",
-				Kind: "",
-				Properties: map[string]string{
-					"address":                    "localhost:50000",
-					"client_id":                  "",
-					"auth_token":                 "some-auth token",
-					"channel":                    "some-channel",
-					"group":                      "",
-					"auto_reconnect":             "true",
-					"reconnect_interval_seconds": "1",
-					"max_reconnects":             "0",
-				},
+			connection: config.Metadata{
+				"address":                    "localhost:50000",
+				"client_id":                  "",
+				"auth_token":                 "some-auth token",
+				"channel":                    "some-channel",
+				"group":                      "",
+				"auto_reconnect":             "true",
+				"reconnect_interval_seconds": "1",
+				"max_reconnects":             "0",
 			},
 			wantErr: false,
 		},
 		{
 			name: "init - error",
-			cfg: config.Spec{
-				Name: "kubemq-rpc",
-				Kind: "",
-				Properties: map[string]string{
-					"address": "localhost",
-				},
+			connection: config.Metadata{
+				"address": "localhost",
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad connection",
+			connection: config.Metadata{
+				"address":                    "localhost:40000",
+				"client_id":                  "",
+				"auth_token":                 "some-auth token",
+				"channel":                    "some-channel",
+				"group":                      "",
+				"auto_reconnect":             "true",
+				"reconnect_interval_seconds": "1",
+				"max_reconnects":             "0",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad channel",
-			cfg: config.Spec{
-				Name: "kubemq-rpc",
-				Kind: "",
-				Properties: map[string]string{
-					"address":                    "localhost:50000",
-					"client_id":                  "",
-					"auth_token":                 "some-auth token",
-					"channel":                    "",
-					"group":                      "",
-					"auto_reconnect":             "true",
-					"reconnect_interval_seconds": "1",
-					"max_reconnects":             "0",
-				},
+			connection: config.Metadata{
+				"address":                    "localhost:50000",
+				"client_id":                  "",
+				"auth_token":                 "some-auth token",
+				"channel":                    "",
+				"group":                      "",
+				"auto_reconnect":             "true",
+				"reconnect_interval_seconds": "1",
+				"max_reconnects":             "0",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad reconnect interval",
-			cfg: config.Spec{
-				Name: "kubemq-rpc",
-				Kind: "",
-				Properties: map[string]string{
-					"address":                    "localhost:50000",
-					"client_id":                  "",
-					"auth_token":                 "some-auth token",
-					"channel":                    "some-channel",
-					"group":                      "",
-					"auto_reconnect":             "true",
-					"reconnect_interval_seconds": "-1",
-					"max_reconnects":             "0",
-				},
+			connection: config.Metadata{
+				"address":                    "localhost:50000",
+				"client_id":                  "",
+				"auth_token":                 "some-auth token",
+				"channel":                    "some-channel",
+				"group":                      "",
+				"auto_reconnect":             "true",
+				"reconnect_interval_seconds": "-1",
+				"max_reconnects":             "0",
 			},
 			wantErr: true,
 		},
@@ -191,10 +187,9 @@ func TestClient_Init(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			c := New()
-			if err := c.Init(ctx, tt.cfg); (err != nil) != tt.wantErr {
+			if err := c.Init(ctx, tt.connection); (err != nil) != tt.wantErr {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			require.EqualValues(t, tt.cfg.Name, c.Name())
 		})
 	}
 }
