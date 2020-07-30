@@ -64,7 +64,7 @@ func main() {
 					log.Println("client d, done")
 					return
 				}
-				log.Printf("client B: Channel: %s, Data: %s", event.Channel, string(event.Body))
+				log.Printf("client D: Channel: %s, Data: %s", event.Channel, string(event.Body))
 
 			case <-ctx.Done():
 				return

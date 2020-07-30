@@ -1,19 +1,3 @@
-# KubeMQ Bridges - Aggregate Example
-
-In this example we demonstrate how to aggregate data from multiple clusters as sources (in this case events) and send all the events to single cluster as targets for further processing.
-
-![aggregate-example](../../.github/assets/aggregate-example.jpeg)
-
-## Run
-
-Run the following deployment
-
-```bash
-kubectl apply -f ./deploy.yaml
-```
-Where deploy.yaml:
-
-```yaml
 apiVersion: core.k8s.kubemq.io/v1alpha1
 kind: KubemqCluster
 metadata:
@@ -143,7 +127,4 @@ data:
               client_id: "cluster-a-d-events-target"
               auth_token: ""
               channels: "events.aggregate"
-
-
-```
 
