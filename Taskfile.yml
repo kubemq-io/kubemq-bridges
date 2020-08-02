@@ -29,4 +29,4 @@ tasks:
     cmds:
       - task: docker
       - docker push kubemq/{{.BINARY_NAME}}:{{.VERSION}}
-      - docker kubemq/{{.BINARY_NAME}}:latest
+      - docker push kubemq/{{.BINARY_NAME}}:latest
