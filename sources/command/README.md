@@ -1,9 +1,9 @@
-# Kubemq Command Source
+# KubeMQ Bridges Command Source
 
-Kubemq Command source provides rpc command subscriber for processing targets commands.
+KubeMQ Bridges Command source provides an RPC command subscriber for processing target commands.
 
 ## Prerequisites
-The following are required to run command source connector:
+The following are required to run the command source connector:
 
 - kubemq cluster
 - kubemq-bridges deployment
@@ -11,50 +11,51 @@ The following are required to run command source connector:
 
 ## Configuration
 
-Command target connector configuration properties:
+Command source connector configuration properties:
 
-| Properties Key             | Required | Description                                                           | Example         |
-|:---------------------------|:---------|:----------------------------------------------------------------------|:----------------|
-| host                       | yes      | kubemq server host address                                            | "localhost      |
-| port                       | yes      | kubemq server port number                                             | "50000"         |
-| client_id                  | no       | set client id                                                         | "client_id"     |
-| auth_token                 | no       | set authentication token                                              | jwt token       |
-| channel                    | yes      | set channel to subscribe                                              |                 |
-| group                      | no       | set subscriber group                                                  |                 |
-| concurrency                | yes      | set parallel subscribers count       | "10"            |
-| auto_reconnect             | no       | set auto reconnect on lost connection                                 | "false", "true" |
-| reconnect_interval_seconds | no       | set reconnection seconds                                              | "5"             |
-| max_reconnects             | no       | set how many time to reconnect                                        | "0"             |
-
-
-
+| Properties Key             | Required | Description                            | Example                                              |
+|:---------------------------|:---------|:---------------------------------------|:-----------------------------------------------------|
+| address                    | yes      | kubemq server address (gRPC interface) | kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000 |
+| client_id                  | no       | set client id                          | "client_id"                                          |
+| auth_token                 | no       | set authentication token               | JWT token                                            |
+| channel                    | yes      | set channel to subscribe               |                                                      |
+| group                      | no       | set subscriber group                   |                                                      |
+| auto_reconnect             | no       | set auto reconnect on lost connection  | "false", "true"                                      |
+| reconnect_interval_seconds | no       | set reconnection seconds               | "5"                                                  |
+| max_reconnects             | no       | set how many time to reconnect         | "0"                                                  |
 
 
 Example:
 
 ```yaml
 bindings:
-  - name: kubemq-command-elastic-search
-    source:
-      kind: source.command
-      name: kubemq-command
-      properties:
-        host: "localhost"
-        port: "50000"
-        client_id: "kubemq-command-elastic-search-connector"
-        auth_token: ""
-        channel: "command.elastic-search"
-        group:   ""
-        concurrency: "1"
-        auto_reconnect: "true"
-        reconnect_interval_seconds: "1"
-        max_reconnects: "0"
-    target:
-      kind: target.stores.elastic-search
-      name: target-elastic-search
-      properties:
-        urls: "http://localhost:9200"
-        username: "admin"
-        password: "password"
-        sniff: "false"
+  - name:  command-binding 
+    properties: 
+      log_level: error
+      retry_attempts: 3
+      retry_delay_milliseconds: 1000
+      retry_max_jitter_milliseconds: 100
+      retry_delay_type: "back-off"
+      rate_per_second: 100
+    sources:
+      kind: source.command # Sources kind
+      name: 3-clusters-source # sources name 
+      connections: # Array of connections settings per each source kind
+        - address: "kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000"
+          client_id: "cluster-a-command-connection"
+          auth_token: ""
+          group: ""
+        - address: "kubemq-cluster-b-grpc.kubemq.svc.cluster.local:50000"
+          client_id: "cluster-b-command-connection"
+          auth_token: ""
+          channel: "command"
+          group: ""
+        - address: "kubemq-cluster-c-grpc.kubemq.svc.cluster.local:50000"
+          client_id: "cluster-c-command-connection"
+          auth_token: ""
+          channel: "command"
+          group: ""              
+    targets:
+    .....
 ```
+

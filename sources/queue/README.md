@@ -1,9 +1,9 @@
-# Kubemq Queue Source
+# KubeMQ Bridges Queue Source
 
-Kubemq Queue source provides rpc queue subscriber for processing targets commands.
+KubeMQ  Bridges Queue source provides an RPC queue subscriber for processing target commands.
 
 ## Prerequisites
-The following are required to run queue source connector:
+The following are required to run the queue source connector:
 
 - kubemq cluster
 - kubemq-bridges deployment
@@ -11,45 +11,53 @@ The following are required to run queue source connector:
 
 ## Configuration
 
-Queue target connector configuration properties:
+Queue source configuration properties:
 
-| Properties Key | Required | Description                                            | Example     |
-|:---------------|:---------|:-------------------------------------------------------|:------------|
-| host           | yes      | kubemq server host address                             | "localhost  |
-| port           | yes      | kubemq server port number                              | "50000"     |
-| client_id      | no       | set client id                                          | "client_id" |
-| auth_token     | no       | set authentication token                               | jwt token   |
-| channel        | yes      | set channel to subscribe                               |             |
-| concurrency    | yes      | set parallel subscribers count                         | "10"        |
-| response_channel             | no       | set send target response to channel   | "response.channel" |
-| batch_size     | yes      | set how many messages to pull from queue               | "1"         |
-| wait_timeout   | yes      | set how long to wait for messages to arrive in seconds | "60"        |
+| Property     | Required | Description                                             | Possible Values                                      |
+|:-------------|:---------|:--------------------------------------------------------|:-----------------------------------------------------|
+| address      | yes      | kubemq server address (gRPC interface)                  | kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000 |
+| client_id    | no       | sets client_id value for connection                     | "cluster-a-queue-connection"                         |
+| auth_token   | no       | JWT auth token for connection authentication            | JWT token                                            |
+| channel      | yes      | kubemq channel to pull queue messages                   | queue.a                                              |
+| batch_size   | no       | sets how many messages the source will pull in one call | default - 1                                          |
+| wait_timeout | no       | sets how many seconds to wait per each pull             | 60                                                   |
 
 
 Example:
 
 ```yaml
 bindings:
-  - name: kubemq-queue-elastic-search
-    source:
-      kind: queue
-      name: kubemq-queue
-      properties:
-        host: "localhost"
-        port: "50000"
-        client_id: "kubemq-queue-elastic-search-connector"
-        auth_token: ""
-        channel: "queue.elastic-search"
-        response_channel: "queue.response.elastic"
-        concurrency: "1"
-        batch_size: "1"
-        wait_timeout: "60"
-    target:
-      kind: target.stores.elastic-search
-      name: target-elastic-search
-      properties:
-        urls: "http://localhost:9200"
-        username: "admin"
-        password: "password"
-        sniff: "false"
+  - name:  queue-binding 
+    properties: 
+      log_level: error
+      retry_attempts: 3
+      retry_delay_milliseconds: 1000
+      retry_max_jitter_milliseconds: 100
+      retry_delay_type: "back-off"
+      rate_per_second: 100
+    sources:
+      kind: source.queue # Sources kind
+      name: 3-clusters-source # sources name 
+      connections: # Array of connections settings per each source kind
+        - address: "kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000"
+          client_id: "cluster-a-queue-connection"
+          auth_token: ""
+          channel: "queue"
+          batch_size: 1
+          wait_timeout: 60
+        - address: "kubemq-cluster-b-grpc.kubemq.svc.cluster.local:50000"
+          client_id: "cluster-b-queue-connection"
+          auth_token: ""
+          channel: "queue"
+          batch_size: 1
+          wait_timeout: 60
+        - address: "kubemq-cluster-c-grpc.kubemq.svc.cluster.local:50000"
+          client_id: "cluster-c-queue-connection"
+          auth_token: ""
+          channel: "queue"
+          batch_size: 1
+          wait_timeout: 60    
+    targets:
+    .....
 ```
+
