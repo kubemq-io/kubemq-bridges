@@ -237,7 +237,7 @@ Sources section contains sources configuration for binding as follows:
 |             |                                                   | source.command                                                |
 |             |                                                   | source.events                                                 |
 |             |                                                   | source.events-store                                           |
-| connections | an array of connection properties for each source | [queue configuration](/sources/queue/README.md)               |
+| connections | an array of connection properties for each source | [queue configuration](/sources/queue)               |
 |             |                                                   | [query configuration](/sources/query/README.md)               |
 |             |                                                   | [command configuration](/sources/command/README.md)           |
 |             |                                                   | [events configuration](/sources/events/README.md)             |
