@@ -1,11 +1,31 @@
-# kubemq-bridges
+# KubeMQ Bridges
 
+KubeMQ Bridges bridge, replicate, aggregate, and transform messages between KubeMQ clusters no matter where they are, allowing to build a true cloud-native messaging single network running globally.
 
+Key Features:
 
+- **Runs anywhere**  - Kubernetes, Cloud, on-prem , anywhere
+- **Stand-alone** - small docker container / binary
+- **Build Any Topology** - connects KubeMQ clusters in 1:1, 1:n , n:1, n:n
+- **Middleware Supports** - Logs, Metrics, Retries and Rate Limiters
+- **Easy Configuration** - simple yaml file builds your topology
 
 ## Concept
 
+KubeMQ Bridges' concept is bridging between sources and targets, thus Bindings.
+
+Binding can be any source kinds to any target kinds, as shown below:
+
 ![concept](.github/assets/concept.jpeg)
+
+KubeMQ Bridges can support any binding topology :
+
+| Topology   | Description                                                                                   | Sources-Targets        |
+|:----------|:----------------------------------------------------------------------------------------------|:-----------------------|
+| Bridge    | a 1:1 connectivity mainly for sync type of messages                                           | one source to 1 target   |
+| Replicate | a 1:n connectivity allowing to replicate messages between clusters                            | one source to n targets  |
+| Aggregate | an n:1 connectivity allowing to aggregate streams fo messages from clusters to a single target | n source to 1 target   |
+| Transform | an n:n mix and much sources and targets in many to many topology                               | n sources to n targets |
 
 
 ### Bridge
@@ -126,9 +146,9 @@ kubemq-bridges --config config.yaml
 
 ### Config file
 
-KubeMQ Bridges loads configuration on startup. Configuration file is a yaml file contains definitions for bindings of Sources and Targets.
+KubeMQ Bridges loads configuration file on startup. The configuration file is a yaml file that contains definitions for bindings of Sources and Targets.
 
-Default config file name is config.yaml and KubeMQ bridges search for this file on loading.
+The default config file name is config.yaml, and KubeMQ bridges search for this file on loading.
 
 #### Structure
 
@@ -162,11 +182,11 @@ bindings:
 
 In bindings configuration, KubeMQ Bridges supports properties setting for each pair of source and target bindings.
 
-These properties contains middleware information settings as follows:
+These properties contain middleware information settings as follows:
 
 #### Logs Middleware
 
-KubeMQ Bridges supports level based logging to console according as follows:
+KubeMQ Bridges supports level based logging to console according to as follows:
 
 | Property  | Description       | Possible Values        |
 |:----------|:------------------|:-----------------------|
@@ -186,7 +206,7 @@ bindings:
 
 #### Retry Middleware
 
-KubeMQ Bridges supports Retry target execution before reporting of error back to source on failed execution.
+KubeMQ Bridges supports Retries' target execution before reporting of error back to the source on failed execution.
 
 Retry middleware settings values:
 
