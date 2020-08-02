@@ -101,7 +101,7 @@ data:
   config.yaml: |-
     apiPort: 8081
     bindings:
-      - name: cluster-a-d-events-agrregate
+      - name: cluster-a-d-events-aggregate
         properties:
           log_level: "debug"
         sources:

@@ -31,7 +31,7 @@ func parseRetryOptions(meta config.Metadata) ([]retry.Option, error) {
 
 	delayMilliseconds, err := meta.ParseIntWithRange("retry_delay_milliseconds", 100, 0, math.MaxInt32)
 	if err != nil {
-		return nil, fmt.Errorf("invalid retry delay millisecond svalue")
+		return nil, fmt.Errorf("invalid retry delay milliseconds value")
 	}
 	opts = append(opts, retry.MaxDelay(time.Duration(delayMilliseconds)*time.Millisecond))
 

@@ -13,7 +13,7 @@ type RateLimitMiddleware struct {
 }
 
 func NewRateLimitMiddleware(meta config.Metadata) (*RateLimitMiddleware, error) {
-	rpc, err := meta.ParseIntWithRange("rate_per_seconds", 0, 0, math.MaxInt32)
+	rpc, err := meta.ParseIntWithRange("rate_per_second", 0, 0, math.MaxInt32)
 	if err != nil {
 		return nil, fmt.Errorf("invalid rate limiter rate per second value, %w", err)
 	}

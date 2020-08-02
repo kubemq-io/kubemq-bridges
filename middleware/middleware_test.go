@@ -42,7 +42,7 @@ func TestClient_RateLimiter(t *testing.T) {
 				executed:    0,
 			},
 			meta: map[string]string{
-				"rate_per_seconds": "100",
+				"rate_per_second": "100",
 			},
 			timeToRun:        time.Second,
 			wantMaxExecution: 110,
@@ -71,7 +71,7 @@ func TestClient_RateLimiter(t *testing.T) {
 				executed:    0,
 			},
 			meta: map[string]string{
-				"rate_per_seconds": "-100",
+				"rate_per_second": "-100",
 			},
 			timeToRun:        time.Second,
 			wantMaxExecution: 0,
@@ -522,7 +522,7 @@ func TestClient_Chain(t *testing.T) {
 	}
 	meta := map[string]string{
 		"log_level":                     "debug",
-		"rate_per_seconds":              "1",
+		"rate_per_second":               "1",
 		"retry_attempts":                "3",
 		"retry_delay_milliseconds":      "100",
 		"retry_max_jitter_milliseconds": "100",
