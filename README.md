@@ -32,17 +32,23 @@ KubeMQ Bridges can support any binding topology :
 
 ![bridge](.github/assets/bridge.jpeg)
 
+[**See an example**](/examples/bridge)
 ### Replicate
 
 ![replicate](.github/assets/replicate.jpeg)
 
+[**See an example**](/examples/replicate)
 ### Aggregate
 
 ![aggregate](.github/assets/aggregate.jpeg)
 
+[**See an example**](/examples/aggregate)
+
 ### Transform
 
 ![transform](.github/assets/transform.jpeg)
+
+[**See an example**](/examples/Transform)
 
 ## Installation
 
