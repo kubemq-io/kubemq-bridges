@@ -44,6 +44,7 @@ bindings:
         - address: "kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000"
           client_id: "cluster-a-query-connection"
           auth_token: ""
+          channel: "query"
           group: ""
         - address: "kubemq-cluster-b-grpc.kubemq.svc.cluster.local:50000"
           client_id: "cluster-b-query-connection"

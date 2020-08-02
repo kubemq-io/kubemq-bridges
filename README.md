@@ -238,10 +238,30 @@ Sources section contains sources configuration for binding as follows:
 |             |                                                   | source.events                                                 |
 |             |                                                   | source.events-store                                           |
 | connections | an array of connection properties for each source | [queue configuration](/sources/queue)               |
-|             |                                                   | [query configuration](/sources/query/README.md)               |
-|             |                                                   | [command configuration](/sources/command/README.md)           |
-|             |                                                   | [events configuration](/sources/events/README.md)             |
-|             |                                                   | [events-store configuration](/sources/events-store/README.md) |
+|             |                                                   | [query configuration](/sources/query)               |
+|             |                                                   | [command configuration](/sources/command)           |
+|             |                                                   | [events configuration](/sources/events)             |
+|             |                                                   | [events-store configuration](/sources/events-store) |
+
+
+### Sources
+
+Sources section contains sources configuration for binding as follows:
+
+| Property    | Description                                       | Possible Values                                               |
+|:------------|:--------------------------------------------------|:--------------------------------------------------------------|
+| name        | targets name (will show up in logs)               | string without white spaces                                   |
+| kind        | source kind type                                  | target.queue                                                  |
+|             |                                                   | target.query                                                  |
+|             |                                                   | target.command                                                |
+|             |                                                   | target.events                                                 |
+|             |                                                   | target.events-store                                           |
+| connections | an array of connection properties for each target | [queue configuration](/targets/queue)               |
+|             |                                                   | [query configuration](/targets/query)               |
+|             |                                                   | [command configuration](/targets/command)           |
+|             |                                                   | [events configuration](/targets/events)             |
+|             |                                                   | [events-store configuration](/targets/events-store) |
+
 
 
 

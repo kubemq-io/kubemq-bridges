@@ -42,7 +42,7 @@ func parseOptions(cfg config.Metadata) (options, error) {
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing delay seconds, %w", err)
 	}
-	o.maxReceiveCount, err = cfg.ParseIntWithRange("max_receive_count", 1, 1, math.MaxInt32)
+	o.maxReceiveCount, err = cfg.ParseIntWithRange("max_receive_count", 0, 0, math.MaxInt32)
 	if err != nil {
 		return options{}, fmt.Errorf("error max receive count seconds")
 	}

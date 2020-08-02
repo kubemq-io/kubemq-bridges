@@ -44,6 +44,7 @@ bindings:
         - address: "kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000"
           client_id: "cluster-a-events-store-connection"
           auth_token: ""
+          channel: "events-store"
           group: ""
         - address: "kubemq-cluster-b-grpc.kubemq.svc.cluster.local:50000"
           client_id: "cluster-b-events-store-connection"
