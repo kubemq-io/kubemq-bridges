@@ -109,6 +109,18 @@ data:
               default_channel: "queries"
               timeout_seconds: 3600
 ```
+### Binary (Cross-platform)
+
+Download the appropriate version for your platform from KubeMQ Releases. Once downloaded, the binary can be run from anywhere.
+
+Ideally, you should install it somewhere in your PATH for easy use. /usr/local/bin is the most probable location.
+
+Running KubeMQ Bridges
+
+```bash
+kubemq-bridges --config config.yaml
+```
+
 
 ## Configuration
 
@@ -244,7 +256,7 @@ Sources section contains sources configuration for binding as follows:
 |             |                                                   | [events-store configuration](/sources/events-store) |
 
 
-### Sources
+### Targets
 
 Sources section contains sources configuration for binding as follows:
 
