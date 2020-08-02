@@ -2,13 +2,17 @@
 
 KubeMQ Bridges bridge, replicate, aggregate, and transform messages between KubeMQ clusters no matter where they are, allowing to build a true cloud-native messaging single network running globally.
 
-Key Features:
+**Key Features**:
 
 - **Runs anywhere**  - Kubernetes, Cloud, on-prem , anywhere
 - **Stand-alone** - small docker container / binary
 - **Build Any Topology** - connects KubeMQ clusters in 1:1, 1:n , n:1, n:n
 - **Middleware Supports** - Logs, Metrics, Retries and Rate Limiters
 - **Easy Configuration** - simple yaml file builds your topology
+
+**An example of a use case:**
+
+![use-case](.github/assets/usecase.jpeg)
 
 ## Concept
 
