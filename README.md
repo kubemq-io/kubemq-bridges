@@ -288,7 +288,7 @@ Sources section contains sources configuration for binding as follows:
 
 ### Targets
 
-Sources section contains sources configuration for binding as follows:
+Targets section contains target configuration for binding as follows:
 
 | Property    | Description                                       | Possible Values                                               |
 |:------------|:--------------------------------------------------|:--------------------------------------------------------------|
