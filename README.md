@@ -154,13 +154,11 @@ kubemq-bridges --config config.yaml
 
 ## Configuration
 
-### Config file
-
 KubeMQ Bridges loads configuration file on startup. The configuration file is a yaml file that contains definitions for bindings of Sources and Targets.
 
 The default config file name is config.yaml, and KubeMQ bridges search for this file on loading.
 
-#### Structure
+### Structure
 
 Config file structure:
 
