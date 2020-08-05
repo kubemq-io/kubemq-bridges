@@ -141,7 +141,7 @@ data:
 ```
 ### Binary (Cross-platform)
 
-Download the appropriate version for your platform from KubeMQ Releases. Once downloaded, the binary can be run from anywhere.
+Download the appropriate version for your platform from KubeMQ Bridges Releases. Once downloaded, the binary can be run from anywhere.
 
 Ideally, you should install it somewhere in your PATH for easy use. /usr/local/bin is the most probable location.
 
