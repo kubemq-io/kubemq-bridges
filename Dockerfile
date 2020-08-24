@@ -10,19 +10,19 @@ WORKDIR $GOPATH/github.com/kubemq-hub/kubemq-bridges
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -mod=vendor -installsuffix cgo -ldflags="-w -s -X main.version=$VERSION" -o kubemq-bridges-run .
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 MAINTAINER KubeMQ info@kubemq.io
-LABEL name="KubeMQ Target Connectors" \
+LABEL name="KubeMQ Bridges Connectors" \
       maintainer="info@kubemq.io" \
-      vendor="" \
+      vendor="kubemq.io" \
       version="" \
       release="" \
-      summary="" \
+      summary="KubeMQ Bridges bridge, replicate, aggregate, and transform messages between KubeMQ clusters no matter where they are, allowing to build a true cloud-native messaging single network running globally." \
       description=""
 COPY licenses /licenses
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:$PATH
-RUN mkdir /kubemq-bridges
-COPY --from=builder $GOPATH/github.com/kubemq-hub/kubemq-bridges/kubemq-bridges-run ./kubemq-bridges
-RUN chown -R 1001:root  /kubemq-bridges && chmod g+rwX  /kubemq-bridges
-WORKDIR kubemq-bridges
+RUN mkdir /kubemq-connector
+COPY --from=builder $GOPATH/github.com/kubemq-hub/kubemq-bridges/kubemq-bridges-run ./kubemq-connector
+RUN chown -R 1001:root  /kubemq-connector && chmod g+rwX  /kubemq-connector
+WORKDIR kubemq-connector
 USER 1001
 CMD ["./kubemq-bridges-run"]
