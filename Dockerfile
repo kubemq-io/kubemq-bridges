@@ -13,8 +13,8 @@ MAINTAINER KubeMQ info@kubemq.io
 LABEL name="KubeMQ Bridges Connectors" \
       maintainer="info@kubemq.io" \
       vendor="kubemq.io" \
-      version="" \
-      release="" \
+      version="v0.1.1" \
+      release="stable" \
       summary="KubeMQ Bridges bridge, replicate, aggregate, and transform messages between KubeMQ clusters no matter where they are, allowing to build a true cloud-native messaging single network running globally." \
       description=""
 COPY licenses /licenses
