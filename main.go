@@ -55,7 +55,7 @@ func run() error {
 }
 func main() {
 	log = logger.NewLogger("main")
-	log.Infof("starting kubemq targets connector version: %s, commit: %s, date %s", version, commit, date)
+	log.Infof("starting kubemq bridges connector version: %s, commit: %s, date %s", version, commit, date)
 	if err := run(); err != nil {
 		log.Error(err)
 		os.Exit(1)
