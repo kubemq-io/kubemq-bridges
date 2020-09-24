@@ -9,7 +9,7 @@ vars:
 tasks:
   check_update:
     cmds:
-      - go list -u -m -json all | go-mod-outdated -update -direct
+      - go list -u -m -json -mod=mod all | go-mod-outdated -update -direct
   lint:
     cmds:
       - golangci-lint run --disable gocritic --enable misspell --enable gosec
