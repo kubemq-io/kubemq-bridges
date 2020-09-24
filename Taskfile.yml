@@ -13,6 +13,10 @@ tasks:
   lint:
     cmds:
       - golangci-lint run --disable gocritic --enable misspell --enable gosec
+  run:
+    cmds:
+      - go mod vendor
+      - go run ./main.go
   test:
     cmds:
       - go test -timeout 30m ./...

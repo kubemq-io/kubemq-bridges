@@ -28,7 +28,7 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata) error {
 		kubemq.WithClientId(c.opts.clientId),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithAuthToken(c.opts.authToken),
-		kubemq.WithCheckConnection(true),
+		kubemq.WithCheckConnection(false),
 	)
 	if err != nil {
 		return err

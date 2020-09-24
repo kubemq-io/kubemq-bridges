@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"io/ioutil"
 	"log"
 	"os"
@@ -127,5 +128,9 @@ func Load() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	viper.WatchConfig()
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Config file changed:", e.Name)
+	})
 	return cfg, err
 }

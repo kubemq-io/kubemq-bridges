@@ -7,7 +7,7 @@ bindings:
       kind: source.events
       name: cluster-sources
       connections:
-        - address: "kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000"
+        - address: "localhost:50000"
           client_id: "cluster-a-events-source"
           auth_token: ""
           channel: "events.a"
@@ -16,7 +16,7 @@ bindings:
           auto_reconnect: "true"
           reconnect_interval_seconds: "1"
           max_reconnects: "0"
-        - address: "kubemq-cluster-b-grpc.kubemq.svc.cluster.local:50000"
+        - address: "localhost:50000"
           client_id: "cluster-b-events-source"
           auth_token: ""
           channel: "events.b"
@@ -25,7 +25,7 @@ bindings:
           auto_reconnect: "true"
           reconnect_interval_seconds: "1"
           max_reconnects: "0"
-        - address: "kubemq-cluster-c-grpc.kubemq.svc.cluster.local:50000"
+        - address: "localhost:50000"
           client_id: "cluster-c-d-events-source"
           auth_token: ""
           channel: "events.c"
@@ -38,34 +38,34 @@ bindings:
       kind: target.events
       name: cluster-targets
       connections:
-        - address: "kubemq-cluster-d-grpc.kubemq.svc.cluster.local:50000"
+        - address: "localhost:50000"
           client_id: "cluster-a-d-events-target"
           auth_token: ""
           channels: "events.aggregate"
-  - name: cluster-transform-queue
-    properties:
-      log_level: "debug"
-    sources:
-      kind: source.queue
-      name: cluster-sources
-      connections:
-        - address: "kubemq-cluster-d-grpc.kubemq.svc.cluster.local:50000"
-          client_id: "cluster-d-queue-source"
-          auth_token: ""
-          channel: "queue.e"
-    targets:
-      kind: target.queue
-      name: cluster-targets
-      connections:
-        - address: "kubemq-cluster-d-grpc.kubemq.svc.cluster.local:50000"
-          client_id: "cluster-g-queue-target"
-          auth_token: ""
-          channels: "queue"
-        - address: "kubemq-cluster-g-grpc.kubemq.svc.cluster.local:50000"
-          client_id: "cluster-f-queue-target"
-          auth_token: ""
-          channels: "queue"
-        - address: "kubemq-cluster-g-grpc.kubemq.svc.cluster.local:50000"
-          client_id: "cluster-g-queue-target"
-          auth_token: ""
-          channels: "queue"
+#  - name: cluster-transform-queue
+#    properties:
+#      log_level: "debug"
+#    sources:
+#      kind: source.queue
+#      name: cluster-sources
+#      connections:
+#        - address: "kubemq-cluster-d-grpc.kubemq.svc.cluster.local:50000"
+#          client_id: "cluster-d-queue-source"
+#          auth_token: ""
+#          channel: "queue.e"
+#    targets:
+#      kind: target.queue
+#      name: cluster-targets
+#      connections:
+#        - address: "kubemq-cluster-d-grpc.kubemq.svc.cluster.local:50000"
+#          client_id: "cluster-g-queue-target"
+#          auth_token: ""
+#          channels: "queue"
+#        - address: "kubemq-cluster-g-grpc.kubemq.svc.cluster.local:50000"
+#          client_id: "cluster-f-queue-target"
+#          auth_token: ""
+#          channels: "queue"
+#        - address: "kubemq-cluster-g-grpc.kubemq.svc.cluster.local:50000"
+#          client_id: "cluster-g-queue-target"
+#          auth_token: ""
+#          channels: "queue"

@@ -33,7 +33,7 @@ func (s *Source) Init(ctx context.Context, Source config.Metadata) error {
 		kubemq.WithClientId(s.opts.clientId),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithAuthToken(s.opts.authToken),
-		kubemq.WithCheckConnection(true),
+		kubemq.WithCheckConnection(false),
 		kubemq.WithMaxReconnects(s.opts.maxReconnects),
 		kubemq.WithAutoReconnect(s.opts.autoReconnect),
 		kubemq.WithReconnectInterval(s.opts.reconnectIntervalSeconds))
@@ -69,7 +69,7 @@ func (s *Source) run(ctx context.Context, eventsCh <-chan *kubemq.Event, errCh c
 				go func(event *kubemq.Event, target middleware.Middleware) {
 					_, err := target.Do(ctx, event)
 					if err != nil {
-						s.log.Errorf("error received from target, %w", err)
+						s.log.Errorf("error received from target, %s", err.Error())
 					}
 				}(event, target)
 			}

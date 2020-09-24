@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/api"
 	"github.com/kubemq-hub/kubemq-bridges/binding"
 	"github.com/kubemq-hub/kubemq-bridges/config"
@@ -41,7 +42,8 @@ func run() error {
 	bindingsService := binding.New()
 	err = bindingsService.Start(ctx, cfg)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		//return err
 	}
 	apiServer, err := api.Start(ctx, cfg.ApiPort, bindingsService)
 	if err != nil {

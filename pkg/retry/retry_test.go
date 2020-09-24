@@ -19,7 +19,7 @@ func TestDoAllFailed(t *testing.T) {
 	)
 	assert.Error(t, err)
 
-	expectedErrorFormat := `All attempts fail:
+	expectedErrorFormat := `All attempts failed:
 #1: test
 #2: test
 #3: test
@@ -63,7 +63,7 @@ func TestRetryIf(t *testing.T) {
 	)
 	assert.Error(t, err)
 
-	expectedErrorFormat := `All attempts fail:
+	expectedErrorFormat := `All attempts failed:
 #1: test
 #2: test
 #3: special`
