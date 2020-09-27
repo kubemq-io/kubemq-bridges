@@ -52,7 +52,7 @@ KubeMQ Bridges can support any binding topology :
 
 ![transform](.github/assets/transform.jpeg)
 
-[**See an example**](/examples/Transform)
+[**See an example**](/examples/transform)
 
 ## Installation
 
