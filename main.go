@@ -63,13 +63,24 @@ func run() error {
 				log.Errorf("error on restarting service with new config file: %s", err.Error())
 				continue
 			}
-		case <-gracefulShutdown:
+			if apiServer != nil {
+				err = apiServer.Stop()
+				if err != nil {
+					log.Errorf("error on shutdown api server: %s", err.Error())
+					continue
+				}
+			}
 
-			apiServer.Stop()
+			apiServer, err = api.Start(ctx, newConfig.ApiPort, bindingsService)
+			if err != nil {
+				log.Errorf("error on start api server: %s", err.Error())
+				continue
+			}
+		case <-gracefulShutdown:
+			_=apiServer.Stop()
 			bindingsService.Stop()
 			return nil
 		}
-
 	}
 
 }
