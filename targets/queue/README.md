@@ -1,6 +1,6 @@
 # KubeMQ Bridges Queue Target
 
-KubeMQ Bridges Queue target provides an RPC queue sender for processing targets requests.
+KubeMQ Bridges Queue target provides a queue sender for processing sources requests.
 
 ## Prerequisites
 The following are required to run the queue target connector:

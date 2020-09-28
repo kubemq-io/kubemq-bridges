@@ -1,6 +1,6 @@
 # KubeMQ Bridges Events Target
 
-KubeMQ Bridges Events target provides an RPC events sender for processing targets requests.
+KubeMQ Bridges Events target provides an events sender for processing targets requests.
 
 ## Prerequisites
 The following are required to run the events target connector:

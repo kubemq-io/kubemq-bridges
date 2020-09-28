@@ -1,6 +1,6 @@
 # KubeMQ Bridges Command Target
 
-KubeMQ Bridges Command target provides an RPC command sender for processing targets requests.
+KubeMQ Bridges Command target provides an RPC command sender for processing sources requests.
 
 ## Prerequisites
 The following are required to run the command target connector:
@@ -18,7 +18,7 @@ Command target connector configuration properties:
 | address         | yes      | kubemq server address (gRPC interface)             | kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000 |
 | client_id       | no       | set client id                                      | "client_id"                                          |
 | auth_token      | no       | set authentication token                           | JWT token                                            |
-| default_channel | no       | set default channel to send request                |                                                      |
+| default_channel | no       | set default channel to send request                |   "commands"                                                   |
 | timeout_seconds | no       | sets command request default timeout (600 seconds) |                                                      |
 
 

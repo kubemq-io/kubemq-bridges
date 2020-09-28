@@ -1,6 +1,6 @@
-# KubeMQ Bridges Events-Store-Store Target
+# KubeMQ Bridges Events-Store Target
 
-KubeMQ Bridges Events-Store-Store target provides an RPC events-store sender for processing targets requests.
+KubeMQ Bridges Events-Store target provides an events-store sender for processing sources requests.
 
 ## Prerequisites
 The following are required to run the events-store target connector:
@@ -11,7 +11,7 @@ The following are required to run the events-store target connector:
 
 ## Configuration
 
-Events-Store-Store target connector configuration properties:
+Events-Store target connector configuration properties:
 
 | Properties Key  | Required | Description                                        | Example                                              |
 |:----------------|:---------|:---------------------------------------------------|:-----------------------------------------------------|

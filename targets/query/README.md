@@ -1,6 +1,6 @@
 # KubeMQ Bridges Query Target
 
-KubeMQ Bridges Query target provides an RPC query sender for processing targets requests.
+KubeMQ Bridges Query target provides an RPC query sender for processing sources requests.
 
 ## Prerequisites
 The following are required to run the query target connector:
