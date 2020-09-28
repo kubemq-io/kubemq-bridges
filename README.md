@@ -59,85 +59,39 @@ KubeMQ Bridges can support any binding topology :
 ### Kubernetes
 
 An example of kubernetes deployment can be find below:
+
 ```yaml
----
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: core.k8s.kubemq.io/v1alpha1
+kind: KubemqConnector
 metadata:
-  name: kubemq-bridges-deployment
-  namespace: kubemq
-  labels:
-    app: kubemq-bridges
+  name: kubemq-bridges
 spec:
+  type: bridges
   replicas: 1
-  selector:
-    matchLabels:
-      app: kubemq-bridges
-  template:
-    metadata:
-      labels:
-        app: kubemq-bridges
-    spec:
-      containers:
-        - name: kubemq-bridges
-          image: kubemq/kubemq-bridges:latest
-          ports:
-            - containerPort: 8080
-          volumeMounts:
-            - mountPath: /kubemq-bridges/config.yaml
-              name: config-file
-              subPath: config.yaml
-      volumes:
-        - name: config-file
-          configMap:
-            name: kubemq-bridges-config
-            items:
-              - key: config.yaml
-                path: config.yaml
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kubemq-bridges-config
-  namespace: kubemq
-data:
-  config.yaml: |-
-    apiPort: 8080
+  config: |-
     bindings:
-      - name: clusters-sources
+      - name: bridges-example-binding
         properties:
-          log_level: "debug"
+          log_level: "info"
         sources:
-          kind: source.query
-          name: cluster-a-query-source
+          kind: source.events
+          name: cluster-sources
           connections:
-            - address: "kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000"
-              client_id: "cluster-a-query-source"
-              auth_token: ""
-              channel: "queries"
+            - address: "kubemq-cluster-grpc:50000"
+              client_id: "cluster-events-source"
+              channel: "events.source"
               group:   ""
+              concurrency: "1"
               auto_reconnect: "true"
               reconnect_interval_seconds: "1"
               max_reconnects: "0"
         targets:
-          kind: target.query
+          kind: target.events
           name: cluster-targets
           connections:
-            - address: "kubemq-cluster-b-grpc.kubemq.svc.cluster.local:50000"
-              client_id: "cluster-b-query-target"
-              auth_token: ""
-              default_channel: "queries"
-              timeout_seconds: 3600
-            - address: "kubemq-cluster-c-grpc.kubemq.svc.cluster.local:50000"
-              client_id: "cluster-c-query-target"
-              auth_token: ""
-              default_channel: "queries"
-              timeout_seconds: 3600
-            - address: "kubemq-cluster-d-grpc.kubemq.svc.cluster.local:50000"
-              client_id: "cluster-d-query-target"
-              auth_token: ""
-              default_channel: "queries"
-              timeout_seconds: 3600
+            - address: "kubemq-cluster-grpc:50000"
+              client_id: "cluster-events-target"
+              channels: "events.target"
 ```
 ### Binary (Cross-platform)
 
