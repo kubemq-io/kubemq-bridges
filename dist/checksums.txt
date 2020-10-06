@@ -1,0 +1,4 @@
+0c2b8e9159028a481bf2c09a817e27938ff57c44eb639f709b845105708120b1  kubemq-bridges_v0.0.0-next_Linux_x86_64.tar.gz
+1db1e949772da773b9c956fac185c746dfe3f42c58e93541cf807ca22d073189  kubemq-bridges_v0.0.0-next_Linux_i386.tar.gz
+3a15e4c754fa3d155e45de5a4eb160712ab2dfa2cb8540aff724f14374765a6a  kubemq-bridges_v0.0.0-next_Darwin_x86_64.tar.gz
+936ac9134ec18f872c2f04a605f07a40074316f35edde6793d77dfbcc1474eca  kubemq-bridges_v0.0.0-next_Windows_x86_64.tar.gz

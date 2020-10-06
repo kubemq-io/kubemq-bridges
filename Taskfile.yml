@@ -4,7 +4,7 @@ version: '3'
 
 vars:
   BINARY_NAME: kubemq-bridges
-  VERSION: v0.1.6
+  VERSION: v0.2.0
 
 tasks:
   check_update:
@@ -28,29 +28,29 @@ tasks:
       - go mod tidy
       - go mod vendor
       - go build -o "{{.BINARY_NAME}}.exe" -ldflags "-X main.version={{.VERSION}}"
-    docker:
-      env:
-        GOOS: linux
-        GOARCH: amd64
-      cmds:
-        - go mod tidy
-        - go mod vendor
-        - docker build --build-arg VERSION={{.VERSION}} . -t kubemq/{{.BINARY_NAME}}:{{.VERSION}}
-        - docker tag kubemq/{{.BINARY_NAME}}:{{.VERSION}} kubemq/{{.BINARY_NAME}}:latest
-    push:
+  docker:
+    env:
+      GOOS: linux
+      GOARCH: amd64
+    cmds:
+      - go mod tidy
+      - go mod vendor
+      - docker build --build-arg VERSION={{.VERSION}} . -t kubemq/{{.BINARY_NAME}}:{{.VERSION}}
+      - docker tag kubemq/{{.BINARY_NAME}}:{{.VERSION}} kubemq/{{.BINARY_NAME}}:latest
+  push:
       cmds:
         - docker push kubemq/{{.BINARY_NAME}}:{{.VERSION}}
         - docker push kubemq/{{.BINARY_NAME}}:latest
-    commit-modifed:
+  commit-modifed:
       cmds:
         - git add -A
         - git commit -a -m "release {{.VERSION}}"
         - git push origin master
-    tag:
+  tag:
       cmds:
         - git tag -a {{.VERSION}} -m {{.VERSION}}
         - git push origin master --tags
-    release:
+  release:
       cmds:
         - task: lint
         - task: commit-modifed
