@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"flag"
+	"github.com/kubemq-hub/builder/connector"
 	"github.com/kubemq-hub/kubemq-bridges/api"
 	"github.com/kubemq-hub/kubemq-bridges/binding"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"io/ioutil"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,8 +21,21 @@ var (
 )
 
 var (
-	log *logger.Logger
+	log        *logger.Logger
+	build      = flag.Bool("build", false, "build sources configuration")
+	configFile = flag.String("config", "config.yaml", "set config file name")
 )
+
+func buildConfig() error {
+	var err error
+	var bindingsYaml []byte
+	if bindingsYaml, err = connector.NewBridge().
+		SetClusterAddress([]string{"localhost:50000", "Other"}).
+		Render(); err != nil {
+		return err
+	}
+	return ioutil.WriteFile("config.yaml", bindingsYaml, 0644)
+}
 
 func run() error {
 	var gracefulShutdown = make(chan os.Signal, 1)
@@ -77,7 +93,7 @@ func run() error {
 				continue
 			}
 		case <-gracefulShutdown:
-			_=apiServer.Stop()
+			_ = apiServer.Stop()
 			bindingsService.Stop()
 			return nil
 		}
@@ -86,6 +102,15 @@ func run() error {
 }
 func main() {
 	log = logger.NewLogger("main")
+	flag.Parse()
+	if *build {
+		err := buildConfig()
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+	}
+	config.SetConfigFile(*configFile)
 	log.Infof("starting kubemq bridges connector version: %s, commit: %s, date %s", version, commit, date)
 	if err := run(); err != nil {
 		log.Error(err)

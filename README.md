@@ -27,9 +27,9 @@ KubeMQ Bridges can support any binding topology :
 | Topology   | Description                                                                                   | Sources-Targets        |
 |:----------|:----------------------------------------------------------------------------------------------|:-----------------------|
 | Bridge    | a 1:1 connectivity mainly for sync type of messages                                           | one source to 1 target   |
-| Replicate | a 1:n connectivity allowing to replicate messages between clusters                            | one source to n targets  |
-| Aggregate | an n:1 connectivity allowing to aggregate streams fo messages from clusters to a single target | n source to 1 target   |
-| Transform | an n:n mix and much sources and targets in many to many topology                               | n sources to n targets |
+| Replicate | a 1:n connectivity allowing  replicating messages between clusters                            | one source to n targets  |
+| Aggregate | an n:1 connectivity allowing aggregating streams fo messages from clusters to a single target | n source to 1 target   |
+| Transform | an n:n mix and match sources and targets in many to many topology                               | n sources to n targets |
 
 
 ### Bridge

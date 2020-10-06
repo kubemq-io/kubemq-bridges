@@ -11,13 +11,12 @@ import (
 	"strings"
 
 	"github.com/ghodss/yaml"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
 const defaultApiPort = 8080
 
-var configFile = pflag.String("config", "config.yaml", "set config file name")
+var configFile string
 var logr = logger.NewLogger("config")
 
 type Config struct {
@@ -25,6 +24,9 @@ type Config struct {
 	ApiPort  int             `json:"api_port"`
 }
 
+func SetConfigFile(filename string) {
+	configFile = filename
+}
 func (c *Config) Validate() error {
 	if c.ApiPort == 0 {
 		c.ApiPort = defaultApiPort
@@ -97,8 +99,8 @@ func getConfigDataFromEnv() (string, error) {
 	return "", fmt.Errorf("no config data from environment variable")
 }
 func getConfigFile() (string, error) {
-	if *configFile != "" {
-		loadedConfigFile, err := getConfigDataFromLocalFile(*configFile)
+	if configFile != "" {
+		loadedConfigFile, err := getConfigDataFromLocalFile(configFile)
 		if err != nil {
 			return "", err
 		}
@@ -133,7 +135,6 @@ func load() (*Config, error) {
 }
 
 func Load(cfgCh chan *Config) (*Config, error) {
-	pflag.Parse()
 	viper.AddConfigPath("./")
 	cfg, err := load()
 	if err != nil {
