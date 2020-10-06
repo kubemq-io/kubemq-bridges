@@ -139,6 +139,13 @@ bindings:
       connections: # Array of connections settings per each target kind
         - .....
 ```
+### Build Wizard
+
+KubeMQ Bridges configuration can be build with --build flag
+
+```
+./kubemq-bridges --build
+```
 
 ### Properties
 

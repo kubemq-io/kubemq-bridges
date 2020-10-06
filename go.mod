@@ -31,4 +31,5 @@ require (
 	google.golang.org/grpc v1.30.0 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 )
+
 // replace github.com/kubemq-hub/builder => ../builder
