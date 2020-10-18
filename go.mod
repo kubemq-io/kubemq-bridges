@@ -10,7 +10,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/json-iterator/go v1.1.10
 	github.com/kr/pretty v0.2.0 // indirect
-	github.com/kubemq-hub/builder v0.2.1
+	github.com/kubemq-hub/builder v0.3.0
 	github.com/kubemq-io/kubemq-go v1.4.3
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/nats-io/nuid v1.0.1

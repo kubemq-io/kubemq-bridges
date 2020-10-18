@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/kubemq-hub/builder/connector"
+
+	"github.com/kubemq-hub/builder/connector/bridges"
 	"github.com/kubemq-hub/kubemq-bridges/api"
 	"github.com/kubemq-hub/kubemq-bridges/binding"
 	"github.com/kubemq-hub/kubemq-bridges/config"
@@ -29,8 +30,7 @@ var (
 func buildConfig() error {
 	var err error
 	var bindingsYaml []byte
-	if bindingsYaml, err = connector.NewBridge().
-		SetClusterAddress([]string{"localhost:50000", "Other"}).
+	if bindingsYaml, err = bridges.NewBridges("kubemq-bridges").
 		Render(); err != nil {
 		return err
 	}
