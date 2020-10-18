@@ -16,7 +16,7 @@ func (k *Kind) Render() (string, error) {
 		SetName("kind").
 		SetMessage("Set Target kind").
 		SetDefault("target.queue").
-		SetHelp("Sets targets kind entry").
+		SetHelp("Set targets kind entry").
 		SetRequired(true).
 		SetOptions([]string{"target.queue", "target.events", "target.events-store", "target.command", "target.query"}).
 		Render(&val)

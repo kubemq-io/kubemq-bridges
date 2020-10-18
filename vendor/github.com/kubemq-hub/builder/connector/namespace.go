@@ -31,13 +31,12 @@ func (n *Namespace) checkNonEmptyNamespace(val interface{}) error {
 	return nil
 }
 func (n *Namespace) Render() (*Namespace, error) {
-
 	err := survey.NewString().
 		SetKind("string").
 		SetName("namespace").
-		SetMessage("Set connector namespace").
-		SetDefault("").
-		SetHelp("Sets connector namespace").
+		SetMessage("Set Connector namespace").
+		SetDefault("kubemq").
+		SetHelp("Set Connector namespace").
 		SetRequired(true).
 		SetValidator(n.checkNonEmptyNamespace).
 		Render(&n.Namespace)

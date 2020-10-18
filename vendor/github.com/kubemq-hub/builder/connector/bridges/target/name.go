@@ -3,11 +3,14 @@ package target
 import "github.com/kubemq-hub/builder/survey"
 
 type Name struct {
-	takenNames []string
+	takenNames  []string
+	defaultName string
 }
 
-func NewName() *Name {
-	return &Name{}
+func NewName(defaultName string) *Name {
+	return &Name{
+		defaultName: defaultName,
+	}
 }
 func (n *Name) SetTakenNames(value []string) *Name {
 	n.takenNames = value
@@ -19,8 +22,8 @@ func (n *Name) Render() (string, error) {
 		SetKind("string").
 		SetName("name").
 		SetMessage("Set Target name").
-		SetDefault("").
-		SetHelp("Sets targets name entry").
+		SetDefault(n.defaultName).
+		SetHelp("Set targets name entry").
 		SetRequired(true).
 		SetInvalidOptions(n.takenNames).
 		SetInvalidOptionsMessage("target name must be unique").

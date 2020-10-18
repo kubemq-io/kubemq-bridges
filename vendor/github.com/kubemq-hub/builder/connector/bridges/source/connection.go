@@ -28,9 +28,9 @@ func (c *Connection) askAddress() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("address").
-		SetMessage("Sets Kubemq connection address").
+		SetMessage("Set Kubemq connection address").
 		SetDefault("").
-		SetHelp("Sets address of Kubemq cluster grpc endpoint").
+		SetHelp("Set address of Kubemq cluster grpc endpoint").
 		SetRequired(true).
 		SetOptions(c.addressOptions).
 		Render(&val)
@@ -45,9 +45,9 @@ func (c *Connection) askChannel() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("channel").
-		SetMessage("Sets source channel").
+		SetMessage("Set source channel").
 		SetDefault(fmt.Sprintf("source.%s.%s", c.name, c.kind)).
-		SetHelp("Sets source channel").
+		SetHelp("Set source channel").
 		SetRequired(true).
 		Render(&val)
 	if err != nil {
@@ -62,9 +62,9 @@ func (c *Connection) askGroup() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("group").
-		SetMessage("Sets source channel group").
+		SetMessage("Set source channel group").
 		SetDefault("").
-		SetHelp("Sets source channel group (load balancing)").
+		SetHelp("Set source channel group (load balancing)").
 		SetRequired(false).
 		Render(&val)
 	if err != nil {
@@ -81,9 +81,9 @@ func (c *Connection) askClientID() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("client_id").
-		SetMessage("Sets source connection client id").
+		SetMessage("Set source connection client id").
 		SetDefault("").
-		SetHelp("Sets source connection client id").
+		SetHelp("Set source connection client id").
 		SetRequired(false).
 		Render(&val)
 	if err != nil {
@@ -99,9 +99,9 @@ func (c *Connection) askAuthToken() error {
 	err := survey.NewMultiline().
 		SetKind("multilines").
 		SetName("auth_token").
-		SetMessage("Sets source connection authentication token").
+		SetMessage("Set source connection authentication token").
 		SetDefault("").
-		SetHelp("Sets JWT source connection authentication token").
+		SetHelp("Set JWT source connection authentication token").
 		SetRequired(false).
 		Render(&val)
 	if err != nil {
@@ -117,9 +117,9 @@ func (c *Connection) askBatchSize() error {
 	err := survey.NewInt().
 		SetKind("int").
 		SetName("batch_size").
-		SetMessage("Sets source channel queue polling size").
+		SetMessage("Set source channel queue polling size").
 		SetDefault("1").
-		SetHelp("Sets source channel queue polling size").
+		SetHelp("Set source channel queue polling size").
 		SetRange(1, 1024).
 		SetRequired(false).
 		Render(&val)
@@ -136,9 +136,9 @@ func (c *Connection) askWaitTimeout() error {
 	err := survey.NewInt().
 		SetKind("int").
 		SetName("wait_timeout").
-		SetMessage("Sets source channel queue polling interval in seconds").
+		SetMessage("Set source channel queue polling interval in seconds").
 		SetDefault("60").
-		SetHelp("Sets source channel queue polling interval in seconds").
+		SetHelp("Set source channel queue polling interval in seconds").
 		SetRange(1, 24*60*60).
 		SetRequired(false).
 		Render(&val)
@@ -194,10 +194,6 @@ func (c *Connection) renderQueueKind() (map[string]string, error) {
 	if err := c.askChannel(); err != nil {
 		return nil, err
 	}
-	if err := c.askGroup(); err != nil {
-		return nil, err
-	}
-
 	if err := c.askClientID(); err != nil {
 		return nil, err
 	}

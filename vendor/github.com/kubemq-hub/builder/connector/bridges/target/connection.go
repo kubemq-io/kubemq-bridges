@@ -29,9 +29,9 @@ func (c *Connection) askAddress() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("address").
-		SetMessage("Sets Kubemq connection address").
+		SetMessage("Set Kubemq connection address").
 		SetDefault("").
-		SetHelp("Sets address of Kubemq cluster grpc endpoint").
+		SetHelp("Set address of Kubemq cluster grpc endpoint").
 		SetRequired(true).
 		SetOptions(c.addressOptions).
 		Render(&val)
@@ -46,9 +46,9 @@ func (c *Connection) askDefaultChannel() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("default_channel").
-		SetMessage("Sets target default channel").
+		SetMessage("Set target default channel").
 		SetDefault(fmt.Sprintf("target.%s.%s", c.name, c.kind)).
-		SetHelp("Sets target channel").
+		SetHelp("Set target channel").
 		SetRequired(true).
 		Render(&val)
 	if err != nil {
@@ -62,9 +62,9 @@ func (c *Connection) askChannelList() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("channels").
-		SetMessage("Sets target channels list separated by comma").
+		SetMessage("Set target channels list separated by comma").
 		SetDefault(fmt.Sprintf("target.%s.%s", c.name, c.kind)).
-		SetHelp("Sets target channels list ").
+		SetHelp("Set target channels list ").
 		SetRequired(true).
 		Render(&val)
 	if err != nil {
@@ -79,9 +79,9 @@ func (c *Connection) askExpirationSeconds() error {
 	err := survey.NewInt().
 		SetKind("int").
 		SetName("expiration_seconds").
-		SetMessage("Sets target queue message expiration seconds (0 - not expired)").
+		SetMessage("Set target queue message expiration seconds (0 - not expired)").
 		SetDefault("0").
-		SetHelp("Sets target queue message expiration seconds (0 - not expired)").
+		SetHelp("Set target queue message expiration seconds (0 - not expired)").
 		SetRange(0, math.MaxInt32).
 		SetRequired(false).
 		Render(&val)
@@ -100,9 +100,9 @@ func (c *Connection) askDelaySeconds() error {
 	err := survey.NewInt().
 		SetKind("int").
 		SetName("delay_seconds").
-		SetMessage("Sets target queue message delay seconds (0 - no delay)").
+		SetMessage("Set target queue message delay seconds (0 - no delay)").
 		SetDefault("0").
-		SetHelp("Sets target queue message delay seconds (0 - no delay)").
+		SetHelp("Set target queue message delay seconds (0 - no delay)").
 		SetRange(0, math.MaxInt32).
 		SetRequired(false).
 		Render(&val)
@@ -120,9 +120,9 @@ func (c *Connection) askDeadLetterQueue() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("dead_letter_queue").
-		SetMessage("Sets target dead letter queue routing channel").
+		SetMessage("Set target dead letter queue routing channel").
 		SetDefault("").
-		SetHelp("Sets target queue dead letter routing max receive fails (0 - no routing").
+		SetHelp("Set target queue dead letter routing max receive fails (0 - no routing").
 		SetRequired(false).
 		Render(&val)
 	if err != nil {
@@ -134,9 +134,9 @@ func (c *Connection) askDeadLetterQueue() error {
 		err := survey.NewInt().
 			SetKind("int").
 			SetName("max_receive_count").
-			SetMessage("Sets target queue dead letter routing max receive fails").
+			SetMessage("Set target queue dead letter routing max receive fails").
 			SetDefault("1").
-			SetHelp("Sets target queue dead letter routing max receive fails").
+			SetHelp("Set target queue dead letter routing max receive fails").
 			SetRange(1, math.MaxInt32).
 			SetRequired(true).
 			Render(&maxVal)
@@ -153,9 +153,9 @@ func (c *Connection) askTimeoutSeconds() error {
 	err := survey.NewInt().
 		SetKind("int").
 		SetName("timeout_seconds").
-		SetMessage("Sets target response timeout seconds").
+		SetMessage("Set target response timeout seconds").
 		SetDefault("60").
-		SetHelp("Sets target  response timeout seconds").
+		SetHelp("Set target  response timeout seconds").
 		SetRequired(false).
 		Render(&val)
 	if err != nil {
@@ -172,9 +172,9 @@ func (c *Connection) askClientID() error {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("client_id").
-		SetMessage("Sets target connection client id").
+		SetMessage("Set target connection client id").
 		SetDefault("").
-		SetHelp("Sets target connection client id").
+		SetHelp("Set target connection client id").
 		SetRequired(false).
 		Render(&val)
 	if err != nil {
@@ -190,9 +190,9 @@ func (c *Connection) askAuthToken() error {
 	err := survey.NewMultiline().
 		SetKind("multilines").
 		SetName("auth_token").
-		SetMessage("Sets source connection authentication token").
+		SetMessage("Set source connection authentication token").
 		SetDefault("").
-		SetHelp("Sets JWT source connection authentication token").
+		SetHelp("Set JWT source connection authentication token").
 		SetRequired(false).
 		Render(&val)
 	if err != nil {
