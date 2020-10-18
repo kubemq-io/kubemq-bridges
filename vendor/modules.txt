@@ -72,13 +72,10 @@ github.com/kballard/go-shellquote
 ## explicit
 # github.com/kubemq-hub/builder v0.3.0
 ## explicit
-github.com/kubemq-hub/builder/connector
 github.com/kubemq-hub/builder/connector/bridges
 github.com/kubemq-hub/builder/connector/bridges/source
 github.com/kubemq-hub/builder/connector/bridges/target
 github.com/kubemq-hub/builder/connector/common
-github.com/kubemq-hub/builder/connector/sources
-github.com/kubemq-hub/builder/connector/targets
 github.com/kubemq-hub/builder/pkg/utils
 github.com/kubemq-hub/builder/survey
 # github.com/kubemq-io/kubemq-go v1.4.3
