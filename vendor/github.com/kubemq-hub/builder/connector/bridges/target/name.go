@@ -21,10 +21,11 @@ func (n *Name) Render() (string, error) {
 	err := survey.NewString().
 		SetKind("string").
 		SetName("name").
-		SetMessage("Set Target name").
+		SetMessage("Set Targets name").
 		SetDefault(n.defaultName).
 		SetHelp("Set targets name entry").
 		SetRequired(true).
+		SetValidator(survey.ValidateNoneSpace).
 		SetInvalidOptions(n.takenNames).
 		SetInvalidOptionsMessage("target name must be unique").
 		Render(&val)

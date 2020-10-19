@@ -22,6 +22,8 @@ type Binding struct {
 	takenTargetsNames []string
 	takenBindingNames []string
 	defaultName       string
+	isEditMode        bool
+	wasEdited         bool
 }
 
 func NewBinding(defaultName string) *Binding {
@@ -29,8 +31,33 @@ func NewBinding(defaultName string) *Binding {
 		defaultName: defaultName,
 	}
 }
+func (b *Binding) Clone() *Binding {
+	newBnd := &Binding{
+		Name:              b.Name,
+		Sources:           b.Sources.Clone(),
+		Targets:           b.Targets.Clone(),
+		Properties:        map[string]string{},
+		SourcesSpec:       b.SourcesSpec,
+		TargetsSpec:       b.TargetsSpec,
+		PropertiesSpec:    b.PropertiesSpec,
+		addressOptions:    b.addressOptions,
+		takenSourceNames:  b.takenSourceNames,
+		takenTargetsNames: b.takenTargetsNames,
+		takenBindingNames: b.takenBindingNames,
+		defaultName:       b.Name,
+	}
+	for key, val := range b.Properties {
+		newBnd.Properties[key] = val
+	}
+
+	return newBnd
+}
 func (b *Binding) SetAddress(value []string) *Binding {
 	b.addressOptions = value
+	return b
+}
+func (b *Binding) SetEditMode(value bool) *Binding {
+	b.isEditMode = value
 	return b
 }
 func (b *Binding) SetTakenSourceNames(value []string) *Binding {
@@ -61,7 +88,7 @@ func (b *Binding) BindingName() string {
 	return b.Name
 }
 func (b *Binding) confirmSource() bool {
-	utils.Println(fmt.Sprintf(promptSourceConfirm, b.Sources.String()))
+	utils.Println(fmt.Sprintf(promptSourceConfirm, b.Sources.ColoredYaml()))
 	val := true
 	err := survey.NewBool().
 		SetKind("bool").
@@ -79,7 +106,7 @@ func (b *Binding) confirmSource() bool {
 	return val
 }
 func (b *Binding) confirmTarget() bool {
-	utils.Println(fmt.Sprintf(promptTargetConfirm, b.Targets.String()))
+	utils.Println(fmt.Sprintf(promptTargetConfirm, b.Targets.ColoredYaml()))
 	val := true
 	err := survey.NewBool().
 		SetKind("bool").
@@ -97,7 +124,7 @@ func (b *Binding) confirmTarget() bool {
 	return val
 }
 func (b *Binding) confirmProperties(p *common.Properties) bool {
-	utils.Println(fmt.Sprintf(promptPropertiesConfirm, p.String()))
+	utils.Println(fmt.Sprintf(promptPropertiesConfirm, p.ColoredYaml()))
 	val := true
 	err := survey.NewBool().
 		SetKind("bool").
@@ -114,64 +141,196 @@ func (b *Binding) confirmProperties(p *common.Properties) bool {
 	}
 	return val
 }
-func (b *Binding) Render() (*Binding, error) {
-	var err error
-	if b.Name, err = NewName(b.defaultName).
-		SetTakenNames(b.takenBindingNames).
-		Render(); err != nil {
-		return nil, err
+func (b *Binding) setSource() error {
+	if !b.isEditMode {
+		utils.Println(promptSourceStart)
+		b.Sources = source.NewSource(fmt.Sprintf("%s-source", b.defaultName))
 	}
-	utils.Println(promptSourceStart)
+
+	var err error
 	for {
-		if b.Sources, err = source.NewSource(fmt.Sprintf("%s-source", b.defaultName)).
+		if b.Sources, err = b.Sources.
 			SetAddress(b.addressOptions).
+			SetIsEdit(b.isEditMode).
 			SetTakenNames(b.takenSourceNames).
 			Render(); err != nil {
-			return nil, err
+			return err
+		}
+		if !b.Sources.WasEdited {
+			return nil
 		}
 		ok := b.confirmSource()
 		if ok {
-			b.SourcesSpec = b.Sources.String()
+			b.SourcesSpec = b.Sources.ColoredYaml()
 			break
 		}
 	}
-	utils.Println(promptTargetStart)
+	return nil
+}
+func (b *Binding) setTarget() error {
 
+	if !b.isEditMode {
+		utils.Println(promptTargetStart)
+		b.Targets = target.NewTarget(fmt.Sprintf("%s-target", b.defaultName))
+	}
+	var err error
 	for {
-		if b.Targets, err = target.NewTarget(fmt.Sprintf("%s-target", b.defaultName)).
+		if b.Targets, err = b.Targets.
 			SetAddress(b.addressOptions).
-			SetTakenNames(b.takenTargetsNames).
+			SetIsEdit(b.isEditMode).
+			SetTakenNames(b.takenSourceNames).
 			Render(); err != nil {
-			return nil, err
+			return err
+		}
+		if !b.Targets.WasEdited {
+			return nil
 		}
 		ok := b.confirmTarget()
 		if ok {
-			b.TargetsSpec = b.Targets.String()
+			b.TargetsSpec = b.Targets.ColoredYaml()
 			break
 		}
 	}
-	utils.Println(promptBindingComplete)
+	return nil
+}
+func (b *Binding) setProperties() error {
+	var err error
 	for {
 		p := common.NewProperties()
 		if b.Properties, err = p.
 			Render(); err != nil {
-			return nil, err
+			return err
+		}
+		if len(b.Properties) == 0 {
+			break
 		}
 		ok := b.confirmProperties(p)
 		if ok {
-			b.PropertiesSpec = p.String()
+			b.PropertiesSpec = p.ColoredYaml()
 			break
 		}
 
 	}
+	return nil
+}
+func (b *Binding) showConfiguration() error {
+	utils.Println(promptShowBinding, b.Name)
+	utils.Println(b.ColoredYaml())
+
+	return nil
+}
+func (b *Binding) setName() error {
+	var err error
+	if b.Name, err = NewName(b.defaultName).
+		SetTakenNames(b.takenBindingNames).
+		Render(); err != nil {
+		return err
+	}
+	return nil
+}
+func (b *Binding) add() (*Binding, error) {
+	if err := b.setName(); err != nil {
+		return nil, err
+	}
+
+	if err := b.setSource(); err != nil {
+		return nil, err
+	}
+
+	if err := b.setTarget(); err != nil {
+		return nil, err
+	}
+	utils.Println(promptBindingComplete)
+	if err := b.setProperties(); err != nil {
+		return nil, err
+	}
 	return b, nil
 }
 
-func (b *Binding) String() string {
+func (b *Binding) edit() (*Binding, error) {
+	for {
+		ops := []string{
+			"Edit binding name",
+			"Edit binding Sources",
+			"Edit binding Targets",
+			"Edit binding Middlewares",
+			"Show binding configuration",
+			"Done",
+		}
+
+		val := ""
+		err := survey.NewString().
+			SetKind("string").
+			SetName("select-operation").
+			SetMessage("Select Edit Binding operation").
+			SetDefault(ops[0]).
+			SetHelp("Select Edit Binding operation").
+			SetRequired(true).
+			SetOptions(ops).
+			Render(&val)
+		if err != nil {
+			return nil, err
+		}
+		switch val {
+		case ops[0]:
+			if err := b.setName(); err != nil {
+				return nil, err
+			}
+			b.wasEdited = true
+		case ops[1]:
+			if err := b.setSource(); err != nil {
+				return nil, err
+			}
+			if b.Sources.WasEdited {
+				b.wasEdited = true
+			}
+
+		case ops[2]:
+			if err := b.setTarget(); err != nil {
+				return nil, err
+			}
+			if b.Targets.WasEdited {
+				b.wasEdited = true
+			}
+		case ops[3]:
+			if err := b.setProperties(); err != nil {
+				return nil, err
+			}
+			b.wasEdited = true
+		case ops[4]:
+			if err := b.showConfiguration(); err != nil {
+				return nil, err
+			}
+		default:
+			return b, nil
+		}
+	}
+
+}
+func (b *Binding) Render() (*Binding, error) {
+	if b.isEditMode {
+		return b.edit()
+	}
+	return b.add()
+}
+
+func (b *Binding) ColoredYaml() string {
+	b.SourcesSpec = b.Sources.ColoredYaml()
+	b.TargetsSpec = b.Targets.ColoredYaml()
+	b.PropertiesSpec = utils.MapToYaml(b.Properties)
 	tpl := utils.NewTemplate(bindingTemplate, b)
 	bnd, err := tpl.Get()
 	if err != nil {
 		return fmt.Sprintf("error rendring binding spec,%s", err.Error())
 	}
 	return string(bnd)
+}
+func (b *Binding) TableRowShort() []interface{} {
+	var list []interface{}
+	ms := utils.MapFlatten(b.Properties)
+	if ms == "" {
+		ms = "none"
+	}
+	list = append(list, b.Name, b.Sources.TableItemShort(), b.Targets.TableItemShort(), ms)
+	return list
 }

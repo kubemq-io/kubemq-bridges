@@ -12,13 +12,13 @@ const propertiesTml = `
 `
 
 type Properties struct {
-	values     map[string]string
+	Values     map[string]string
 	ValuesSpec string
 }
 
 func NewProperties() *Properties {
 	return &Properties{
-		values: map[string]string{},
+		Values: map[string]string{},
 	}
 }
 
@@ -42,30 +42,30 @@ func (p *Properties) Render() (map[string]string, error) {
 		return nil, err
 	} else {
 		for key, val := range values {
-			p.values[key] = val
+			p.Values[key] = val
 		}
 	}
 	if values, err := NewRateLimiter().Render(); err != nil {
 		return nil, err
 	} else {
 		for key, val := range values {
-			p.values[key] = val
+			p.Values[key] = val
 		}
 	}
 	if values, err := NewRetry().Render(); err != nil {
 		return nil, err
 	} else {
 		for key, val := range values {
-			p.values[key] = val
+			p.Values[key] = val
 		}
 	}
-	return p.values, nil
+	return p.Values, nil
 }
-func (p *Properties) String() string {
-	if len(p.values) == 0 {
+func (p *Properties) ColoredYaml() string {
+	if len(p.Values) == 0 {
 		return "\n<red>properties: {}</>"
 	}
-	p.ValuesSpec = utils.MapToYaml(p.values)
+	p.ValuesSpec = utils.MapToYaml(p.Values)
 	tpl := utils.NewTemplate(propertiesTml, p)
 	b, err := tpl.Get()
 	if err != nil {

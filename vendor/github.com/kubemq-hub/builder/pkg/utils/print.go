@@ -93,3 +93,11 @@ func MapArrayToYaml(ml []map[string]string) string {
 	}
 	return strings.Join(output, "\n")
 }
+
+func MapFlatten(m map[string]string) string {
+	var list []string
+	for key, val := range m {
+		list = append(list, fmt.Sprintf("%s=%s", key, val))
+	}
+	return strings.Join(list, ";")
+}

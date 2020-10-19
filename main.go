@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"flag"
-
-	"github.com/kubemq-hub/builder/connector/bridges"
+	"github.com/ghodss/yaml"
+	connectorBridges "github.com/kubemq-hub/builder/connector/bridges"
 	"github.com/kubemq-hub/kubemq-bridges/api"
 	"github.com/kubemq-hub/kubemq-bridges/binding"
 	"github.com/kubemq-hub/kubemq-bridges/config"
@@ -27,10 +27,24 @@ var (
 	configFile = flag.String("config", "config.yaml", "set config file name")
 )
 
+func loadCfgBindings() []*connectorBridges.Binding {
+	file, err := ioutil.ReadFile("./config.yaml")
+	if err != nil {
+		return nil
+	}
+	list := &connectorBridges.Bindings{}
+	err = yaml.Unmarshal(file, list)
+	if err != nil {
+		return nil
+	}
+	return list.Bindings
+}
+
 func buildConfig() error {
 	var err error
 	var bindingsYaml []byte
-	if bindingsYaml, err = bridges.NewBridges("kubemq-bridges").
+	if bindingsYaml, err = connectorBridges.NewBridges("kubemq-bridges").
+		SetBindings(loadCfgBindings()).
 		Render(); err != nil {
 		return err
 	}
