@@ -25,6 +25,7 @@ func (n *Name) Render() (string, error) {
 		SetDefault(n.defaultName).
 		SetHelp("Set binding name entry").
 		SetRequired(true).
+		SetValidator(survey.ValidateNoneSpace).
 		SetInvalidOptions(n.takenNames).
 		SetInvalidOptionsMessage("binding name must be unique").
 		Render(&val)

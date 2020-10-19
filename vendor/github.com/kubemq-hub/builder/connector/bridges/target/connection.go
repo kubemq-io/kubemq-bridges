@@ -33,6 +33,7 @@ func (c *Connection) askAddress() error {
 		SetDefault("").
 		SetHelp("Set address of Kubemq cluster grpc endpoint").
 		SetRequired(true).
+		SetValidator(survey.ValidateNoneSpace).
 		SetOptions(c.addressOptions).
 		Render(&val)
 	if err != nil {
@@ -49,6 +50,7 @@ func (c *Connection) askDefaultChannel() error {
 		SetMessage("Set target default channel").
 		SetDefault(fmt.Sprintf("target.%s.%s", c.name, c.kind)).
 		SetHelp("Set target channel").
+		SetValidator(survey.ValidateNoneSpace).
 		SetRequired(true).
 		Render(&val)
 	if err != nil {
@@ -66,6 +68,7 @@ func (c *Connection) askChannelList() error {
 		SetDefault(fmt.Sprintf("target.%s.%s", c.name, c.kind)).
 		SetHelp("Set target channels list ").
 		SetRequired(true).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return err
@@ -124,6 +127,7 @@ func (c *Connection) askDeadLetterQueue() error {
 		SetDefault("").
 		SetHelp("Set target queue dead letter routing max receive fails (0 - no routing").
 		SetRequired(false).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return err
@@ -176,6 +180,7 @@ func (c *Connection) askClientID() error {
 		SetDefault("").
 		SetHelp("Set target connection client id").
 		SetRequired(false).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return err

@@ -26,6 +26,7 @@ func (n *Name) RenderBinding() (string, error) {
 		SetHelp("Set binding name entry").
 		SetRequired(true).
 		SetInvalidOptions(n.takenNames).
+		SetValidator(survey.ValidateNoneSpace).
 		SetInvalidOptionsMessage("binding name must be unique").
 		Render(&val)
 	if err != nil {
@@ -42,6 +43,7 @@ func (n *Name) RenderSource() (string, error) {
 		SetDefault(n.defaultName).
 		SetHelp("Set source name entry").
 		SetRequired(true).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return "", err
@@ -57,6 +59,7 @@ func (n *Name) RenderTarget() (string, error) {
 		SetDefault(n.defaultName).
 		SetHelp("Set Target name entry").
 		SetRequired(true).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return "", err

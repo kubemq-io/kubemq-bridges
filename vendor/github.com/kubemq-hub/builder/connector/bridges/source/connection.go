@@ -33,6 +33,7 @@ func (c *Connection) askAddress() error {
 		SetHelp("Set address of Kubemq cluster grpc endpoint").
 		SetRequired(true).
 		SetOptions(c.addressOptions).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return err
@@ -49,6 +50,7 @@ func (c *Connection) askChannel() error {
 		SetDefault(fmt.Sprintf("source.%s.%s", c.name, c.kind)).
 		SetHelp("Set source channel").
 		SetRequired(true).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return err
@@ -66,6 +68,7 @@ func (c *Connection) askGroup() error {
 		SetDefault("").
 		SetHelp("Set source channel group (load balancing)").
 		SetRequired(false).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return err
@@ -85,6 +88,7 @@ func (c *Connection) askClientID() error {
 		SetDefault("").
 		SetHelp("Set source connection client id").
 		SetRequired(false).
+		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
 		return err
