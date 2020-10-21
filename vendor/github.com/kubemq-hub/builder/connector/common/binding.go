@@ -197,79 +197,72 @@ func (b *Binding) addSource(defaultName string) error {
 }
 
 func (b *Binding) editSource() error {
-	for {
-		ops := []string{
-			"Edit Source name",
-			"Edit Source kind",
-			"Edit Source properties",
-			"Show Source configuration",
-			"Return",
-		}
+	menu := survey.NewMenu("Select Edit Binding Sources operation").
+		SetBackOption(true).
+		SetErrorHandler(survey.MenuShowErrorFn)
 
-		val := ""
-		err := survey.NewString().
-			SetKind("string").
-			SetName("select-operation").
-			SetMessage("Select Edit Binding Source operation").
-			SetDefault(ops[0]).
-			SetHelp("Select Edit Binding Source operation").
-			SetRequired(true).
-			SetOptions(ops).
-			Render(&val)
-		if err != nil {
+	menu.AddItem("Edit Source Name", func() error {
+		var err error
+		if b.Source.Name, err = NewName(b.Source.Name).
+			RenderSource(); err != nil {
 			return err
 		}
-		switch val {
-		case ops[0]:
-			if b.Source.Name, err = NewName(b.Source.Name).
-				RenderSource(); err != nil {
-				return err
-			}
-			b.wasEdited = true
-		case ops[1]:
-			var kinds []string
-			sources := make(map[string]*Connector)
-			for _, c := range b.sourcesList {
-				kinds = append(kinds, c.Kind)
-				sources[c.Kind] = c
-			}
-			if len(kinds) == 0 {
-				return fmt.Errorf("no source connectors available")
-			}
-			lastKind := b.Source.Kind
-			if b.Source.Kind, err = b.askKind(kinds, b.Source.Kind); err != nil {
-				return err
-			}
-			if lastKind != b.Source.Kind {
-				connector := sources[b.Source.Kind]
-				if b.Source.Properties, err = connector.Render(b.loadedOptions); err != nil {
-					return err
-				}
-			}
-			b.wasEdited = true
-		case ops[2]:
-			var kinds []string
-			sources := make(map[string]*Connector)
-			for _, c := range b.sourcesList {
-				kinds = append(kinds, c.Kind)
-				sources[c.Kind] = c
-			}
-			if len(kinds) == 0 {
-				return fmt.Errorf("no source connectors available")
-			}
+		b.wasEdited = true
+		return nil
+	})
+
+	menu.AddItem("Edit Source Kinds", func() error {
+		var kinds []string
+		sources := make(map[string]*Connector)
+		for _, c := range b.sourcesList {
+			kinds = append(kinds, c.Kind)
+			sources[c.Kind] = c
+		}
+		if len(kinds) == 0 {
+			return fmt.Errorf("no source connectors available")
+		}
+		lastKind := b.Source.Kind
+		var err error
+		if b.Source.Kind, err = b.askKind(kinds, b.Source.Kind); err != nil {
+			return err
+		}
+		if lastKind != b.Source.Kind {
 			connector := sources[b.Source.Kind]
 			if b.Source.Properties, err = connector.Render(b.loadedOptions); err != nil {
 				return err
 			}
-			b.wasEdited = true
-		case ops[3]:
-			utils.Println(promptShowSource, b.Source.Name)
-			utils.Println(b.Source.ColoredYaml(sourceSpecTemplate))
-		default:
-			return nil
 		}
+		b.wasEdited = true
+		return nil
+	},
+	)
+	menu.AddItem("Edit Source Properties", func() error {
+		var kinds []string
+		sources := make(map[string]*Connector)
+		for _, c := range b.sourcesList {
+			kinds = append(kinds, c.Kind)
+			sources[c.Kind] = c
+		}
+		if len(kinds) == 0 {
+			return fmt.Errorf("no source connectors available")
+		}
+		var err error
+		connector := sources[b.Source.Kind]
+		if b.Source.Properties, err = connector.Render(b.loadedOptions); err != nil {
+			return err
+		}
+		b.wasEdited = true
+		return nil
+	})
+	menu.AddItem("Show Source Configuration", func() error {
+		utils.Println(promptShowSource, b.Source.Name)
+		utils.Println("%s\n", b.Source.ColoredYaml(sourceSpecTemplate))
+		return nil
+	})
+	if err := menu.Render(); err != nil {
+		return err
 	}
-
+	return nil
 }
 
 func (b *Binding) addTarget(defaultName string) error {
@@ -305,79 +298,72 @@ func (b *Binding) addTarget(defaultName string) error {
 	return nil
 }
 func (b *Binding) editTarget() error {
-	for {
-		ops := []string{
-			"Edit Target name",
-			"Edit Target kind",
-			"Edit Target properties",
-			"Show Target configuration",
-			"Return",
-		}
+	menu := survey.NewMenu("Select Edit Binding Targets operation").
+		SetBackOption(true).
+		SetErrorHandler(survey.MenuShowErrorFn)
 
-		val := ""
-		err := survey.NewString().
-			SetKind("string").
-			SetName("select-operation").
-			SetMessage("Select Edit Binding Target operation").
-			SetDefault(ops[0]).
-			SetHelp("Select Edit Binding Target operation").
-			SetRequired(true).
-			SetOptions(ops).
-			Render(&val)
-		if err != nil {
+	menu.AddItem("Edit Target Name", func() error {
+		var err error
+		if b.Target.Name, err = NewName(b.Target.Name).
+			RenderTarget(); err != nil {
 			return err
 		}
-		switch val {
-		case ops[0]:
-			if b.Target.Name, err = NewName(b.Target.Name).
-				RenderTarget(); err != nil {
-				return err
-			}
-			b.wasEdited = true
-		case ops[1]:
-			var kinds []string
-			targets := make(map[string]*Connector)
-			for _, c := range b.targetsList {
-				kinds = append(kinds, c.Kind)
-				targets[c.Kind] = c
-			}
-			if len(kinds) == 0 {
-				return fmt.Errorf("no target connectors available")
-			}
-			lastKind := b.Target.Kind
-			if b.Target.Kind, err = b.askKind(kinds, b.Target.Kind); err != nil {
-				return err
-			}
-			if lastKind != b.Target.Kind {
-				connector := targets[b.Target.Kind]
-				if b.Target.Properties, err = connector.Render(b.loadedOptions); err != nil {
-					return err
-				}
-			}
-			b.wasEdited = true
-		case ops[2]:
-			var kinds []string
-			sources := make(map[string]*Connector)
-			for _, c := range b.sourcesList {
-				kinds = append(kinds, c.Kind)
-				sources[c.Kind] = c
-			}
-			if len(kinds) == 0 {
-				return fmt.Errorf("no source connectors available")
-			}
-			connector := sources[b.Target.Kind]
+		b.wasEdited = true
+		return nil
+	})
+
+	menu.AddItem("Edit Target Kinds", func() error {
+		var kinds []string
+		targets := make(map[string]*Connector)
+		for _, c := range b.targetsList {
+			kinds = append(kinds, c.Kind)
+			targets[c.Kind] = c
+		}
+		if len(kinds) == 0 {
+			return fmt.Errorf("no target connectors available")
+		}
+		lastKind := b.Target.Kind
+		var err error
+		if b.Target.Kind, err = b.askKind(kinds, b.Target.Kind); err != nil {
+			return err
+		}
+		if lastKind != b.Target.Kind {
+			connector := targets[b.Target.Kind]
 			if b.Target.Properties, err = connector.Render(b.loadedOptions); err != nil {
 				return err
 			}
-			b.wasEdited = true
-		case ops[3]:
-			utils.Println(promptShowTarget, b.Target.Name)
-			utils.Println(b.Target.ColoredYaml(sourceSpecTemplate))
-		default:
-			return nil
 		}
+		b.wasEdited = true
+		return nil
+	},
+	)
+	menu.AddItem("Edit Target Properties", func() error {
+		var kinds []string
+		targets := make(map[string]*Connector)
+		for _, c := range b.targetsList {
+			kinds = append(kinds, c.Kind)
+			targets[c.Kind] = c
+		}
+		if len(kinds) == 0 {
+			return fmt.Errorf("no target connectors available")
+		}
+		var err error
+		connector := targets[b.Target.Kind]
+		if b.Target.Properties, err = connector.Render(b.loadedOptions); err != nil {
+			return err
+		}
+		b.wasEdited = true
+		return nil
+	})
+	menu.AddItem("Show Target Configuration", func() error {
+		utils.Println(promptShowTarget, b.Target.Name)
+		utils.Println("%s\n", b.Target.ColoredYaml(targetSpecTemplate))
+		return nil
+	})
+	if err := menu.Render(); err != nil {
+		return err
 	}
-
+	return nil
 }
 
 func (b *Binding) setName() error {
@@ -416,66 +402,18 @@ func (b *Binding) setProperties() error {
 	return nil
 }
 func (b *Binding) edit() (*Binding, error) {
-	for {
-		ops := []string{
-			"Edit binding name",
-			"Edit binding Source",
-			"Edit binding Target",
-			"Edit binding Middlewares",
-			"Show binding configuration",
-			"Done",
-		}
-
-		val := ""
-		err := survey.NewString().
-			SetKind("string").
-			SetName("select-operation").
-			SetMessage("Select Edit Binding operation").
-			SetDefault(ops[0]).
-			SetHelp("Select Edit Binding operation").
-			SetRequired(true).
-			SetOptions(ops).
-			Render(&val)
-		if err != nil {
-			return nil, err
-		}
-		switch val {
-		case ops[0]:
-			if err := b.setName(); err != nil {
-				return nil, err
-			}
-			b.wasEdited = true
-		case ops[1]:
-			for {
-				if err := b.editSource(); err != nil {
-					return nil, err
-				}
-				if b.confirmSource() {
-					break
-				}
-			}
-
-		case ops[2]:
-			if err := b.editTarget(); err != nil {
-				return nil, err
-			}
-			if b.confirmTarget() {
-				break
-			}
-
-		case ops[3]:
-			if err := b.setProperties(); err != nil {
-				return nil, err
-			}
-			b.wasEdited = true
-		case ops[4]:
-			if err := b.showConfiguration(); err != nil {
-				return nil, err
-			}
-		default:
-			return b, nil
-		}
+	menu := survey.NewMenu("Select Edit Binding operation").
+		SetBackOption(true).
+		SetErrorHandler(survey.MenuShowErrorFn)
+	menu.AddItem("Edit Binding Name", b.setName)
+	menu.AddItem("Edit Binding Source", b.editSource)
+	menu.AddItem("Edit Binding Target", b.editTarget)
+	menu.AddItem("Edit Binding Middlewares", b.setProperties)
+	menu.AddItem("Show Binding Configuration", b.showConfiguration)
+	if err := menu.Render(); err != nil {
+		return nil, err
 	}
+	return b, nil
 
 }
 func (b *Binding) add() (*Binding, error) {

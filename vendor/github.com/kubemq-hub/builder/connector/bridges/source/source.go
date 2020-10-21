@@ -122,6 +122,7 @@ func (s *Source) editName() error {
 		Render(); err != nil {
 		return err
 	}
+	s.WasEdited = true
 	return nil
 }
 func (s *Source) editKind() (bool, error) {
@@ -155,67 +156,39 @@ func (s *Source) editConnections() error {
 		}
 	}
 done:
+	s.WasEdited = true
 	return nil
 }
 func (s *Source) showConfiguration() error {
 	utils.Println(promptShowSource, s.Name)
-	utils.Println(s.ColoredYaml())
+	utils.Println(fmt.Sprintf("%s\n", s.ColoredYaml()))
 	return nil
 }
 func (s *Source) edit() (*Source, error) {
-	for {
-		ops := []string{
-			"Edit Sources name",
-			"Edit Sources kind",
-			"Edit Sources connections",
-			"Show Sources configuration",
-			"Return",
-		}
-
-		val := ""
-		err := survey.NewString().
-			SetKind("string").
-			SetName("select-operation").
-			SetMessage("Select Edit Binding Sources operation").
-			SetDefault(ops[0]).
-			SetHelp("Select Edit Binding Sources operation").
-			SetRequired(true).
-			SetOptions(ops).
-			Render(&val)
-		if err != nil {
-			return nil, err
-		}
-		switch val {
-		case ops[0]:
-			if err := s.editName(); err != nil {
-				return nil, err
-			}
-			s.WasEdited = true
-		case ops[1]:
-			if changed, err := s.editKind(); err != nil {
-				return nil, err
-			} else {
-				if changed {
-					if err := s.editConnections(); err != nil {
-						return nil, err
-					}
+	menu := survey.NewMenu("Select Edit Binding Sources operation").
+		SetBackOption(true).
+		SetErrorHandler(survey.MenuShowErrorFn)
+	menu.AddItem("Edit Sources Name", s.editName)
+	menu.AddItem("Edit Sources Kinds", func() error {
+		if changed, err := s.editKind(); err != nil {
+			return err
+		} else {
+			if changed {
+				if err := s.editConnections(); err != nil {
+					return err
 				}
+				s.WasEdited = true
 			}
-			s.WasEdited = true
-		case ops[2]:
-			if err := s.editConnections(); err != nil {
-				return nil, err
-			}
-			s.WasEdited = true
-		case ops[3]:
-			if err := s.showConfiguration(); err != nil {
-				return nil, err
-			}
-
-		default:
-			return s, nil
 		}
+		return nil
+	},
+	)
+	menu.AddItem("Edit Sources Connections", s.editConnections)
+	menu.AddItem("Show Sources Configuration", s.showConfiguration)
+	if err := menu.Render(); err != nil {
+		return nil, err
 	}
+	return s, nil
 }
 func (s *Source) Render() (*Source, error) {
 	if s.isEdit {

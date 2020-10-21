@@ -16,8 +16,6 @@ github.com/cespare/xxhash/v2
 github.com/davecgh/go-spew/spew
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 github.com/dgrijalva/jwt-go
-# github.com/fatih/color v1.7.0
-github.com/fatih/color
 # github.com/fortytw2/leaktest v1.3.0
 ## explicit
 github.com/fortytw2/leaktest
@@ -72,13 +70,12 @@ github.com/json-iterator/go
 github.com/kballard/go-shellquote
 # github.com/kr/pretty v0.2.0
 ## explicit
-# github.com/kubemq-hub/builder v0.3.1
+# github.com/kubemq-hub/builder v0.4.0
 ## explicit
 github.com/kubemq-hub/builder/connector/bridges
 github.com/kubemq-hub/builder/connector/bridges/source
 github.com/kubemq-hub/builder/connector/bridges/target
 github.com/kubemq-hub/builder/connector/common
-github.com/kubemq-hub/builder/pkg/uitable
 github.com/kubemq-hub/builder/pkg/utils
 github.com/kubemq-hub/builder/survey
 # github.com/kubemq-io/kubemq-go v1.4.3
@@ -101,8 +98,6 @@ github.com/magiconair/properties
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
-# github.com/mattn/go-runewidth v0.0.9
-github.com/mattn/go-runewidth
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
 # github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b

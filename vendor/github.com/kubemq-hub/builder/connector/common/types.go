@@ -13,7 +13,7 @@ We will set:</>
 <yellow>Properties -</> A list of key/value properties based on the selected kind
 <cyan>Lets start binding source configuration:</>`
 
-	promptSourceConfirm = `<cyan>Here is the binding's Source configuration:</>%s`
+	promptSourceConfirm = `<cyan>Here is the binding's Source configuration:</>%s\n`
 )
 const (
 	promptTargetStart = `
@@ -24,7 +24,7 @@ We will set:</>
 <yellow>Properties -</> A list of key/value properties based on the selected kind
 <cyan>Lets start binding target configuration:</>`
 
-	promptTargetConfirm = `<cyan>Here is the binding's Target configuration:</>%s`
+	promptTargetConfirm = `<cyan>Here is the binding's Target configuration:</>%s\n`
 )
 
 const (
@@ -42,15 +42,12 @@ const (
 	promptBindingStartMenu          = "<cyan>Lets configure the binding list:</>"
 	promptBindingComplete           = "<cyan>We have completed Source and Target binding configuration</>"
 	promptBindingDeleteConfirmation = "<red>Binding %s deleted successfully</>"
-	promptBindingDeleteCanceled     = "<red>Delete binding operation, cancelled</>"
 	promptBindingEditedConfirmation = "<red>Binding %s edited successfully</>"
 	promptBindingEditedNoSave       = "<red>Binding %s was not edited</>"
-	promptBindingEditCanceled       = "<red>Edit binding operation, cancelled</>"
-	promptBindingShowCanceled       = "<red>Show binding operation, cancelled</>"
 	promptShowBinding               = "<cyan>Showing Binding %s configuration:</>"
-	promptShowList                  = "<cyan>Current Bindings list:</>"
 	promptShowSource                = "<cyan>Showing Source %s configuration:</>"
 	promptShowTarget                = "<cyan>Showing Target %s configuration:</>"
+	promptBindingEmptyError         = "<red>At least one binding must be configured</>"
 )
 
 const (
@@ -69,3 +66,9 @@ const (
 {{ .PropertiesSpec | indent 4}}
 `
 )
+const connectorTemplate = `
+<red>kind:</> {{.Kind}}
+<red>description:</> {{.Description}}
+<red>properties:</>
+{{ .PropertiesSpec | indent 2}}
+`

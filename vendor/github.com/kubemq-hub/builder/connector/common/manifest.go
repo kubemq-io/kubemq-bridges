@@ -1,6 +1,8 @@
 package common
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -42,8 +44,8 @@ func LoadFromUrl(url string) (*Manifest, error) {
 		log.Fatal(err)
 	}
 	defer func() {
-		err := os.Remove(file.Name())
-		fmt.Println(err)
+		_ = os.Remove(file.Name())
+
 	}()
 	resp, err := http.Get(url)
 	if err != nil {
@@ -58,12 +60,35 @@ func LoadFromUrl(url string) (*Manifest, error) {
 
 	return LoadManifestFromFile(file.Name())
 }
-func (m *Manifest) Save(filename string) error {
+func (m *Manifest) Save() error {
 	b, err := json.Marshal(m)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filename, b, 0644)
+	h := sha256.New()
+	_, _ = h.Write(b)
+	hash := hex.EncodeToString(h.Sum(nil))
+	err = ioutil.WriteFile(fmt.Sprintf("%s-manifest.json", m.Schema), b, 0644)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(fmt.Sprintf("%s-manifest-hash.txt", m.Schema), []byte(hash), 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (m *Manifest) SaveFile(filename string) error {
+	b, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(filename, b, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 func (m *Manifest) Marshal() []byte {
 	b, _ := json.Marshal(m)

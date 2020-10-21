@@ -1,6 +1,9 @@
 package common
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Property struct {
 	Name          string   `json:"name"`
@@ -89,4 +92,27 @@ func (p *Property) NewCondition(condition string, properties []*Property) *Prope
 	}
 	p.Conditional[condition] = properties
 	return p
+}
+
+func (p *Property) Map() map[string]string {
+	if p.Kind == "condition" {
+		return nil
+	}
+	m := map[string]string{}
+	m["name"] = p.Name
+	m["kind"] = p.Kind
+	m["description"] = p.Description
+	if p.Default != "" {
+		m["default"] = p.Default
+	}
+	m["required"] = fmt.Sprintf("%t", p.Must)
+	if len(p.Options) > 0 {
+		m["options"] = strings.Join(p.Options, ",")
+	}
+	if p.Kind == "int" {
+		m["min"] = fmt.Sprintf("%d", p.Min)
+		m["max"] = fmt.Sprintf("%d", p.Max)
+
+	}
+	return m
 }

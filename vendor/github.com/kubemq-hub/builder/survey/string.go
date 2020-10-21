@@ -13,6 +13,8 @@ type String struct {
 	InvalidOptionsMessage string
 	askOpts               []survey.AskOpt
 	validators            []func(val interface{}) error
+	keepFilter            bool
+	pageSize              int
 }
 
 func NewString() *String {
@@ -34,6 +36,14 @@ func (s *String) NewObjectMeta() *String {
 }
 func (s *String) SetKind(value string) *String {
 	s.KindMeta.SetKind(value)
+	return s
+}
+func (s *String) SetKeepFilter(value bool) *String {
+	s.keepFilter = value
+	return s
+}
+func (s *String) SetPageSize(value int) *String {
+	s.pageSize = value
 	return s
 }
 
@@ -109,6 +119,10 @@ func (s *String) Complete() error {
 	for _, validator := range s.validators {
 		s.askOpts = append(s.askOpts, survey.WithValidator(validator))
 	}
+	s.askOpts = append(s.askOpts, survey.WithKeepFilter(true))
+	if s.pageSize > 0 && len(s.Options) >= s.pageSize {
+		s.askOpts = append(s.askOpts, survey.WithPageSize(s.pageSize))
+	}
 	return nil
 }
 
@@ -129,14 +143,18 @@ func (s *String) Render(target interface{}) error {
 	if s.Default == "" {
 		s.Default = s.Options[0]
 	}
-
 	selectInput := &survey.Select{
-		Renderer: survey.Renderer{},
-		Message:  s.Message,
-		Options:  s.Options,
-		Default:  s.Default,
-		Help:     s.Help,
+		Renderer:      survey.Renderer{},
+		Message:       s.Message,
+		Options:       s.Options,
+		Default:       s.Default,
+		Help:          s.Help,
+		PageSize:      0,
+		VimMode:       false,
+		FilterMessage: "",
+		Filter:        nil,
 	}
+
 	err := survey.AskOne(selectInput, target, s.askOpts...)
 	if err != nil {
 		return err

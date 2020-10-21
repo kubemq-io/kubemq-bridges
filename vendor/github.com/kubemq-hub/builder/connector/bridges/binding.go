@@ -60,6 +60,10 @@ func (b *Binding) SetEditMode(value bool) *Binding {
 	b.isEditMode = value
 	return b
 }
+func (b *Binding) SetDefaultName(value string) *Binding {
+	b.defaultName = value
+	return b
+}
 func (b *Binding) SetTakenSourceNames(value []string) *Binding {
 	b.takenSourceNames = value
 	return b
@@ -165,6 +169,7 @@ func (b *Binding) setSource() error {
 			break
 		}
 	}
+	b.wasEdited = b.Sources.WasEdited
 	return nil
 }
 func (b *Binding) setTarget() error {
@@ -191,6 +196,7 @@ func (b *Binding) setTarget() error {
 			break
 		}
 	}
+	b.wasEdited = b.Targets.WasEdited
 	return nil
 }
 func (b *Binding) setProperties() error {
@@ -216,7 +222,6 @@ func (b *Binding) setProperties() error {
 func (b *Binding) showConfiguration() error {
 	utils.Println(promptShowBinding, b.Name)
 	utils.Println(b.ColoredYaml())
-
 	return nil
 }
 func (b *Binding) setName() error {
@@ -226,6 +231,7 @@ func (b *Binding) setName() error {
 		Render(); err != nil {
 		return err
 	}
+	b.wasEdited = true
 	return nil
 }
 func (b *Binding) add() (*Binding, error) {
@@ -248,63 +254,18 @@ func (b *Binding) add() (*Binding, error) {
 }
 
 func (b *Binding) edit() (*Binding, error) {
-	for {
-		ops := []string{
-			"Edit binding name",
-			"Edit binding Sources",
-			"Edit binding Targets",
-			"Edit binding Middlewares",
-			"Show binding configuration",
-			"Done",
-		}
-
-		val := ""
-		err := survey.NewString().
-			SetKind("string").
-			SetName("select-operation").
-			SetMessage("Select Edit Binding operation").
-			SetDefault(ops[0]).
-			SetHelp("Select Edit Binding operation").
-			SetRequired(true).
-			SetOptions(ops).
-			Render(&val)
-		if err != nil {
-			return nil, err
-		}
-		switch val {
-		case ops[0]:
-			if err := b.setName(); err != nil {
-				return nil, err
-			}
-			b.wasEdited = true
-		case ops[1]:
-			if err := b.setSource(); err != nil {
-				return nil, err
-			}
-			if b.Sources.WasEdited {
-				b.wasEdited = true
-			}
-
-		case ops[2]:
-			if err := b.setTarget(); err != nil {
-				return nil, err
-			}
-			if b.Targets.WasEdited {
-				b.wasEdited = true
-			}
-		case ops[3]:
-			if err := b.setProperties(); err != nil {
-				return nil, err
-			}
-			b.wasEdited = true
-		case ops[4]:
-			if err := b.showConfiguration(); err != nil {
-				return nil, err
-			}
-		default:
-			return b, nil
-		}
+	menu := survey.NewMenu("Select Edit Binding operation").
+		SetBackOption(true).
+		SetErrorHandler(survey.MenuShowErrorFn)
+	menu.AddItem("Edit Binding Name", b.setName)
+	menu.AddItem("Edit Binding Sources", b.setSource)
+	menu.AddItem("Edit Binding Targets", b.setTarget)
+	menu.AddItem("Edit Binding Middlewares", b.setProperties)
+	menu.AddItem("Show Binding Configuration", b.showConfiguration)
+	if err := menu.Render(); err != nil {
+		return nil, err
 	}
+	return b, nil
 
 }
 func (b *Binding) Render() (*Binding, error) {
@@ -324,13 +285,4 @@ func (b *Binding) ColoredYaml() string {
 		return fmt.Sprintf("error rendring binding spec,%s", err.Error())
 	}
 	return string(bnd)
-}
-func (b *Binding) TableRowShort() []interface{} {
-	var list []interface{}
-	ms := utils.MapFlatten(b.Properties)
-	if ms == "" {
-		ms = "none"
-	}
-	list = append(list, b.Name, b.Sources.TableItemShort(), b.Targets.TableItemShort(), ms)
-	return list
 }

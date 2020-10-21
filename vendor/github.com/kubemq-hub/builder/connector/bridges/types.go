@@ -14,7 +14,7 @@ We will set:</>
 
 <cyan>Lets start binding source configuration:</>`
 
-	promptSourceConfirm = `<cyan>Here is the binding's Source configuration:</>%s`
+	promptSourceConfirm = `<cyan>Here is the binding's Source configuration:</>%s\n`
 
 	promptSourceReconfigure = `<cyan>Lets reconfigure the binding Source:</>`
 )
@@ -28,7 +28,7 @@ We will set:</>
 
 <cyan>Lets start binding target configuration:</>`
 
-	promptTargetConfirm = `<cyan>Here is the binding's Target configuration:</>%s`
+	promptTargetConfirm = `<cyan>Here is the binding's Target configuration:</>%s\n`
 
 	promptTargetReconfigure = `<cyan>Lets reconfigure the binding Target:</>`
 )
@@ -46,15 +46,13 @@ const (
 {{- .PropertiesSpec -}}
 `
 
-	promptBindingStartMenu = "<cyan>Lets configure the binding list:</>"
-	promptBindingComplete  = "<cyan>We have completed Source and Target binding configurations\n</>"
-	promptShowList         = "<cyan>Current Bindings list:</>"
-	promptShowBinding      = "<cyan>Showing Binding %s configuration:</>"
+	promptBindingStartMenu  = "<cyan>Lets configure the binding list:</>"
+	promptBindingEmptyError = "<red>At least one binding must be configured</>"
+	promptBindingComplete   = "<cyan>We have completed Source and Target binding configurations\n</>"
+	promptShowList          = "<cyan>Current Bindings list:</>\n"
+	promptShowBinding       = "<cyan>Showing Binding %s configuration:</>"
 
-	promptBindingDeleteConfirmation = "<red>Binding %s deleted successfully</>"
-	promptBindingDeleteCanceled     = "<red>Delete binding operation, cancelled</>"
-	promptBindingShowCanceled       = "<red>Show binding operation, cancelled</>"
-	promptBindingEditedConfirmation = "<red>Binding %s edited successfully</>"
-	promptBindingEditedNoSave       = "<red>Binding %s was not edited</>"
-	promptBindingEditCanceled       = "<red>Edit binding operation, cancelled</>"
+	promptBindingDeleteConfirmation = "<cyan>Binding %s deleted successfully\n</>"
+	promptBindingEditedConfirmation = "<red>Binding %s edited successfully\n</>"
+	promptBindingEditedNoSave       = "<red>Binding %s was not edited\n</>"
 )

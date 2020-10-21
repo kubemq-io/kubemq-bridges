@@ -120,6 +120,7 @@ func (t *Target) editName() error {
 		Render(); err != nil {
 		return err
 	}
+	t.WasEdited = true
 	return nil
 }
 func (t *Target) editKind() (bool, error) {
@@ -153,67 +154,39 @@ func (t *Target) editConnections() error {
 		}
 	}
 done:
+	t.WasEdited = true
 	return nil
 }
 func (t *Target) showConfiguration() error {
 	utils.Println(promptShowTarget, t.Name)
-	utils.Println(t.ColoredYaml())
+	utils.Println(fmt.Sprintf("%s\n", t.ColoredYaml()))
 	return nil
 }
 func (t *Target) edit() (*Target, error) {
-	for {
-		ops := []string{
-			"Edit Targets name",
-			"Edit Targets kind",
-			"Edit Targets connections",
-			"Show Targets configuration",
-			"Return",
-		}
-
-		val := ""
-		err := survey.NewString().
-			SetKind("string").
-			SetName("select-operation").
-			SetMessage("Select Edit Binding Targets operation").
-			SetDefault(ops[0]).
-			SetHelp("Select Edit Binding Targets operation").
-			SetRequired(true).
-			SetOptions(ops).
-			Render(&val)
-		if err != nil {
-			return nil, err
-		}
-		switch val {
-		case ops[0]:
-			if err := t.editName(); err != nil {
-				return nil, err
-			}
-			t.WasEdited = true
-		case ops[1]:
-			if changed, err := t.editKind(); err != nil {
-				return nil, err
-			} else {
-				if changed {
-					if err := t.editConnections(); err != nil {
-						return nil, err
-					}
+	menu := survey.NewMenu("Select Edit Binding Targets operation").
+		SetBackOption(true).
+		SetErrorHandler(survey.MenuShowErrorFn)
+	menu.AddItem("Edit Targets Name", t.editName)
+	menu.AddItem("Edit Targets Kinds", func() error {
+		if changed, err := t.editKind(); err != nil {
+			return err
+		} else {
+			if changed {
+				if err := t.editConnections(); err != nil {
+					return err
 				}
+				t.WasEdited = true
 			}
-			t.WasEdited = true
-		case ops[2]:
-			if err := t.editConnections(); err != nil {
-				return nil, err
-			}
-			t.WasEdited = true
-		case ops[3]:
-			if err := t.showConfiguration(); err != nil {
-				return nil, err
-			}
-
-		default:
-			return t, nil
 		}
+		return nil
+	},
+	)
+	menu.AddItem("Edit Targets Connections", t.editConnections)
+	menu.AddItem("Show Targets Configuration", t.showConfiguration)
+	if err := menu.Render(); err != nil {
+		return nil, err
 	}
+	return t, nil
 }
 func (t *Target) Render() (*Target, error) {
 	if t.isEdit {

@@ -3,16 +3,18 @@ package common
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kubemq-hub/builder/pkg/utils"
 	"github.com/kubemq-hub/builder/survey"
 	"strings"
 )
 
 type Connector struct {
-	Kind          string      `json:"kind"`
-	Description   string      `json:"description"`
-	Properties    []*Property `json:"properties"`
-	loadedOptions DefaultOptions
-	values        map[string]string
+	Kind           string      `json:"kind"`
+	Description    string      `json:"description"`
+	Properties     []*Property `json:"properties"`
+	PropertiesSpec string
+	loadedOptions  DefaultOptions
+	values         map[string]string
 }
 
 func NewConnector() *Connector {
@@ -224,6 +226,22 @@ func (c *Connector) Render(options DefaultOptions) (map[string]string, error) {
 		return nil, err
 	}
 	return c.values, nil
+}
+func (c *Connector) ColoredYaml() string {
+	var propertiesMap []map[string]string
+	for _, property := range c.Properties {
+		m := property.Map()
+		if m != nil {
+			propertiesMap = append(propertiesMap, m)
+		}
+	}
+	c.PropertiesSpec = utils.MapArrayToYaml(propertiesMap)
+	t := utils.NewTemplate(connectorTemplate, c)
+	b, err := t.Get()
+	if err != nil {
+		return fmt.Sprintf("error rendring connector spec,%s", err.Error())
+	}
+	return string(b)
 }
 
 type Connectors []*Connector
