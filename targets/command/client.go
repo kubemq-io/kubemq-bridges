@@ -37,7 +37,12 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata) error {
 	}
 	return nil
 }
-
+func (c *Client) Stop() error {
+	if c.client != nil {
+		return c.client.Close()
+	}
+	return nil
+}
 func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, error) {
 
 	var cmd *kubemq.Command

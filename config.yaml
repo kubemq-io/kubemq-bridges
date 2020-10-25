@@ -4,7 +4,7 @@ bindings:
   sources:
     Connections:
     - address: localhost:50000
-      channel: source.da.queues
+      channel: source.da.queuess
     Kind: source.queue
     Name: da
   targets:
@@ -12,4 +12,19 @@ bindings:
     - address: localhost:50000
       channels: target.sd.queues
     Kind: target.queue
+    Name: sds
+- name: as
+  properties: null
+  sources:
+    Connections:
+      - address: localhost:50000
+        channel: source.da.queues
+    Kind: source.queue
+    Name: da
+  targets:
+    Connections:
+      - address: localhost:50000
+        channels: target.sd.queues
+    Kind: target.queue
     Name: sd
+

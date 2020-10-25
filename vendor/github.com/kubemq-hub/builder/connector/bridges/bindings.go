@@ -170,7 +170,6 @@ func (b *Bindings) deleteBinding() error {
 }
 
 func (b *Bindings) listBindings() error {
-	utils.Println(promptShowList)
 	menu := survey.NewMenu("Select Binding to show configuration").
 		SetBackOption(true).
 		SetErrorHandler(survey.MenuShowErrorFn)
@@ -223,4 +222,9 @@ func Unmarshal(data []byte) (*Bindings, error) {
 		return nil, err
 	}
 	return bnd, nil
+}
+
+func (b *Bindings) Validate() error {
+	return nil
+
 }

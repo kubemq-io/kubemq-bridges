@@ -12,10 +12,11 @@ import (
 )
 
 type Binder struct {
-	name    string
-	log     *logger.Logger
-	sources []sources.Source
-	targets []middleware.Middleware
+	name              string
+	log               *logger.Logger
+	sources           []sources.Source
+	targetsMiddleware []middleware.Middleware
+	targets           []targets.Target
 }
 
 func NewBinder() *Binder {
@@ -53,7 +54,8 @@ func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *m
 		if err != nil {
 			return fmt.Errorf("error loading middlewares %s on binding %s, %w", cfg.Targets.Name, b.name, err)
 		}
-		b.targets = append(b.targets, md)
+		b.targetsMiddleware = append(b.targetsMiddleware, md)
+		b.targets = append(b.targets, target)
 	}
 
 	for _, connection := range cfg.Sources.Connections {
@@ -68,7 +70,7 @@ func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *m
 }
 
 func (b *Binder) Start(ctx context.Context) error {
-	if b.targets == nil {
+	if b.targetsMiddleware == nil {
 		return fmt.Errorf("error starting binding connector %s,no valid initialzed targets middleware found", b.name)
 	}
 	if b.sources == nil {
@@ -76,7 +78,7 @@ func (b *Binder) Start(ctx context.Context) error {
 	}
 
 	for _, source := range b.sources {
-		err := source.Start(ctx, b.targets, b.log)
+		err := source.Start(ctx, b.targetsMiddleware, b.log)
 		if err != nil {
 			return err
 		}
@@ -88,6 +90,12 @@ func (b *Binder) Start(ctx context.Context) error {
 func (b *Binder) Stop() error {
 	for _, source := range b.sources {
 		err := source.Stop()
+		if err != nil {
+			return err
+		}
+	}
+	for _, target := range b.targets {
+		err := target.Stop()
 		if err != nil {
 			return err
 		}

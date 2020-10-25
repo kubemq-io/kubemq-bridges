@@ -21,7 +21,7 @@ func Start(ctx context.Context, port int, bs *binding.Service) (*Server, error) 
 	}
 	s.echoWebServer.Use(middleware.Recover())
 	s.echoWebServer.Use(middleware.CORS())
-
+	s.echoWebServer.HideBanner = true
 	s.echoWebServer.GET("/health", func(c echo.Context) error {
 
 		return c.String(200, "ok")
@@ -59,5 +59,5 @@ func Start(ctx context.Context, port int, bs *binding.Service) (*Server, error) 
 func (s *Server) Stop() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	 return s.echoWebServer.Shutdown(ctx)
+	return s.echoWebServer.Shutdown(ctx)
 }

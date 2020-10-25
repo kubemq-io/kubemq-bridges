@@ -8,6 +8,11 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/pkg/metrics"
 	"net/http"
 	"sync"
+	"time"
+)
+
+const (
+	addRetryInterval = 1 * time.Second
 )
 
 type Service struct {
@@ -34,22 +39,33 @@ func New() (*Service, error) {
 }
 func (s *Service) Start(ctx context.Context, cfg *config.Config) error {
 	s.currentCtx, s.currentCancelFunc = context.WithCancel(ctx)
-	wg := sync.WaitGroup{}
-	wg.Add(len(cfg.Bindings))
-	for _, bindingCfg := range cfg.Bindings {
-		go func(cfg config.BindingConfig) {
-			defer wg.Done()
-			err := s.Add(s.currentCtx, cfg)
-			if err != nil {
-				s.log.Errorf("failed to initialized binding, %s", err.Error())
-				return
-			}
-		}(bindingCfg)
-
+	if len(cfg.Bindings) == 0 {
+		return nil
 	}
-	wg.Wait()
-	if len(s.bindings) == 0 {
-		return fmt.Errorf("no valid bindings started")
+	for _, bindingCfg := range cfg.Bindings {
+		go func(ctx context.Context, cfg config.BindingConfig) {
+			err := s.Add(ctx, cfg)
+			if err == nil {
+				return
+			} else {
+				s.log.Errorf("failed to initialized binding, %s", err.Error())
+			}
+			count := 0
+			for {
+				select {
+				case <-time.After(addRetryInterval):
+					count++
+					err := s.Add(ctx, cfg)
+					if err != nil {
+						s.log.Errorf("failed to initialized binding: %s, attempt: %d, error: %s", cfg.Name, count, err.Error())
+					}
+				case <-ctx.Done():
+					return
+				}
+			}
+
+		}(s.currentCtx, bindingCfg)
+
 	}
 	return nil
 }
@@ -66,10 +82,6 @@ func (s *Service) Stop() {
 func (s *Service) Add(ctx context.Context, cfg config.BindingConfig) error {
 	s.Lock()
 	defer s.Unlock()
-	_, ok := s.bindings[cfg.Name]
-	if ok {
-		return fmt.Errorf("duplicate binding name")
-	}
 	binder := NewBinder()
 	err := binder.Init(ctx, cfg, s.exporter)
 	if err != nil {

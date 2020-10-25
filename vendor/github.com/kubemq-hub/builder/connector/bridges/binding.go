@@ -254,7 +254,8 @@ func (b *Binding) add() (*Binding, error) {
 }
 
 func (b *Binding) edit() (*Binding, error) {
-	menu := survey.NewMenu("Select Edit Binding operation").
+
+	menu := survey.NewMenu("Select Edit Binding Options").
 		SetBackOption(true).
 		SetErrorHandler(survey.MenuShowErrorFn)
 	menu.AddItem("Edit Binding Name", b.setName)

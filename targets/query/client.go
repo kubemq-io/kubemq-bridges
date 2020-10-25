@@ -28,14 +28,19 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata) error {
 		kubemq.WithClientId(c.opts.clientId),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithAuthToken(c.opts.authToken),
-		kubemq.WithCheckConnection(false),
+		kubemq.WithCheckConnection(true),
 	)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-
+func (c *Client) Stop() error {
+	if c.client != nil {
+		return c.client.Close()
+	}
+	return nil
+}
 func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, error) {
 	var query *kubemq.Query
 	switch val := request.(type) {

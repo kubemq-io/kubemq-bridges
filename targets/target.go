@@ -14,6 +14,7 @@ import (
 type Target interface {
 	Init(ctx context.Context, connection config.Metadata) error
 	Do(ctx context.Context, request interface{}) (interface{}, error)
+	Stop() error
 }
 
 func Init(ctx context.Context, kind string, connection config.Metadata) (Target, error) {

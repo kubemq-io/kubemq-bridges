@@ -251,7 +251,7 @@ func (c Connectors) Validate() error {
 	for _, connector := range c {
 		_, ok := list[connector.Kind]
 		if ok {
-			return fmt.Errorf("duplicate connector kind: %s", connector.Kind)
+			return fmt.Errorf("copied connector kind: %s", connector.Kind)
 		} else {
 			list[connector.Kind] = connector
 		}

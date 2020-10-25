@@ -49,7 +49,6 @@ const (
 	promptBindingStartMenu  = "<cyan>Lets configure the binding list:</>"
 	promptBindingEmptyError = "<red>At least one binding must be configured</>"
 	promptBindingComplete   = "<cyan>We have completed Source and Target binding configurations\n</>"
-	promptShowList          = "<cyan>Current Bindings list:</>\n"
 	promptShowBinding       = "<cyan>Showing Binding %s configuration:</>"
 
 	promptBindingDeleteConfirmation = "<cyan>Binding %s deleted successfully\n</>"

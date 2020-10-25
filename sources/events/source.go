@@ -33,7 +33,7 @@ func (s *Source) Init(ctx context.Context, Source config.Metadata) error {
 		kubemq.WithClientId(s.opts.clientId),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithAuthToken(s.opts.authToken),
-		kubemq.WithCheckConnection(false),
+		kubemq.WithCheckConnection(true),
 		kubemq.WithMaxReconnects(s.opts.maxReconnects),
 		kubemq.WithAutoReconnect(s.opts.autoReconnect),
 		kubemq.WithReconnectInterval(s.opts.reconnectIntervalSeconds))

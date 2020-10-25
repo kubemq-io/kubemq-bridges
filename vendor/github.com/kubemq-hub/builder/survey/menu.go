@@ -52,7 +52,7 @@ func (m *Menu) AddItem(title string, fn func() error) *Menu {
 
 func (m *Menu) Render() error {
 	if m.back {
-		m.AddItem("<-back", nil)
+		m.AddItem("<back>", nil)
 	}
 	val := ""
 	menu := &survey.Select{

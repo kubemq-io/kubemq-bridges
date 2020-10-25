@@ -5,6 +5,7 @@ import (
 	"github.com/kubemq-hub/builder/pkg/utils"
 	"github.com/kubemq-hub/builder/survey"
 	"gopkg.in/yaml.v2"
+	"sort"
 )
 
 type Bindings struct {
@@ -20,7 +21,19 @@ func NewBindings(defaultName string) *Bindings {
 		defaultName: defaultName,
 	}
 }
-
+func (b *Bindings) Clone() *Bindings {
+	cloned := &Bindings{
+		Bindings:          nil,
+		manifest:          b.manifest,
+		loadedOptions:     b.loadedOptions,
+		takenBindingNames: b.takenBindingNames,
+		defaultName:       b.defaultName,
+	}
+	for _, binding := range b.Bindings {
+		cloned.Bindings = append(cloned.Bindings, binding.Clone())
+	}
+	return cloned
+}
 func (b *Bindings) SetBindings(value []*Binding) *Bindings {
 	b.Bindings = value
 	return b
@@ -37,25 +50,14 @@ func (b *Bindings) SetDefaultName(value string) *Bindings {
 	b.defaultName = value
 	return b
 }
-func (b *Bindings) confirmBinding(bnd *Binding) bool {
-	utils.Println(fmt.Sprintf(promptBindingConfirm, bnd.ColoredYaml()))
-	val := true
-	err := survey.NewBool().
-		SetKind("bool").
-		SetName("confirm-connection").
-		SetMessage("Would you like save this configuration").
-		SetDefault("true").
-		SetRequired(true).
-		Render(&val)
-	if err != nil {
-		return false
-	}
 
-	return val
+func (b *Bindings) sort() {
+	sort.Slice(b.Bindings, func(i, j int) bool {
+		return b.Bindings[i].Name < b.Bindings[j].Name
+	})
 }
 func (b *Bindings) addBinding() error {
-
-	bnd := NewBinding(fmt.Sprintf("%s-binding-%d", b.defaultName, len(b.Bindings)+1))
+	bnd := NewBinding(fmt.Sprintf("binding-%d", len(b.Bindings)+1))
 	var err error
 	if bnd, err = bnd.
 		SetDefaultOptions(b.loadedOptions).
@@ -65,12 +67,14 @@ func (b *Bindings) addBinding() error {
 		Render(); err != nil {
 		return err
 	}
-	ok := b.confirmBinding(bnd)
-	if ok {
-		b.Bindings = append(b.Bindings, bnd)
-		b.takenBindingNames = append(b.takenBindingNames, bnd.Name)
+	for _, binding := range b.Bindings {
+		if bnd.Name == binding.Name {
+			return fmt.Errorf("added binding name it not unique, binding %s was not added", bnd.Name)
+		}
 	}
-
+	utils.Println(promptBindingAddConfirmation, bnd.Name)
+	b.Bindings = append(b.Bindings, bnd)
+	b.sort()
 	return nil
 }
 
@@ -90,33 +94,36 @@ func (b *Bindings) switchOrRemove(old, new *Binding) {
 	}
 	b.Bindings = newBindingList
 	b.takenBindingNames = newTakenBindingNames
-
+	b.sort()
 }
+
 func (b *Bindings) editBinding() error {
-	menu := survey.NewMenu("Select Binding to edit").
+	menu := survey.NewMenu("Select Binding to edit:").
 		SetBackOption(true).
-		SetErrorHandler(survey.MenuShowErrorFn)
+		SetErrorHandler(survey.MenuShowErrorFn).
+		SetDisableLoop(true)
 	for _, binding := range b.Bindings {
+		edited := binding.Clone()
+		origin := binding
 		editFn := func() error {
 			var err error
-			edited := binding.Clone()
 			if edited, err = edited.
 				SetEditMode(true).
 				SetDefaultOptions(b.loadedOptions).
+				SetSourcesList(b.manifest.Sources).
+				SetTargetsList(b.manifest.Targets).
 				SetTakenBindingNames(b.takenBindingNames).
 				Render(); err != nil {
 				return err
 			}
-			if !edited.wasEdited {
-				return nil
+			for _, binding := range b.Bindings {
+				if edited.Name == binding.Name {
+					return fmt.Errorf("binding name %s is not unique, binding %s was not edited", edited.Name, origin.Name)
+				}
 			}
-			ok := b.confirmBinding(edited)
-			if ok {
-				b.switchOrRemove(binding, edited)
-				utils.Println(promptBindingEditedConfirmation, binding.Name)
-			} else {
-				utils.Println(promptBindingEditedNoSave, binding.Name)
-			}
+
+			b.switchOrRemove(origin, edited)
+			utils.Println(promptBindingEditedConfirmation, edited.Name)
 			return nil
 		}
 		menu.AddItem(binding.Name, editFn)
@@ -127,25 +134,25 @@ func (b *Bindings) editBinding() error {
 	return nil
 }
 func (b *Bindings) deleteBinding() error {
-	menu := survey.NewMenu("Select Binding to delete").
+	menu := survey.NewMenu("Select Binding to delete:").
 		SetBackOption(true).
 		SetErrorHandler(survey.MenuShowErrorFn).
 		SetDisableLoop(true)
 	for _, binding := range b.Bindings {
+		deleted := binding
 		deleteFn := func() error {
-			bindingName := binding.Name
 			val := false
 			if err := survey.NewBool().
 				SetName("confirm-delete").
-				SetMessage(fmt.Sprintf("Are you sure you want to delete %s binding", bindingName)).
+				SetMessage(fmt.Sprintf("Are you sure you want to delete %s binding", deleted.Name)).
 				SetRequired(true).
 				SetDefault("false").
 				Render(&val); err != nil {
 				return err
 			}
 			if val {
-				b.switchOrRemove(binding, nil)
-				utils.Println(promptBindingDeleteConfirmation, binding.Name)
+				b.switchOrRemove(deleted, nil)
+				utils.Println(promptBindingDeleteConfirmation, deleted.Name)
 				return nil
 			}
 			return nil
@@ -155,17 +162,69 @@ func (b *Bindings) deleteBinding() error {
 	if err := menu.Render(); err != nil {
 		return err
 	}
+	b.sort()
+	return nil
+}
+
+func (b *Bindings) copyBinding() error {
+	menu := survey.NewMenu("Select Binding to copy:").
+		SetBackOption(true).
+		SetErrorHandler(survey.MenuShowErrorFn).
+		SetDisableLoop(true)
+	for _, binding := range b.Bindings {
+		cloned := binding.Clone()
+		origin := binding
+		copyFn := func() error {
+			if err := cloned.setName(); err != nil {
+				return err
+			}
+			for _, binding := range b.Bindings {
+				if cloned.Name == binding.Name {
+					return fmt.Errorf("copied binding name (%s) must be unique\n", cloned.Name)
+				}
+			}
+			checkEdit := false
+			if err := survey.NewBool().
+				SetKind("bool").
+				SetMessage("Would you like to edit the copied binding before saving").
+				SetRequired(true).
+				SetDefault("false").
+				Render(&checkEdit); err != nil {
+				return err
+			}
+			if checkEdit {
+				var err error
+				cloned, err = cloned.edit()
+				if err != nil {
+					return err
+				}
+			}
+			for _, binding := range b.Bindings {
+				if cloned.Name == binding.Name {
+					return fmt.Errorf("binding name %s is not unique, binding %s was not edited", cloned.Name, origin.Name)
+				}
+			}
+			b.Bindings = append(b.Bindings, cloned)
+			return nil
+		}
+		menu.AddItem(binding.Name, copyFn)
+	}
+	if err := menu.Render(); err != nil {
+		return err
+	}
+	b.sort()
 	return nil
 }
 func (b *Bindings) listBindings() error {
 
-	menu := survey.NewMenu("Select Binding to show configuration").
+	menu := survey.NewMenu("Select Binding to show configuration:").
 		SetBackOption(true).
 		SetErrorHandler(survey.MenuShowErrorFn)
 	for _, binding := range b.Bindings {
+		selected := binding
 		showFn := func() error {
-			utils.Println(promptShowBinding, binding.Name)
-			utils.Println("%s\n", binding.ColoredYaml())
+			utils.Println(promptShowBinding, selected.Name)
+			utils.Println("%s\n", selected.ColoredYaml())
 			utils.WaitForEnter()
 			return nil
 		}
@@ -178,27 +237,34 @@ func (b *Bindings) listBindings() error {
 }
 
 func (b *Bindings) Render() ([]byte, error) {
-	utils.Println(promptBindingStartMenu)
-	for {
-		menu := survey.NewMenu("Select Bindings operation").
-			SetBackOption(true).
-			SetErrorHandler(survey.MenuShowErrorFn)
+	var result *Bindings
+	clone := b.Clone()
+	form := survey.NewForm("Select Manage Bindings Option:")
 
-		menu.AddItem("Add binding", b.addBinding)
-		menu.AddItem("Edit binding", b.editBinding)
-		menu.AddItem("Delete binding", b.deleteBinding)
-		menu.AddItem("List bindings", b.listBindings)
-		if err := menu.Render(); err != nil {
-			return nil, err
-		}
+	form.AddItem("<a> Add Binding", clone.addBinding)
+	form.AddItem("<e> Edit Bindings", clone.editBinding)
+	form.AddItem("<c> Copy Binding", clone.copyBinding)
+	form.AddItem("<d> Delete Binding", clone.deleteBinding)
+	form.AddItem("<l> List of Bindings", clone.listBindings)
 
-		if len(b.Bindings) == 0 {
-			utils.Println(promptBindingEmptyError)
-		} else {
-			break
+	form.SetOnSaveFn(func() error {
+		if err := clone.Validate(); err != nil {
+			return err
 		}
+		result = clone
+
+		return nil
+	})
+	form.SetOnCancelFn(func() error {
+		result = b
+		return nil
+	})
+	form.SetOnErrorFn(survey.FormShowErrorFn)
+	if err := form.Render(); err != nil {
+		return nil, err
 	}
-	return yaml.Marshal(b)
+	result.sort()
+	return yaml.Marshal(result)
 }
 
 func (b *Bindings) Yaml() ([]byte, error) {
@@ -212,4 +278,11 @@ func Unmarshal(data []byte) (*Bindings, error) {
 		return nil, err
 	}
 	return bnd, nil
+}
+
+func (b *Bindings) Validate() error {
+	if len(b.Bindings) == 0 {
+		return fmt.Errorf("at least one binding must be configured")
+	}
+	return nil
 }
