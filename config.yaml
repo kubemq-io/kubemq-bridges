@@ -1,30 +1,75 @@
 bindings:
-- name: as
+- name: command
   properties:
     log_level: "debug"
   sources:
-    Connections:
+    connections:
     - address: localhost:50000
-      channel: source1
-    Kind: source.queue
+      channel: command1
+    Kind: source.command
     Name: da
   targets:
-    Connections:
+    connections:
     - address: localhost:50000
       channels: target1
+    Kind: target.queue
+    Name: sds
+- name: query
+  properties:
+    log_level: "debug"
+  sources:
+    connections:
+      - address: localhost:50000
+        channel: query1
+    Kind: source.query
+    Name: da
+  targets:
+    connections:
+      - address: localhost:50000
+        channels: target1
+    Kind: target.queue
+    Name: sds
+- name: events
+  properties:
+    log_level: "debug"
+  sources:
+    connections:
+      - address: localhost:50000
+        channel: events1
+    Kind: source.events
+    Name: da
+  targets:
+    connections:
+      - address: localhost:50000
+        channels: target1
+    Kind: target.queue
+    Name: sds
+- name: events-store
+  properties:
+    log_level: "debug"
+  sources:
+    connections:
+      - address: localhost:50000
+        channel: events-store1
+    Kind: source.events-store
+    Name: da
+  targets:
+    connections:
+      - address: localhost:50000
+        channels: target1
     Kind: target.queue
     Name: sds
 - name: as2344
   properties:
     log_level: "debug"
   sources:
-    Connections:
+    connections:
       - address: localhost:50000
         channel: target1
     Kind: source.queue
     Name: da
   targets:
-    Connections:
+    connections:
       - address: localhost:50000
         channels: target2
     Kind: target.queue
