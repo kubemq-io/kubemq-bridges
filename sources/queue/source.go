@@ -3,6 +3,7 @@ package queue
 import (
 	"context"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
+	"time"
 
 	"github.com/kubemq-io/kubemq-go"
 
@@ -10,11 +11,16 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
 )
 
+const (
+	retriesInterval = 1 * time.Second
+)
+
 type Source struct {
-	opts    options
-	client  *kubemq.Client
-	log     *logger.Logger
-	targets []middleware.Middleware
+	opts      options
+	client    *kubemq.Client
+	log       *logger.Logger
+	targets   []middleware.Middleware
+	isStopped bool
 }
 
 func New() *Source {
@@ -47,13 +53,30 @@ func (c *Source) Start(ctx context.Context, targets []middleware.Middleware, log
 	go c.run(ctx)
 	return nil
 }
-
+func (c *Source) reconnect(ctx context.Context) error {
+	var err error
+	c.client, err = kubemq.NewClient(ctx,
+		kubemq.WithAddress(c.opts.host, c.opts.port),
+		kubemq.WithClientId(c.opts.clientId),
+		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
+		kubemq.WithAuthToken(c.opts.authToken),
+		kubemq.WithCheckConnection(true),
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (c *Source) run(ctx context.Context) {
 	for {
+		if c.isStopped {
+			return
+		}
 		queueMessages, err := c.getQueueMessages(ctx)
 		if err != nil {
 			c.log.Error(err.Error())
-			return
+			time.Sleep(retriesInterval)
+			continue
 		}
 		for _, message := range queueMessages {
 			for _, target := range c.targets {
@@ -94,5 +117,6 @@ func (c *Source) processQueueMessage(ctx context.Context, msg *kubemq.QueueMessa
 }
 
 func (c *Source) Stop() error {
+	c.isStopped = true
 	return c.client.Close()
 }

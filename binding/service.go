@@ -58,6 +58,8 @@ func (s *Service) Start(ctx context.Context, cfg *config.Config) error {
 					err := s.Add(ctx, cfg)
 					if err != nil {
 						s.log.Errorf("failed to initialized binding: %s, attempt: %d, error: %s", cfg.Name, count, err.Error())
+					} else {
+						return
 					}
 				case <-ctx.Done():
 					return
