@@ -53,20 +53,7 @@ func (c *Source) Start(ctx context.Context, targets []middleware.Middleware, log
 	go c.run(ctx)
 	return nil
 }
-func (c *Source) reconnect(ctx context.Context) error {
-	var err error
-	c.client, err = kubemq.NewClient(ctx,
-		kubemq.WithAddress(c.opts.host, c.opts.port),
-		kubemq.WithClientId(c.opts.clientId),
-		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
-		kubemq.WithAuthToken(c.opts.authToken),
-		kubemq.WithCheckConnection(true),
-	)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+
 func (c *Source) run(ctx context.Context) {
 	for {
 		if c.isStopped {
