@@ -48,11 +48,11 @@ func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *m
 	for _, connection := range cfg.Targets.Connections {
 		target, err := targets.Init(ctx, cfg.Targets.Kind, connection)
 		if err != nil {
-			return fmt.Errorf("error loading targets conntector %s on binding %s, %w", cfg.Targets.Name, b.name, err)
+			return fmt.Errorf("error loading targets conntector on binding %s, %w", b.name, err)
 		}
 		md, err := b.buildMiddleware(target, cfg, exporter)
 		if err != nil {
-			return fmt.Errorf("error loading middlewares %s on binding %s, %w", cfg.Targets.Name, b.name, err)
+			return fmt.Errorf("error loading middlewares on binding %s, %w", b.name, err)
 		}
 		b.targetsMiddleware = append(b.targetsMiddleware, md)
 		b.targets = append(b.targets, target)
@@ -61,7 +61,7 @@ func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *m
 	for _, connection := range cfg.Sources.Connections {
 		source, err := sources.Init(ctx, cfg.Sources.Kind, connection)
 		if err != nil {
-			return fmt.Errorf("error loading sources conntector %s on binding %s, %w", cfg.Sources.Name, b.name, err)
+			return fmt.Errorf("error loading sources conntector on binding %s, %w", b.name, err)
 		}
 		b.sources = append(b.sources, source)
 	}
