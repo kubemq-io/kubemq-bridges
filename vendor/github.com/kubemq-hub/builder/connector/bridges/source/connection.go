@@ -8,7 +8,6 @@ import (
 type Connection struct {
 	addressOptions []string
 	properties     map[string]string
-	name           string
 	kind           string
 }
 
@@ -47,7 +46,7 @@ func (c *Connection) askChannel() error {
 		SetKind("string").
 		SetName("channel").
 		SetMessage("Set source channel").
-		SetDefault(fmt.Sprintf("source.%s.%s", c.name, c.kind)).
+		SetDefault(fmt.Sprintf("source.%s", c.kind)).
 		SetHelp("Set source channel").
 		SetRequired(true).
 		SetValidator(survey.ValidateNoneSpace).
@@ -216,9 +215,7 @@ func (c *Connection) renderQueueKind() (map[string]string, error) {
 	return c.properties, nil
 }
 
-func (c *Connection) Render(name, kind string) (map[string]string, error) {
-	c.name = name
-
+func (c *Connection) Render(kind string) (map[string]string, error) {
 	switch kind {
 	case "source.queue":
 		c.kind = "queues"

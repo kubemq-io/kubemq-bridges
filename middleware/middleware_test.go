@@ -324,12 +324,10 @@ func TestClient_Metric(t *testing.T) {
 
 				Name: "b-1",
 				Sources: config.Spec{
-					Name:        "sn",
 					Kind:        "sk",
 					Connections: nil,
 				},
 				Targets: config.Spec{
-					Name:        "tn",
 					Kind:        "tk",
 					Connections: nil,
 				},
@@ -338,9 +336,7 @@ func TestClient_Metric(t *testing.T) {
 			wantReport: &metrics.Report{
 				Key:            "b-1-sn-sk-tn-tk",
 				Binding:        "b-1",
-				SourceName:     "sn",
 				SourceKind:     "sk",
-				TargetName:     "tn",
 				TargetKind:     "tk",
 				RequestCount:   1,
 				RequestVolume:  16,
@@ -361,12 +357,10 @@ func TestClient_Metric(t *testing.T) {
 			cfg: config.BindingConfig{
 				Name: "b-2",
 				Sources: config.Spec{
-					Name:        "sn",
 					Kind:        "sk",
 					Connections: nil,
 				},
 				Targets: config.Spec{
-					Name:        "tn",
 					Kind:        "tk",
 					Connections: nil,
 				},
@@ -375,9 +369,7 @@ func TestClient_Metric(t *testing.T) {
 			wantReport: &metrics.Report{
 				Key:            "b-2-sn-sk-tn-tk",
 				Binding:        "b-2",
-				SourceName:     "sn",
 				SourceKind:     "sk",
-				TargetName:     "tn",
 				TargetKind:     "tk",
 				RequestCount:   1,
 				RequestVolume:  16,

@@ -7,32 +7,25 @@ import (
 )
 
 type Source struct {
-	Name           string              `json:"name"`
 	Kind           string              `json:"kind"`
 	Connections    []map[string]string `json:"connections"`
 	ConnectionSpec string              `json:"-" yaml:"-"`
 	WasEdited      bool                `json:"-" yaml:"-"`
-	addressOptions []string
-	takenNames     []string
-	defaultName    string
 	isEdit         bool
+	kubemqAddress  []string
 }
 
-func NewSource(defaultName string) *Source {
-	return &Source{
-		addressOptions: nil,
-		defaultName:    defaultName,
-	}
+func NewSource() *Source {
+	return &Source{}
 }
 func (s *Source) Clone() *Source {
 	newSrc := &Source{
-		Name:           s.Name,
 		Kind:           s.Kind,
 		Connections:    []map[string]string{},
 		ConnectionSpec: s.ConnectionSpec,
-		addressOptions: s.addressOptions,
-		takenNames:     s.takenNames,
-		defaultName:    s.Name,
+		WasEdited:      s.WasEdited,
+		isEdit:         s.isEdit,
+		kubemqAddress:  s.kubemqAddress,
 	}
 	for _, connection := range s.Connections {
 		newConnection := map[string]string{}
@@ -43,13 +36,8 @@ func (s *Source) Clone() *Source {
 	}
 	return newSrc
 }
-
-func (s *Source) SetAddress(value []string) *Source {
-	s.addressOptions = value
-	return s
-}
-func (s *Source) SetTakenNames(value []string) *Source {
-	s.takenNames = value
+func (s *Source) SetKubemqAddress(values []string) *Source {
+	s.kubemqAddress = values
 	return s
 }
 func (s *Source) SetIsEdit(value bool) *Source {
@@ -74,8 +62,8 @@ func (s *Source) askAddConnection() (bool, error) {
 
 func (s *Source) addConnection() error {
 	if connection, err := NewConnection().
-		SetAddress(s.addressOptions).
-		Render(s.Name, s.Kind); err != nil {
+		SetAddress(s.kubemqAddress).
+		Render(s.Kind); err != nil {
 		return err
 	} else {
 		s.Connections = append(s.Connections, connection)
@@ -84,11 +72,6 @@ func (s *Source) addConnection() error {
 }
 func (s *Source) add() (*Source, error) {
 	var err error
-	if s.Name, err = NewName(s.defaultName).
-		SetTakenNames(s.takenNames).
-		Render(); err != nil {
-		return nil, err
-	}
 	if s.Kind, err = NewKind("").
 		Render(); err != nil {
 		return nil, err
@@ -115,16 +98,7 @@ func (s *Source) add() (*Source, error) {
 done:
 	return s, nil
 }
-func (s *Source) editName() error {
-	var err error
-	if s.Name, err = NewName(s.Name).
-		SetTakenNames(s.takenNames).
-		Render(); err != nil {
-		return err
-	}
-	s.WasEdited = true
-	return nil
-}
+
 func (s *Source) editKind() (bool, error) {
 	var err error
 	current := s.Kind
@@ -159,17 +133,18 @@ done:
 	s.WasEdited = true
 	return nil
 }
-func (s *Source) showConfiguration() error {
-	utils.Println(promptShowSource, s.Name)
-	utils.Println(fmt.Sprintf("%s\n", s.ColoredYaml()))
-	return nil
-}
+
 func (s *Source) edit() (*Source, error) {
-	menu := survey.NewMenu("Select Edit Binding Sources operation").
-		SetBackOption(true).
-		SetErrorHandler(survey.MenuShowErrorFn)
-	menu.AddItem("Edit Sources Name", s.editName)
-	menu.AddItem("Edit Sources Kinds", func() error {
+	var result *Source
+	edited := s.Clone()
+	form := survey.NewForm("Select Edit Source Option:")
+
+	ftKind := new(string)
+	*ftKind = fmt.Sprintf("<k> Edit Source Kind (%s)", edited.Kind)
+	ftConnections := new(string)
+	*ftConnections = fmt.Sprintf("<c> Edit Source Connections (%s)", edited.Kind)
+
+	form.AddItem(ftKind, func() error {
 		if changed, err := s.editKind(); err != nil {
 			return err
 		} else {
@@ -180,15 +155,40 @@ func (s *Source) edit() (*Source, error) {
 				s.WasEdited = true
 			}
 		}
+		*ftKind = fmt.Sprintf("<k> Edit Source Kind (%s)", edited.Kind)
+		*ftConnections = fmt.Sprintf("<c> Edit Source Connections (%s)", edited.Kind)
 		return nil
-	},
-	)
-	menu.AddItem("Edit Sources Connections", s.editConnections)
-	menu.AddItem("Show Sources Configuration", s.showConfiguration)
-	if err := menu.Render(); err != nil {
+	})
+
+	form.AddItem(ftConnections, func() error {
+		if err := s.editConnections(); err != nil {
+			return err
+		}
+		*ftConnections = fmt.Sprintf("<c> Edit Source Connections (%s)", edited.Kind)
+		return nil
+	})
+
+	form.AddItem("<s> Show Source Configuration", func() error {
+		utils.Println(promptShowSource)
+		utils.Println("%s\n", edited.ColoredYaml())
+		return nil
+	})
+	form.SetOnSaveFn(func() error {
+		if err := edited.Validate(); err != nil {
+			return err
+		}
+		result = edited
+		return nil
+	})
+
+	form.SetOnCancelFn(func() error {
+		result = s
+		return nil
+	})
+	if err := form.Render(); err != nil {
 		return nil, err
 	}
-	return s, nil
+	return result, nil
 }
 func (s *Source) Render() (*Source, error) {
 	if s.isEdit {
@@ -207,5 +207,9 @@ func (s *Source) ColoredYaml() string {
 	return string(b)
 }
 func (s *Source) TableItemShort() string {
-	return fmt.Sprintf("%s/%s/%d", s.Name, s.Kind, len(s.Connections))
+	return fmt.Sprintf("%s/%d", s.Kind, len(s.Connections))
+}
+
+func (s *Source) Validate() error {
+	return nil
 }

@@ -13,10 +13,10 @@ const (
 )
 
 type Form struct {
-	title     string
-	fnMap     map[int]func() error
-	fnItems   []interface{}
-	pageSize  int
+	title   string
+	fnMap   map[int]func() error
+	fnItems []interface{}
+
 	onError   func(err error) error
 	onSave    func() error
 	onDefault func() error
@@ -47,10 +47,6 @@ func (f *Form) SetOnCancelFn(fn func() error) *Form {
 	return f
 }
 
-func (f *Form) SetPageSize(value int) *Form {
-	f.pageSize = value
-	return f
-}
 func (f *Form) AddItem(title interface{}, fn func() error) *Form {
 	f.fnMap[len(f.fnItems)] = fn
 	f.fnItems = append(f.fnItems, title)
@@ -72,6 +68,9 @@ func (f *Form) buildOptions() ([]string, map[string]int) {
 	return list, m
 }
 func (f *Form) Render() error {
+	if len(f.fnItems) == 0 {
+		return fmt.Errorf("no items to select are available")
+	}
 
 	if f.onSave != nil {
 		f.AddItem(FormSave, f.onSave)
@@ -82,6 +81,14 @@ func (f *Form) Render() error {
 	if f.onCancel != nil {
 		f.AddItem(FormCancel, f.onCancel)
 	}
+	itemsLength := len(f.fnItems)
+	pageSize := 7
+	if itemsLength > pageSize {
+		pageSize = len(f.fnItems)
+	}
+	if pageSize > 25 {
+		pageSize = 25
+	}
 	lastIndex := 0
 	for {
 		options, selectionMap := f.buildOptions()
@@ -91,7 +98,7 @@ func (f *Form) Render() error {
 			Message:       f.title,
 			Options:       options,
 			Default:       options[lastIndex],
-			PageSize:      f.pageSize,
+			PageSize:      pageSize,
 			VimMode:       false,
 			FilterMessage: "",
 			Filter:        nil,

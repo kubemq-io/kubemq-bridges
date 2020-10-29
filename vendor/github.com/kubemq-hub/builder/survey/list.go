@@ -8,9 +8,11 @@ import (
 type List struct {
 	*KindMeta
 	*ObjectMeta
-	Options    []string
+	Options []string
+
 	askOpts    []survey.AskOpt
 	validators []func(val interface{}) error
+	pageSize   int
 }
 
 func NewList() *List {
@@ -34,7 +36,10 @@ func (l *List) SetKind(value string) *List {
 	l.KindMeta.SetKind(value)
 	return l
 }
-
+func (l *List) SetPageSize(value int) *List {
+	l.pageSize = value
+	return l
+}
 func (l *List) SetName(value string) *List {
 	l.ObjectMeta.SetName(value)
 	return l
@@ -99,7 +104,7 @@ func (l *List) Render(target interface{}) error {
 		Options:       l.Options,
 		Default:       l.Default,
 		Help:          l.Help,
-		PageSize:      0,
+		PageSize:      l.pageSize,
 		VimMode:       false,
 		FilterMessage: "",
 		Filter:        nil,

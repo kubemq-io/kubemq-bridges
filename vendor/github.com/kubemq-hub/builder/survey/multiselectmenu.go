@@ -3,50 +3,41 @@ package survey
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/kubemq-hub/builder/pkg/utils"
 )
 
-type Menu struct {
+type MultiSelectMenu struct {
 	title        string
 	fnMap        map[string]func() error
 	fnItems      []string
 	errorHandler func(err error) error
-	disableLoop  bool
-	back         bool
 }
 
-func NewMenu(title string) *Menu {
-	return &Menu{
+func NewMultiSelectMenu(title string) *MultiSelectMenu {
+	return &MultiSelectMenu{
 		title:   title,
 		fnMap:   map[string]func() error{},
 		fnItems: []string{},
 	}
 }
 
-func (m *Menu) SetErrorHandler(value func(err error) error) *Menu {
+func (m *MultiSelectMenu) SetErrorHandler(value func(err error) error) *MultiSelectMenu {
 	m.errorHandler = value
 	return m
 }
-func (m *Menu) SetDisableLoop(value bool) *Menu {
-	m.disableLoop = value
-	return m
-}
-func (m *Menu) SetBackOption(value bool) *Menu {
-	m.back = value
-	return m
-}
-func (m *Menu) AddItem(title string, fn func() error) *Menu {
+
+func (m *MultiSelectMenu) AddItem(title string, fn func() error) *MultiSelectMenu {
 	m.fnMap[title] = fn
 	m.fnItems = append(m.fnItems, title)
 	return m
 }
 
-func (m *Menu) Render() error {
+func (m *MultiSelectMenu) Render() error {
 	if len(m.fnItems) == 0 {
 		return fmt.Errorf("no items to select are available")
 	}
-	if m.back {
-		m.AddItem("<back>", nil)
+	m.AddItem("<cancel>", nil)
+	if m.errorHandler == nil {
+		m.errorHandler = MenuShowErrorFn
 	}
 	itemsLength := len(m.fnItems) + 1
 	pageSize := 7
@@ -56,8 +47,8 @@ func (m *Menu) Render() error {
 	if pageSize > 25 {
 		pageSize = 25
 	}
-	val := ""
-	menu := &survey.Select{
+	var values []string
+	menu := &survey.MultiSelect{
 		Renderer:      survey.Renderer{},
 		Message:       m.title,
 		Options:       m.fnItems,
@@ -67,38 +58,32 @@ func (m *Menu) Render() error {
 		FilterMessage: "",
 		Filter:        nil,
 	}
-	for {
-		err := survey.AskOne(menu, &val)
-		if err != nil {
-			return err
-		}
 
+	err := survey.AskOne(menu, &values)
+	if err != nil {
+		return err
+	}
+	for _, value := range values {
+		if value == "<cancel>" {
+			return nil
+		}
+	}
+
+	for _, val := range values {
 		fn, ok := m.fnMap[val]
 		if !ok {
 			return fmt.Errorf("menu function for %s not found", val)
 		}
 		if fn == nil {
-			return nil
+			continue
 		}
 		if err := fn(); err != nil {
-			if m.errorHandler != nil {
-				err := m.errorHandler(err)
-				if err != nil {
-					return err
-				}
-				goto loop
-			} else {
+			err := m.errorHandler(err)
+			if err != nil {
 				return err
 			}
 		}
-	loop:
-		if m.disableLoop {
-			return nil
-		}
-	}
-}
 
-func MenuShowErrorFn(err error) error {
-	utils.Println("<red>%s</>\n", err.Error())
+	}
 	return nil
 }

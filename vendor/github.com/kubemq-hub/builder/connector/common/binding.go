@@ -7,57 +7,54 @@ import (
 )
 
 type Binding struct {
-	Name              string            `json:"name" yaml:"name"`
-	Source            *Spec             `json:"source" yaml:"source"`
-	Target            *Spec             `json:"target" yaml:"target"`
-	Properties        map[string]string `json:"properties" yaml:"properties"`
-	SourceSpec        string            `json:"-" yaml:"-"`
-	TargetSpec        string            `json:"-" yaml:"-"`
-	PropertiesSpec    string            `json:"-" yaml:"-"`
-	loadedOptions     DefaultOptions
-	targetsList       Connectors
-	sourcesList       Connectors
-	takenBindingNames []string
-	defaultName       string
-	isEditMode        bool
+	Name           string            `json:"name" yaml:"name"`
+	Source         *Spec             `json:"source" yaml:"source"`
+	Target         *Spec             `json:"target" yaml:"target"`
+	Properties     map[string]string `json:"properties" yaml:"properties"`
+	SourceSpec     string            `json:"-" yaml:"-"`
+	TargetSpec     string            `json:"-" yaml:"-"`
+	PropertiesSpec string            `json:"-" yaml:"-"`
+	Side           string            `json:"-" yaml:"-"`
+	loadedOptions  DefaultOptions
+	targetsList    Connectors
+	sourcesList    Connectors
+	defaultName    string
+	isEditMode     bool
 }
 
-func NewBinding(defaultName string) *Binding {
+func NewBinding(defaultName string, side string, loadedOptions DefaultOptions, targetList, sourcesList Connectors) *Binding {
 	return &Binding{
-		Name:              "",
-		Source:            NewSpec(),
-		Target:            NewSpec(),
-		Properties:        map[string]string{},
-		SourceSpec:        "",
-		TargetSpec:        "",
-		PropertiesSpec:    "",
-		loadedOptions:     nil,
-		targetsList:       nil,
-		sourcesList:       nil,
-		takenBindingNames: nil,
-		defaultName:       defaultName,
-		isEditMode:        false,
+		Name:           "",
+		Source:         NewSpec(),
+		Target:         NewSpec(),
+		Properties:     map[string]string{},
+		SourceSpec:     "",
+		TargetSpec:     "",
+		PropertiesSpec: "",
+		loadedOptions:  loadedOptions,
+		targetsList:    targetList,
+		sourcesList:    sourcesList,
+		defaultName:    defaultName,
+		isEditMode:     false,
+		Side:           side,
 	}
 }
-func (b *Binding) SetDefaultOptions(value DefaultOptions) *Binding {
-	b.loadedOptions = value
-	return b
-}
+
 func (b *Binding) Clone() *Binding {
 	newBinding := &Binding{
-		Name:              b.Name,
-		Source:            b.Source.Clone(),
-		Target:            b.Target.Clone(),
-		Properties:        map[string]string{},
-		SourceSpec:        b.SourceSpec,
-		TargetSpec:        b.TargetSpec,
-		PropertiesSpec:    b.PropertiesSpec,
-		loadedOptions:     b.loadedOptions,
-		targetsList:       b.targetsList,
-		sourcesList:       b.sourcesList,
-		takenBindingNames: b.takenBindingNames,
-		defaultName:       b.defaultName,
-		isEditMode:        false,
+		Name:           b.Name,
+		Source:         b.Source.Clone(),
+		Target:         b.Target.Clone(),
+		Properties:     map[string]string{},
+		SourceSpec:     b.SourceSpec,
+		TargetSpec:     b.TargetSpec,
+		PropertiesSpec: b.PropertiesSpec,
+		loadedOptions:  b.loadedOptions,
+		targetsList:    b.targetsList,
+		sourcesList:    b.sourcesList,
+		defaultName:    b.defaultName,
+		isEditMode:     false,
+		Side:           b.Side,
 	}
 	for key, val := range b.Properties {
 		newBinding.Properties[key] = val
@@ -67,28 +64,12 @@ func (b *Binding) Clone() *Binding {
 func (b *Binding) Validate() error {
 	return nil
 }
-func (b *Binding) SetTargetsList(value Connectors) *Binding {
-	b.targetsList = value
-	return b
-}
-func (b *Binding) SetSourcesList(value Connectors) *Binding {
-	b.sourcesList = value
-	return b
-}
+
 func (b *Binding) SetEditMode(value bool) *Binding {
 	b.isEditMode = value
 	return b
 }
-func (b *Binding) SetTakenBindingNames(value []string) *Binding {
-	b.takenBindingNames = value
-	return b
-}
-func (b *Binding) SourceName() string {
-	return b.Source.Name
-}
-func (b *Binding) TargetName() string {
-	return b.Target.Name
-}
+
 func (b *Binding) askKind(connector string, kinds []string, currentKind string) (string, error) {
 	defaultKind := ""
 	if b.isEditMode {
@@ -108,7 +89,6 @@ func (b *Binding) askKind(connector string, kinds []string, currentKind string) 
 		SetOptions(kinds).
 		SetHelp("Select Connector Kind").
 		SetRequired(true).
-		SetPageSize(15).
 		Render(&val)
 	if err != nil {
 		return "", err
@@ -117,18 +97,7 @@ func (b *Binding) askKind(connector string, kinds []string, currentKind string) 
 }
 
 func (b *Binding) addSource(defaultName string) error {
-	utils.Println(promptSourceStart)
 	var err error
-	sourceDefaultName := ""
-	if b.isEditMode {
-		sourceDefaultName = b.Source.Name
-	} else {
-		sourceDefaultName = defaultName
-	}
-	if b.Source.Name, err = NewName(sourceDefaultName).
-		RenderSource(); err != nil {
-		return err
-	}
 	var kinds []string
 	sources := make(map[string]*Connector)
 	for _, c := range b.sourcesList {
@@ -153,19 +122,7 @@ func (b *Binding) addSource(defaultName string) error {
 func (b *Binding) editSource() (*Spec, error) {
 	var result *Spec
 	edited := b.Clone()
-	form := survey.NewForm(fmt.Sprintf("Select Edit %s Source Option", edited.Source.Name))
-
-	ftName := new(string)
-	*ftName = fmt.Sprintf("<n> Edit Source Name (%s)", edited.Source.Name)
-	form.AddItem(ftName, func() error {
-		var err error
-		if edited.Source.Name, err = NewName(edited.Source.Name).
-			RenderSource(); err != nil {
-			return err
-		}
-		*ftName = fmt.Sprintf("<n> Edit Source Name (%s)", edited.Source.Name)
-		return nil
-	})
+	form := survey.NewForm("Select Edit Source Option:")
 
 	ftKind := new(string)
 	*ftKind = fmt.Sprintf("<k> Edit Source Kind (%s)", edited.Source.Kind)
@@ -223,8 +180,8 @@ func (b *Binding) editSource() (*Spec, error) {
 		return nil
 	})
 
-	form.AddItem("Show Source Configuration", func() error {
-		utils.Println(promptShowSource, edited.Source.Name)
+	form.AddItem("<s> Show Source Configuration", func() error {
+		utils.Println(promptShowSource)
 		utils.Println("%s\n", edited.Source.ColoredYaml(sourceSpecTemplate))
 		return nil
 	})
@@ -247,18 +204,7 @@ func (b *Binding) editSource() (*Spec, error) {
 }
 
 func (b *Binding) addTarget(defaultName string) error {
-	utils.Println(promptTargetStart)
 	var err error
-	targetDefaultName := ""
-	if b.isEditMode {
-		targetDefaultName = b.Target.Name
-	} else {
-		targetDefaultName = defaultName
-	}
-	if b.Target.Name, err = NewName(targetDefaultName).
-		RenderTarget(); err != nil {
-		return err
-	}
 	var kinds []string
 	targets := make(map[string]*Connector)
 	for _, c := range b.targetsList {
@@ -280,21 +226,8 @@ func (b *Binding) addTarget(defaultName string) error {
 }
 func (b *Binding) editTarget() (*Spec, error) {
 	var result *Spec
-
 	edited := b.Clone()
-	form := survey.NewForm(fmt.Sprintf("Select Edit %s Target Option", edited.Target.Name))
-
-	ftName := new(string)
-	*ftName = fmt.Sprintf("<n> Edit Target Name (%s)", edited.Target.Name)
-	form.AddItem(ftName, func() error {
-		var err error
-		if edited.Target.Name, err = NewName(edited.Target.Name).
-			RenderTarget(); err != nil {
-			return err
-		}
-		*ftName = fmt.Sprintf("<n> Edit Target Name (%s)", edited.Target.Name)
-		return nil
-	})
+	form := survey.NewForm("Select Edit Target Option:")
 
 	ftKind := new(string)
 	*ftKind = fmt.Sprintf("<k> Edit Target Kind (%s)", edited.Target.Kind)
@@ -353,8 +286,8 @@ func (b *Binding) editTarget() (*Spec, error) {
 		return nil
 	})
 
-	form.AddItem("Show Target Configuration", func() error {
-		utils.Println(promptShowTarget, edited.Target.Name)
+	form.AddItem("<s> Show Target Configuration", func() error {
+		utils.Println(promptShowTarget)
 		utils.Println("%s\n", edited.Target.ColoredYaml(targetSpecTemplate))
 		return nil
 	})
@@ -379,7 +312,6 @@ func (b *Binding) editTarget() (*Spec, error) {
 func (b *Binding) setName() error {
 	var err error
 	if b.Name, err = NewName(b.defaultName).
-		SetTakenNames(b.takenBindingNames).
 		RenderBinding(); err != nil {
 		return err
 	}
@@ -393,7 +325,7 @@ func (b *Binding) showConfiguration() error {
 }
 func (b *Binding) setProperties() error {
 	var err error
-	p := NewProperties()
+	p := NewProperties(b.Properties)
 	if b.Properties, err = p.
 		Render(); err != nil {
 		return err
@@ -405,7 +337,6 @@ func (b *Binding) edit() (*Binding, error) {
 	var result *Binding
 	edited := b.Clone().
 		SetEditMode(true)
-
 	form := survey.NewForm(fmt.Sprintf("Select Edit %s Binding Option:", edited.Name))
 
 	ftName := new(string)
@@ -479,7 +410,7 @@ func (b *Binding) add() (*Binding, error) {
 	utils.Println(promptBindingComplete)
 	var err error
 
-	p := NewProperties()
+	p := NewProperties(b.Properties)
 	if b.Properties, err = p.
 		Render(); err != nil {
 		return nil, err
@@ -516,4 +447,285 @@ func (b *Binding) TableRowShort() []interface{} {
 	}
 	list = append(list, b.Name, b.Source.TableItemShort(), b.Target.TableItemShort(), ms)
 	return list
+}
+func (b *Binding) BelongToClusterAddress(address string, side string) bool {
+	switch side {
+	case "sources":
+		return b.Target.IsKubemqAddress(address)
+	case "targets":
+		return b.Source.IsKubemqAddress(address)
+	default:
+		return false
+	}
+}
+func generateUniqueIntegrationName(takenNames []string) string {
+	for i := len(takenNames) + 1; i < 10000000; i++ {
+		name := fmt.Sprintf("integration-%d", i)
+		found := false
+		for _, taken := range takenNames {
+			if taken == name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return name
+		}
+	}
+	return ""
+}
+func AddSourceIntegration(takenNames []string, connectorsManifest []byte, loadedOptions DefaultOptions) (*Binding, error) {
+
+	b := &Binding{
+		Name:           "",
+		Source:         nil,
+		Target:         nil,
+		Properties:     nil,
+		SourceSpec:     "",
+		TargetSpec:     "",
+		PropertiesSpec: "",
+		Side:           "sources",
+		loadedOptions:  loadedOptions,
+		targetsList:    nil,
+		sourcesList:    nil,
+		defaultName:    "",
+		isEditMode:     false,
+	}
+	m, err := LoadManifest(connectorsManifest)
+	if err != nil {
+		return nil, err
+	}
+	b.targetsList = m.Targets
+	b.sourcesList = m.Sources
+	// Setting Name
+	err = survey.NewString().
+		SetKind("string").
+		SetName("name").
+		SetMessage("Set Unique Integration Name:").
+		SetDefault(generateUniqueIntegrationName(takenNames)).
+		SetRequired(true).
+		SetInvalidOptions(takenNames).
+		SetValidator(survey.ValidateNoneSpace).
+		SetInvalidOptionsMessage("Integration name must be unique").
+		Render(&b.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	// Configuring Source Kinds
+	b.Source = &Spec{
+		Kind:       "",
+		Properties: nil,
+	}
+
+	var sourcesKinds []string
+	sources := make(map[string]*Connector)
+	for _, con := range b.sourcesList {
+		sourcesKinds = append(sourcesKinds, con.Kind)
+		sources[con.Kind] = con
+	}
+
+	if len(sourcesKinds) == 0 {
+		return nil, fmt.Errorf("no source connectors available")
+	}
+
+	err = survey.NewString().
+		SetKind("string").
+		SetName("kind").
+		SetMessage("Select Source Kind:").
+		SetDefault(sourcesKinds[0]).
+		SetOptions(sourcesKinds).
+		SetRequired(true).
+		Render(&b.Source.Kind)
+	if err != nil {
+		return nil, err
+	}
+
+	if b.Source.Properties, err = sources[b.Source.Kind].Render(b.loadedOptions); err != nil {
+		return nil, err
+	}
+
+	// Configuring Targets Kinds
+	b.Target = &Spec{
+		Kind:       "",
+		Properties: nil,
+	}
+
+	var targetsKinds []string
+	targets := make(map[string]*Connector)
+	for _, con := range b.targetsList {
+		targetsKinds = append(targetsKinds, con.Kind)
+		targets[con.Kind] = con
+	}
+
+	if len(targetsKinds) == 0 {
+		return nil, fmt.Errorf("no target connectors available")
+	}
+
+	err = survey.NewString().
+		SetKind("string").
+		SetName("kind").
+		SetMessage("Select Kubemq Target Kind:").
+		SetDefault(targetsKinds[0]).
+		SetOptions(targetsKinds).
+		SetRequired(true).
+		Render(&b.Target.Kind)
+	if err != nil {
+		return nil, err
+	}
+
+	if b.Target.Properties, err = targets[b.Target.Kind].Render(b.loadedOptions); err != nil {
+		return nil, err
+	}
+
+	// Configuring Middlewares
+	p := NewProperties(b.Properties)
+	if b.Properties, err = p.
+		Render(); err != nil {
+		return nil, err
+	}
+
+	utils.Println("<cyan>Here is the configuration of %s Integration:</>%s", b.Name, b.ColoredYaml())
+	val := true
+	err = survey.NewBool().
+		SetKind("bool").
+		SetName("confirmation").
+		SetMessage("Would you like to save this Integration").
+		SetDefault("true").
+		Render(&val)
+	if err != nil {
+		return nil, err
+	}
+	if val {
+		return b, nil
+	}
+	return nil, nil
+}
+
+func AddTargetIntegration(takenNames []string, connectorsManifest []byte, loadedOptions DefaultOptions) (*Binding, error) {
+
+	b := &Binding{
+		Name:           "",
+		Source:         nil,
+		Target:         nil,
+		Properties:     nil,
+		SourceSpec:     "",
+		TargetSpec:     "",
+		PropertiesSpec: "",
+		Side:           "targets",
+		loadedOptions:  loadedOptions,
+		targetsList:    nil,
+		sourcesList:    nil,
+		defaultName:    "",
+		isEditMode:     false,
+	}
+	m, err := LoadManifest(connectorsManifest)
+	if err != nil {
+		return nil, err
+	}
+	b.targetsList = m.Targets
+	b.sourcesList = m.Sources
+	// Setting Name
+	err = survey.NewString().
+		SetKind("string").
+		SetName("name").
+		SetMessage("Set Unique Integration Name:").
+		SetDefault(generateUniqueIntegrationName(takenNames)).
+		SetRequired(true).
+		SetInvalidOptions(takenNames).
+		SetValidator(survey.ValidateNoneSpace).
+		SetInvalidOptionsMessage("Integration name must be unique").
+		Render(&b.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	// Configuring Targets Kinds
+	b.Target = &Spec{
+		Kind:       "",
+		Properties: nil,
+	}
+
+	var targetsKinds []string
+	targets := make(map[string]*Connector)
+	for _, con := range b.targetsList {
+		targetsKinds = append(targetsKinds, con.Kind)
+		targets[con.Kind] = con
+	}
+
+	if len(targetsKinds) == 0 {
+		return nil, fmt.Errorf("no target connectors available")
+	}
+
+	err = survey.NewString().
+		SetKind("string").
+		SetName("kind").
+		SetMessage("Select Target Kind (Scroll down for more):").
+		SetDefault(targetsKinds[0]).
+		SetOptions(targetsKinds).
+		SetRequired(true).
+		Render(&b.Target.Kind)
+	if err != nil {
+		return nil, err
+	}
+
+	if b.Target.Properties, err = targets[b.Target.Kind].Render(b.loadedOptions); err != nil {
+		return nil, err
+	}
+
+	// Configuring Source Kinds
+	b.Source = &Spec{
+		Kind:       "",
+		Properties: nil,
+	}
+
+	var sourcesKinds []string
+	sources := make(map[string]*Connector)
+	for _, con := range b.sourcesList {
+		sourcesKinds = append(sourcesKinds, con.Kind)
+		sources[con.Kind] = con
+	}
+
+	if len(sourcesKinds) == 0 {
+		return nil, fmt.Errorf("no source connectors available")
+	}
+
+	err = survey.NewString().
+		SetKind("string").
+		SetName("kind").
+		SetMessage("Select Kubemq Source Kind:").
+		SetDefault(sourcesKinds[0]).
+		SetOptions(sourcesKinds).
+		SetRequired(true).
+		Render(&b.Source.Kind)
+	if err != nil {
+		return nil, err
+	}
+
+	if b.Source.Properties, err = sources[b.Source.Kind].Render(b.loadedOptions); err != nil {
+		return nil, err
+	}
+
+	// Configuring Middlewares
+	p := NewProperties(b.Properties)
+	if b.Properties, err = p.
+		Render(); err != nil {
+		return nil, err
+	}
+
+	utils.Println("<cyan>Here is the configuration of %s Integration:</>%s", b.Name, b.ColoredYaml())
+	val := true
+	err = survey.NewBool().
+		SetKind("bool").
+		SetName("confirmation").
+		SetMessage("Would you like to save this Integration").
+		SetDefault("true").
+		Render(&val)
+	if err != nil {
+		return nil, err
+	}
+	if val {
+		return b, nil
+	}
+	return nil, nil
 }

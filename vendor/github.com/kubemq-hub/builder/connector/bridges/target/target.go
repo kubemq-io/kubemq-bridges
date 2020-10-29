@@ -7,32 +7,25 @@ import (
 )
 
 type Target struct {
-	Name           string              `json:"name"`
 	Kind           string              `json:"kind"`
 	Connections    []map[string]string `json:"connections"`
 	ConnectionSpec string              `json:"-" yaml:"-"`
 	WasEdited      bool                `json:"-" yaml:"-"`
-	addressOptions []string
-	takenNames     []string
-	defaultName    string
 	isEdit         bool
+	kubemqAddress  []string
 }
 
-func NewTarget(defaultName string) *Target {
-	return &Target{
-		addressOptions: nil,
-		defaultName:    defaultName,
-	}
+func NewTarget() *Target {
+	return &Target{}
 }
 func (t *Target) Clone() *Target {
 	newTarget := &Target{
-		Name:           t.Name,
 		Kind:           t.Kind,
 		Connections:    []map[string]string{},
 		ConnectionSpec: t.ConnectionSpec,
-		addressOptions: t.addressOptions,
-		takenNames:     t.takenNames,
-		defaultName:    t.Name,
+		WasEdited:      t.WasEdited,
+		isEdit:         t.isEdit,
+		kubemqAddress:  t.kubemqAddress,
 	}
 	for _, connection := range t.Connections {
 		newConnection := map[string]string{}
@@ -47,12 +40,8 @@ func (t *Target) SetIsEdit(value bool) *Target {
 	t.isEdit = value
 	return t
 }
-func (t *Target) SetAddress(value []string) *Target {
-	t.addressOptions = value
-	return t
-}
-func (t *Target) SetTakenNames(value []string) *Target {
-	t.takenNames = value
+func (t *Target) SetKubemqAddress(values []string) *Target {
+	t.kubemqAddress = values
 	return t
 }
 func (t *Target) askAddConnection() (bool, error) {
@@ -72,8 +61,8 @@ func (t *Target) askAddConnection() (bool, error) {
 }
 func (t *Target) addConnection() error {
 	if connection, err := NewConnection().
-		SetAddress(t.addressOptions).
-		Render(t.Name, t.Kind); err != nil {
+		SetAddress(t.kubemqAddress).
+		Render(t.Kind); err != nil {
 		return err
 	} else {
 		t.Connections = append(t.Connections, connection)
@@ -82,11 +71,7 @@ func (t *Target) addConnection() error {
 }
 func (t *Target) add() (*Target, error) {
 	var err error
-	if t.Name, err = NewName(t.defaultName).
-		SetTakenNames(t.takenNames).
-		Render(); err != nil {
-		return nil, err
-	}
+
 	if t.Kind, err = NewKind("").
 		Render(); err != nil {
 		return nil, err
@@ -113,16 +98,7 @@ func (t *Target) add() (*Target, error) {
 done:
 	return t, nil
 }
-func (t *Target) editName() error {
-	var err error
-	if t.Name, err = NewName(t.Name).
-		SetTakenNames(t.takenNames).
-		Render(); err != nil {
-		return err
-	}
-	t.WasEdited = true
-	return nil
-}
+
 func (t *Target) editKind() (bool, error) {
 	var err error
 	current := t.Kind
@@ -157,17 +133,18 @@ done:
 	t.WasEdited = true
 	return nil
 }
-func (t *Target) showConfiguration() error {
-	utils.Println(promptShowTarget, t.Name)
-	utils.Println(fmt.Sprintf("%s\n", t.ColoredYaml()))
-	return nil
-}
+
 func (t *Target) edit() (*Target, error) {
-	menu := survey.NewMenu("Select Edit Binding Targets operation").
-		SetBackOption(true).
-		SetErrorHandler(survey.MenuShowErrorFn)
-	menu.AddItem("Edit Targets Name", t.editName)
-	menu.AddItem("Edit Targets Kinds", func() error {
+	var result *Target
+	edited := t.Clone()
+	form := survey.NewForm("Select Edit Target Option:")
+
+	ftKind := new(string)
+	*ftKind = fmt.Sprintf("<k> Edit Target Kind (%s)", edited.Kind)
+	ftConnections := new(string)
+	*ftConnections = fmt.Sprintf("<c> Edit Target Connections (%s)", edited.Kind)
+
+	form.AddItem(ftKind, func() error {
 		if changed, err := t.editKind(); err != nil {
 			return err
 		} else {
@@ -178,15 +155,40 @@ func (t *Target) edit() (*Target, error) {
 				t.WasEdited = true
 			}
 		}
+		*ftKind = fmt.Sprintf("<k> Edit Target Kind (%s)", edited.Kind)
+		*ftConnections = fmt.Sprintf("<c> Edit Target Connections (%s)", edited.Kind)
 		return nil
-	},
-	)
-	menu.AddItem("Edit Targets Connections", t.editConnections)
-	menu.AddItem("Show Targets Configuration", t.showConfiguration)
-	if err := menu.Render(); err != nil {
+	})
+
+	form.AddItem(ftConnections, func() error {
+		if err := t.editConnections(); err != nil {
+			return err
+		}
+		*ftConnections = fmt.Sprintf("<c> Edit Target Connections (%s)", edited.Kind)
+		return nil
+	})
+
+	form.AddItem("<s> Show Target Configuration", func() error {
+		utils.Println(promptShowTarget)
+		utils.Println("%s\n", edited.ColoredYaml())
+		return nil
+	})
+	form.SetOnSaveFn(func() error {
+		if err := edited.Validate(); err != nil {
+			return err
+		}
+		result = edited
+		return nil
+	})
+
+	form.SetOnCancelFn(func() error {
+		result = t
+		return nil
+	})
+	if err := form.Render(); err != nil {
 		return nil, err
 	}
-	return t, nil
+	return result, nil
 }
 func (t *Target) Render() (*Target, error) {
 	if t.isEdit {
@@ -206,5 +208,9 @@ func (t *Target) ColoredYaml() string {
 }
 
 func (t *Target) TableItemShort() string {
-	return fmt.Sprintf("%s/%s/%d", t.Name, t.Kind, len(t.Connections))
+	return fmt.Sprintf("%s/%d", t.Kind, len(t.Connections))
+}
+
+func (t *Target) Validate() error {
+	return nil
 }

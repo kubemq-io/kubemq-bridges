@@ -9,61 +9,54 @@ import (
 )
 
 type Bindings struct {
-	Bindings          []*Binding `json:"bindings" yaml:"bindings"`
-	manifest          *Manifest
-	loadedOptions     DefaultOptions
-	takenBindingNames []string
-	defaultName       string
+	Bindings      []*Binding `json:"bindings" yaml:"bindings"`
+	Side          string     `json:"-" yaml:"-"`
+	manifest      *Manifest
+	loadedOptions DefaultOptions
+	defaultName   string
 }
 
-func NewBindings(defaultName string) *Bindings {
+func NewBindings(defaultName string, bindings []*Binding, side string, loadedOptions DefaultOptions, manifest *Manifest) *Bindings {
 	return &Bindings{
-		defaultName: defaultName,
+		Bindings:      bindings,
+		Side:          side,
+		manifest:      manifest,
+		loadedOptions: loadedOptions,
+		defaultName:   defaultName,
 	}
 }
 func (b *Bindings) Clone() *Bindings {
 	cloned := &Bindings{
-		Bindings:          nil,
-		manifest:          b.manifest,
-		loadedOptions:     b.loadedOptions,
-		takenBindingNames: b.takenBindingNames,
-		defaultName:       b.defaultName,
+		Bindings:      nil,
+		manifest:      b.manifest,
+		loadedOptions: b.loadedOptions,
+		defaultName:   b.defaultName,
+		Side:          b.Side,
 	}
 	for _, binding := range b.Bindings {
 		cloned.Bindings = append(cloned.Bindings, binding.Clone())
 	}
 	return cloned
 }
-func (b *Bindings) SetBindings(value []*Binding) *Bindings {
-	b.Bindings = value
+func (b *Bindings) Update(manifest *Manifest, loadedOptions DefaultOptions) *Bindings {
+	b.manifest = manifest
+	b.loadedOptions = loadedOptions
+	for _, binding := range b.Bindings {
+		binding.loadedOptions = loadedOptions
+		binding.targetsList = b.manifest.Targets
+		binding.sourcesList = b.manifest.Sources
+	}
 	return b
 }
-func (b *Bindings) SetManifest(value *Manifest) *Bindings {
-	b.manifest = value
-	return b
-}
-func (b *Bindings) SetDefaultOptions(value DefaultOptions) *Bindings {
-	b.loadedOptions = value
-	return b
-}
-func (b *Bindings) SetDefaultName(value string) *Bindings {
-	b.defaultName = value
-	return b
-}
-
-func (b *Bindings) sort() {
+func (b *Bindings) Sort() {
 	sort.Slice(b.Bindings, func(i, j int) bool {
 		return b.Bindings[i].Name < b.Bindings[j].Name
 	})
 }
 func (b *Bindings) addBinding() error {
-	bnd := NewBinding(fmt.Sprintf("binding-%d", len(b.Bindings)+1))
+	bnd := NewBinding(b.GenerateNewBindingName(), b.Side, b.loadedOptions, b.manifest.Targets, b.manifest.Sources)
 	var err error
 	if bnd, err = bnd.
-		SetDefaultOptions(b.loadedOptions).
-		SetSourcesList(b.manifest.Sources).
-		SetTargetsList(b.manifest.Targets).
-		SetTakenBindingNames(b.takenBindingNames).
 		Render(); err != nil {
 		return err
 	}
@@ -74,27 +67,22 @@ func (b *Bindings) addBinding() error {
 	}
 	utils.Println(promptBindingAddConfirmation, bnd.Name)
 	b.Bindings = append(b.Bindings, bnd)
-	b.sort()
+	b.Sort()
 	return nil
 }
 
-func (b *Bindings) switchOrRemove(old, new *Binding) {
+func (b *Bindings) SwitchOrRemove(old, new *Binding) {
 	var newBindingList []*Binding
-	var newTakenBindingNames []string
-
 	for _, binding := range b.Bindings {
 		if old.Name != binding.Name {
 			newBindingList = append(newBindingList, binding)
-			newTakenBindingNames = append(newTakenBindingNames, binding.Name)
 		}
 	}
 	if new != nil {
 		newBindingList = append(newBindingList, new)
-		newTakenBindingNames = append(newTakenBindingNames, new.Name)
 	}
 	b.Bindings = newBindingList
-	b.takenBindingNames = newTakenBindingNames
-	b.sort()
+	b.Sort()
 }
 
 func (b *Bindings) editBinding() error {
@@ -109,20 +97,19 @@ func (b *Bindings) editBinding() error {
 			var err error
 			if edited, err = edited.
 				SetEditMode(true).
-				SetDefaultOptions(b.loadedOptions).
-				SetSourcesList(b.manifest.Sources).
-				SetTargetsList(b.manifest.Targets).
-				SetTakenBindingNames(b.takenBindingNames).
 				Render(); err != nil {
 				return err
 			}
-			for _, binding := range b.Bindings {
-				if edited.Name == binding.Name {
-					return fmt.Errorf("binding name %s is not unique, binding %s was not edited", edited.Name, origin.Name)
+			if origin.Name != edited.Name {
+				if origin.Name != edited.Name {
+					for _, binding := range b.Bindings {
+						if edited.Name == binding.Name {
+							return fmt.Errorf("binding name %s is not unique, binding %s was not edited", edited.Name, origin.Name)
+						}
+					}
 				}
 			}
-
-			b.switchOrRemove(origin, edited)
+			b.SwitchOrRemove(origin, edited)
 			utils.Println(promptBindingEditedConfirmation, edited.Name)
 			return nil
 		}
@@ -134,10 +121,7 @@ func (b *Bindings) editBinding() error {
 	return nil
 }
 func (b *Bindings) deleteBinding() error {
-	menu := survey.NewMenu("Select Binding to delete:").
-		SetBackOption(true).
-		SetErrorHandler(survey.MenuShowErrorFn).
-		SetDisableLoop(true)
+	menu := survey.NewMultiSelectMenu("Select Binding to delete:")
 	for _, binding := range b.Bindings {
 		deleted := binding
 		deleteFn := func() error {
@@ -151,7 +135,7 @@ func (b *Bindings) deleteBinding() error {
 				return err
 			}
 			if val {
-				b.switchOrRemove(deleted, nil)
+				b.SwitchOrRemove(deleted, nil)
 				utils.Println(promptBindingDeleteConfirmation, deleted.Name)
 				return nil
 			}
@@ -162,15 +146,12 @@ func (b *Bindings) deleteBinding() error {
 	if err := menu.Render(); err != nil {
 		return err
 	}
-	b.sort()
+	b.Sort()
 	return nil
 }
 
 func (b *Bindings) copyBinding() error {
-	menu := survey.NewMenu("Select Binding to copy:").
-		SetBackOption(true).
-		SetErrorHandler(survey.MenuShowErrorFn).
-		SetDisableLoop(true)
+	menu := survey.NewMultiSelectMenu("Select Binding to copy:")
 	for _, binding := range b.Bindings {
 		cloned := binding.Clone()
 		origin := binding
@@ -199,11 +180,14 @@ func (b *Bindings) copyBinding() error {
 					return err
 				}
 			}
-			for _, binding := range b.Bindings {
-				if cloned.Name == binding.Name {
-					return fmt.Errorf("binding name %s is not unique, binding %s was not edited", cloned.Name, origin.Name)
+			if origin.Name != cloned.Name {
+				for _, binding := range b.Bindings {
+					if cloned.Name == binding.Name {
+						return fmt.Errorf("binding name %s is not unique, binding %s was not edited", cloned.Name, origin.Name)
+					}
 				}
 			}
+
 			b.Bindings = append(b.Bindings, cloned)
 			return nil
 		}
@@ -212,7 +196,7 @@ func (b *Bindings) copyBinding() error {
 	if err := menu.Render(); err != nil {
 		return err
 	}
-	b.sort()
+	b.Sort()
 	return nil
 }
 func (b *Bindings) listBindings() error {
@@ -239,10 +223,15 @@ func (b *Bindings) listBindings() error {
 func (b *Bindings) Render() ([]byte, error) {
 	var result *Bindings
 	clone := b.Clone()
+	for _, binding := range clone.Bindings {
+		binding.loadedOptions = b.loadedOptions
+		binding.sourcesList = b.manifest.Sources
+		binding.targetsList = b.manifest.Targets
+	}
 	form := survey.NewForm("Select Manage Bindings Option:")
 
 	form.AddItem("<a> Add Binding", clone.addBinding)
-	form.AddItem("<e> Edit Bindings", clone.editBinding)
+	form.AddItem("<e> Edit Binding", clone.editBinding)
 	form.AddItem("<c> Copy Binding", clone.copyBinding)
 	form.AddItem("<d> Delete Binding", clone.deleteBinding)
 	form.AddItem("<l> List of Bindings", clone.listBindings)
@@ -263,7 +252,7 @@ func (b *Bindings) Render() ([]byte, error) {
 	if err := form.Render(); err != nil {
 		return nil, err
 	}
-	result.sort()
+	result.Sort()
 	return yaml.Marshal(result)
 }
 
@@ -281,8 +270,46 @@ func Unmarshal(data []byte) (*Bindings, error) {
 }
 
 func (b *Bindings) Validate() error {
-	if len(b.Bindings) == 0 {
-		return fmt.Errorf("at least one binding must be configured")
-	}
+
 	return nil
+}
+func (b *Bindings) AddIntegration(integration *Binding) error {
+	if err := integration.Validate(); err != nil {
+		return err
+	}
+	b.Bindings = append(b.Bindings, integration)
+	return b.Validate()
+}
+func (b *Bindings) RemoveIntegration(integration *Binding) {
+	b.SwitchOrRemove(integration, nil)
+}
+
+func (b *Bindings) GetBindingsForCluster(address string) []*Binding {
+	var list []*Binding
+
+	for _, binding := range b.Bindings {
+		binding.Side = b.Side
+		if binding.BelongToClusterAddress(address, b.Side) {
+			list = append(list, binding)
+		}
+	}
+	return list
+}
+func (b *Bindings) checkUniqueBindingName(name string) bool {
+	for _, binding := range b.Bindings {
+		if binding.Name == name {
+			return false
+		}
+	}
+	return true
+}
+
+func (b *Bindings) GenerateNewBindingName() string {
+	for i := len(b.Bindings) + 1; i < 10000000; i++ {
+		name := fmt.Sprintf("binding-%d", i)
+		if b.checkUniqueBindingName(name) {
+			return name
+		}
+	}
+	return ""
 }

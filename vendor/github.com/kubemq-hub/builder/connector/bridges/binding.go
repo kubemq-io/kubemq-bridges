@@ -10,20 +10,17 @@ import (
 )
 
 type Binding struct {
-	Name              string            `json:"name"`
-	Sources           *source.Source    `json:"sources"`
-	Targets           *target.Target    `json:"targets"`
-	Properties        map[string]string `json:"properties"`
-	SourcesSpec       string            `json:"-" yaml:"-"`
-	TargetsSpec       string            `json:"-" yaml:"-"`
-	PropertiesSpec    string            `json:"-" yaml:"-"`
-	addressOptions    []string
-	takenSourceNames  []string
-	takenTargetsNames []string
-	takenBindingNames []string
-	defaultName       string
-	isEditMode        bool
-	wasEdited         bool
+	Name           string            `json:"name"`
+	Sources        *source.Source    `json:"sources"`
+	Targets        *target.Target    `json:"targets"`
+	Properties     map[string]string `json:"properties"`
+	SourcesSpec    string            `json:"-" yaml:"-"`
+	TargetsSpec    string            `json:"-" yaml:"-"`
+	PropertiesSpec string            `json:"-" yaml:"-"`
+	defaultName    string
+	isEditMode     bool
+	wasEdited      bool
+	kubemqAddress  []string
 }
 
 func NewBinding(defaultName string) *Binding {
@@ -33,18 +30,17 @@ func NewBinding(defaultName string) *Binding {
 }
 func (b *Binding) Clone() *Binding {
 	newBnd := &Binding{
-		Name:              b.Name,
-		Sources:           b.Sources.Clone(),
-		Targets:           b.Targets.Clone(),
-		Properties:        map[string]string{},
-		SourcesSpec:       b.SourcesSpec,
-		TargetsSpec:       b.TargetsSpec,
-		PropertiesSpec:    b.PropertiesSpec,
-		addressOptions:    b.addressOptions,
-		takenSourceNames:  b.takenSourceNames,
-		takenTargetsNames: b.takenTargetsNames,
-		takenBindingNames: b.takenBindingNames,
-		defaultName:       b.Name,
+		Name:           b.Name,
+		Sources:        b.Sources.Clone(),
+		Targets:        b.Targets.Clone(),
+		Properties:     map[string]string{},
+		SourcesSpec:    b.SourcesSpec,
+		TargetsSpec:    b.TargetsSpec,
+		PropertiesSpec: b.PropertiesSpec,
+		defaultName:    b.Name,
+		isEditMode:     false,
+		wasEdited:      false,
+		kubemqAddress:  b.kubemqAddress,
 	}
 	for key, val := range b.Properties {
 		newBnd.Properties[key] = val
@@ -52,171 +48,55 @@ func (b *Binding) Clone() *Binding {
 
 	return newBnd
 }
-func (b *Binding) SetAddress(value []string) *Binding {
-	b.addressOptions = value
-	return b
-}
+
 func (b *Binding) SetEditMode(value bool) *Binding {
 	b.isEditMode = value
+	b.Sources.SetIsEdit(value)
+	b.Targets.SetIsEdit(value)
 	return b
 }
 func (b *Binding) SetDefaultName(value string) *Binding {
 	b.defaultName = value
 	return b
 }
-func (b *Binding) SetTakenSourceNames(value []string) *Binding {
-	b.takenSourceNames = value
+func (b *Binding) SetKubemqAddress(values []string) *Binding {
+	b.kubemqAddress = values
 	return b
-}
-func (b *Binding) SetTakenTargetsNames(value []string) *Binding {
-	b.takenTargetsNames = value
-	return b
-}
-func (b *Binding) SetTakenBindingNames(value []string) *Binding {
-	b.takenBindingNames = value
-	return b
-}
-func (b *Binding) SourceName() string {
-	if b.Sources != nil {
-		return b.Sources.Name
-	}
-	return ""
-}
-func (b *Binding) TargetName() string {
-	if b.Targets != nil {
-		return b.Targets.Name
-	}
-	return ""
-}
-func (b *Binding) BindingName() string {
-	return b.Name
-}
-func (b *Binding) confirmSource() bool {
-	utils.Println(fmt.Sprintf(promptSourceConfirm, b.Sources.ColoredYaml()))
-	val := true
-	err := survey.NewBool().
-		SetKind("bool").
-		SetName("confirm-connection").
-		SetMessage("Would you like save this configuration").
-		SetDefault("true").
-		SetRequired(true).
-		Render(&val)
-	if err != nil {
-		return false
-	}
-	if !val {
-		utils.Println(promptSourceReconfigure)
-	}
-	return val
-}
-func (b *Binding) confirmTarget() bool {
-	utils.Println(fmt.Sprintf(promptTargetConfirm, b.Targets.ColoredYaml()))
-	val := true
-	err := survey.NewBool().
-		SetKind("bool").
-		SetName("confirm-connection").
-		SetMessage("Would you like save this configuration").
-		SetDefault("true").
-		SetRequired(true).
-		Render(&val)
-	if err != nil {
-		return false
-	}
-	if !val {
-		utils.Println(promptTargetReconfigure)
-	}
-	return val
-}
-func (b *Binding) confirmProperties(p *common.Properties) bool {
-	utils.Println(fmt.Sprintf(promptPropertiesConfirm, p.ColoredYaml()))
-	val := true
-	err := survey.NewBool().
-		SetKind("bool").
-		SetName("confirm-connection").
-		SetMessage("Would you like save this configuration").
-		SetDefault("true").
-		SetRequired(true).
-		Render(&val)
-	if err != nil {
-		return false
-	}
-	if !val {
-		utils.Println(promptPropertiesReconfigure)
-	}
-	return val
 }
 func (b *Binding) setSource() error {
 	if !b.isEditMode {
-		utils.Println(promptSourceStart)
-		b.Sources = source.NewSource(fmt.Sprintf("%s-source", b.defaultName))
+		b.Sources = source.NewSource().SetKubemqAddress(b.kubemqAddress)
 	}
 
 	var err error
-	for {
-		if b.Sources, err = b.Sources.
-			SetAddress(b.addressOptions).
-			SetIsEdit(b.isEditMode).
-			SetTakenNames(b.takenSourceNames).
-			Render(); err != nil {
-			return err
-		}
-		if !b.Sources.WasEdited {
-			return nil
-		}
-		ok := b.confirmSource()
-		if ok {
-			b.SourcesSpec = b.Sources.ColoredYaml()
-			break
-		}
+	if b.Sources, err = b.Sources.
+		SetIsEdit(b.isEditMode).
+		Render(); err != nil {
+		return err
 	}
-	b.wasEdited = b.Sources.WasEdited
 	return nil
 }
 func (b *Binding) setTarget() error {
-
 	if !b.isEditMode {
-		utils.Println(promptTargetStart)
-		b.Targets = target.NewTarget(fmt.Sprintf("%s-target", b.defaultName))
+		b.Targets = target.NewTarget().SetKubemqAddress(b.kubemqAddress)
 	}
 	var err error
-	for {
-		if b.Targets, err = b.Targets.
-			SetAddress(b.addressOptions).
-			SetIsEdit(b.isEditMode).
-			SetTakenNames(b.takenSourceNames).
-			Render(); err != nil {
-			return err
-		}
-		if !b.Targets.WasEdited {
-			return nil
-		}
-		ok := b.confirmTarget()
-		if ok {
-			b.TargetsSpec = b.Targets.ColoredYaml()
-			break
-		}
+	if b.Targets, err = b.Targets.
+		SetIsEdit(b.isEditMode).
+		Render(); err != nil {
+		return err
 	}
-	b.wasEdited = b.Targets.WasEdited
 	return nil
 }
+
 func (b *Binding) setProperties() error {
 	var err error
-	for {
-		p := common.NewProperties()
-		if b.Properties, err = p.
-			Render(); err != nil {
-			return err
-		}
-		if len(b.Properties) == 0 {
-			break
-		}
-		ok := b.confirmProperties(p)
-		if ok {
-			b.PropertiesSpec = p.ColoredYaml()
-			break
-		}
-
+	p := common.NewProperties(b.Properties)
+	if b.Properties, err = p.
+		Render(); err != nil {
+		return err
 	}
+	b.PropertiesSpec = p.ColoredYaml()
 	return nil
 }
 func (b *Binding) showConfiguration() error {
@@ -227,7 +107,6 @@ func (b *Binding) showConfiguration() error {
 func (b *Binding) setName() error {
 	var err error
 	if b.Name, err = NewName(b.defaultName).
-		SetTakenNames(b.takenBindingNames).
 		Render(); err != nil {
 		return err
 	}
@@ -254,19 +133,65 @@ func (b *Binding) add() (*Binding, error) {
 }
 
 func (b *Binding) edit() (*Binding, error) {
+	var result *Binding
+	edited := b.Clone().
+		SetEditMode(true)
 
-	menu := survey.NewMenu("Select Edit Binding Options").
-		SetBackOption(true).
-		SetErrorHandler(survey.MenuShowErrorFn)
-	menu.AddItem("Edit Binding Name", b.setName)
-	menu.AddItem("Edit Binding Sources", b.setSource)
-	menu.AddItem("Edit Binding Targets", b.setTarget)
-	menu.AddItem("Edit Binding Middlewares", b.setProperties)
-	menu.AddItem("Show Binding Configuration", b.showConfiguration)
-	if err := menu.Render(); err != nil {
+	form := survey.NewForm(fmt.Sprintf("Select Edit %s Binding Option:", edited.Name))
+
+	ftName := new(string)
+	*ftName = fmt.Sprintf("<n> Edit Binding's Name (%s)", edited.Name)
+	form.AddItem(ftName, func() error {
+		if err := edited.setName(); err != nil {
+			return err
+		}
+		*ftName = fmt.Sprintf("<n> Edit Binding's Name (%s)", edited.Name)
+		return nil
+	})
+
+	ftSource := new(string)
+	*ftSource = fmt.Sprintf("<s> Edit Binding's Source (%s)", edited.Sources.Kind)
+	form.AddItem(ftSource, func() error {
+		var err error
+		if edited.Sources, err = edited.Sources.Render(); err != nil {
+			return err
+		}
+		*ftSource = fmt.Sprintf("<s> Edit Binding's Source (%s)", edited.Sources.Kind)
+		return nil
+	})
+
+	ftTarget := new(string)
+	*ftTarget = fmt.Sprintf("<t> Edit Binding's Target (%s)", edited.Targets.Kind)
+	form.AddItem(ftTarget, func() error {
+		var err error
+		if edited.Targets, err = edited.Targets.Render(); err != nil {
+			return err
+		}
+		*ftTarget = fmt.Sprintf("<t> Edit Binding's Target (%s)", edited.Targets.Kind)
+		return nil
+	})
+
+	form.AddItem("<m> Edit Binding's Middlewares", edited.setProperties)
+
+	form.AddItem("<c> Show Binding Configuration", edited.showConfiguration)
+
+	form.SetOnSaveFn(func() error {
+		if err := edited.Validate(); err != nil {
+			return err
+		}
+		result = edited
+		return nil
+	})
+
+	form.SetOnCancelFn(func() error {
+		result = b
+		return nil
+	})
+	if err := form.Render(); err != nil {
 		return nil, err
 	}
-	return b, nil
+
+	return result, nil
 
 }
 func (b *Binding) Render() (*Binding, error) {
@@ -286,4 +211,8 @@ func (b *Binding) ColoredYaml() string {
 		return fmt.Sprintf("error rendring binding spec,%s", err.Error())
 	}
 	return string(bnd)
+}
+
+func (b *Binding) Validate() error {
+	return nil
 }

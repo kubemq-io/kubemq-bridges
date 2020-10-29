@@ -8,7 +8,7 @@ vars:
 
 tasks:
   check_update:
-    cmds:
+    cmds:task lint
       - go list -u -m -json -mod=mod all | go-mod-outdated -update -direct
   lint:
     cmds:
@@ -52,6 +52,7 @@ tasks:
         - git push origin master --tags
   release:
       cmds:
+        - go mod vendor
         - task: lint
         - task: commit-modifed
         - task: docker

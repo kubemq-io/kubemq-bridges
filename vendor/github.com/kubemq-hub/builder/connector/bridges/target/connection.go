@@ -9,7 +9,6 @@ import (
 type Connection struct {
 	addressOptions []string
 	properties     map[string]string
-	name           string
 	kind           string
 }
 
@@ -48,7 +47,7 @@ func (c *Connection) askDefaultChannel() error {
 		SetKind("string").
 		SetName("default_channel").
 		SetMessage("Set target default channel").
-		SetDefault(fmt.Sprintf("target.%s.%s", c.name, c.kind)).
+		SetDefault(fmt.Sprintf("target.%s", c.kind)).
 		SetHelp("Set target channel").
 		SetValidator(survey.ValidateNoneSpace).
 		SetRequired(true).
@@ -65,7 +64,7 @@ func (c *Connection) askChannelList() error {
 		SetKind("string").
 		SetName("channels").
 		SetMessage("Set target channels list separated by comma").
-		SetDefault(fmt.Sprintf("target.%s.%s", c.name, c.kind)).
+		SetDefault(fmt.Sprintf("target.%s", c.kind)).
 		SetHelp("Set target channels list ").
 		SetRequired(true).
 		SetValidator(survey.ValidateNoneSpace).
@@ -270,8 +269,8 @@ func (c *Connection) renderEventsKind() (map[string]string, error) {
 	return c.properties, nil
 }
 
-func (c *Connection) Render(name, kind string) (map[string]string, error) {
-	c.name = name
+func (c *Connection) Render(kind string) (map[string]string, error) {
+
 	switch kind {
 	case "target.queue":
 		c.kind = "queues"

@@ -15,14 +15,19 @@ func NewRetry() *Retry {
 		values: map[string]string{},
 	}
 }
-func (r *Retry) askDelayType() error {
+func (r *Retry) askDelayType(values map[string]string) error {
+
+	defaultValue := values["retry_delay_type"]
+	if defaultValue == "" {
+		defaultValue = "fixed"
+	}
 	val := ""
 	err := survey.NewString().
 		SetKind("string").
 		SetName("retry_delay_type").
 		SetMessage("Set retry delay type").
 		SetOptions([]string{"fixed", "back-off", "random"}).
-		SetDefault("fixed").
+		SetDefault(defaultValue).
 		SetHelp("Set retry delay type").
 		SetRequired(true).
 		Render(&val)
@@ -32,13 +37,17 @@ func (r *Retry) askDelayType() error {
 	r.values["retry_delay_type"] = val
 	return nil
 }
-func (r *Retry) askAttempts() error {
+func (r *Retry) askAttempts(values map[string]string) error {
+	defaultValue := values["retry_attempts"]
+	if defaultValue == "" {
+		defaultValue = "1"
+	}
 	val := 0
 	err := survey.NewInt().
 		SetKind("int").
 		SetName("retry_attempts").
 		SetMessage("Set retry max attempts type").
-		SetDefault("1").
+		SetDefault(defaultValue).
 		SetHelp("Set retry max attempts type").
 		SetRequired(true).
 		SetRange(1, 1024).
@@ -49,13 +58,17 @@ func (r *Retry) askAttempts() error {
 	r.values["retry_attempts"] = fmt.Sprintf("%d", val)
 	return nil
 }
-func (r *Retry) askDelayMillisecond() error {
+func (r *Retry) askDelayMillisecond(values map[string]string) error {
+	defaultValue := values["retry_delay_milliseconds"]
+	if defaultValue == "" {
+		defaultValue = "1"
+	}
 	val := 0
 	err := survey.NewInt().
 		SetKind("int").
 		SetName("retry_delay_milliseconds").
 		SetMessage("Set retry delay milliseconds").
-		SetDefault("100").
+		SetDefault(defaultValue).
 		SetHelp("Set retry delay milliseconds").
 		SetRequired(true).
 		SetRange(0, math.MaxInt32).
@@ -66,13 +79,17 @@ func (r *Retry) askDelayMillisecond() error {
 	r.values["retry_delay_milliseconds"] = fmt.Sprintf("%d", val)
 	return nil
 }
-func (r *Retry) askDelayJitter() error {
+func (r *Retry) askDelayJitter(values map[string]string) error {
+	defaultValue := values["retry_max_jitter_milliseconds"]
+	if defaultValue == "" {
+		defaultValue = "100"
+	}
 	val := 0
 	err := survey.NewInt().
 		SetKind("int").
 		SetName("retry_max_jitter_milliseconds").
 		SetMessage("Set retry delay milliseconds jitter").
-		SetDefault("100").
+		SetDefault(defaultValue).
 		SetHelp("Set retry delay milliseconds jitter").
 		SetRequired(true).
 		SetRange(1, math.MaxInt32).
@@ -83,33 +100,60 @@ func (r *Retry) askDelayJitter() error {
 	r.values["retry_max_jitter_milliseconds"] = fmt.Sprintf("%d", val)
 	return nil
 }
-func (r *Retry) Render() (map[string]string, error) {
-	boolVal := false
-	err := survey.NewBool().
-		SetKind("bool").
-		SetName("add-retry-middleware").
-		SetMessage("Would you like to set a request retries middleware").
-		SetDefault("false").
-		SetHelp("Add a request retries middleware properties").
-		SetRequired(true).
-		Render(&boolVal)
-	if err != nil {
+func (r *Retry) Render(values map[string]string) (map[string]string, error) {
+	var result map[string]string
+	menu := survey.NewMenu("Select Retries Middleware Options:")
+
+	addEditFn := func(values map[string]string) (map[string]string, error) {
+		if err := r.askDelayType(values); err != nil {
+			return nil, err
+		}
+		if err := r.askAttempts(values); err != nil {
+			return nil, err
+		}
+		if err := r.askDelayMillisecond(values); err != nil {
+			return nil, err
+		}
+		if err := r.askDelayJitter(values); err != nil {
+			return nil, err
+		}
+		return r.values, nil
+	}
+
+	_, ok := values["retry_delay_type"]
+	if ok {
+		menu.AddItem("Edit Retries Middleware", func() error {
+			var err error
+			values, err := addEditFn(values)
+			if err != nil {
+				return err
+			}
+			result = values
+			return nil
+		})
+		menu.AddItem("Remove Retries Middleware", func() error {
+			result = nil
+			return nil
+		})
+	} else {
+		menu.AddItem("Add Retries Middleware", func() error {
+			var err error
+			resultValues, err := addEditFn(values)
+			if err != nil {
+				return err
+			}
+			result = resultValues
+			return nil
+		})
+	}
+
+	menu.SetDisableLoop(true)
+	menu.SetBackOption(true)
+	menu.SetErrorHandler(survey.MenuShowErrorFn)
+
+	if err := menu.Render(); err != nil {
 		return nil, err
 	}
-	if !boolVal {
-		return nil, nil
-	}
-	if err := r.askDelayType(); err != nil {
-		return nil, err
-	}
-	if err := r.askAttempts(); err != nil {
-		return nil, err
-	}
-	if err := r.askDelayMillisecond(); err != nil {
-		return nil, err
-	}
-	if err := r.askDelayJitter(); err != nil {
-		return nil, err
-	}
-	return r.values, nil
+	return result, nil
+
 }

@@ -16,45 +16,84 @@ type Properties struct {
 	ValuesSpec string
 }
 
-func NewProperties() *Properties {
-	return &Properties{
+func NewProperties(current map[string]string) *Properties {
+
+	p := &Properties{
 		Values: map[string]string{},
 	}
+	for key, val := range current {
+		p.Values[key] = val
+	}
+	return p
 }
 
 func (p *Properties) Render() (map[string]string, error) {
-	boolVal := false
-	err := survey.NewBool().
-		SetKind("bool").
-		SetName("add-middleware").
-		SetMessage("Would you to add middlewares to this binding").
-		SetDefault("false").
-		SetHelp("Add a middleware properties").
-		SetRequired(true).
-		Render(&boolVal)
-	if err != nil {
-		return nil, err
+	if len(p.Values) == 0 {
+		boolVal := false
+		err := survey.NewBool().
+			SetKind("bool").
+			SetName("add-middleware").
+			SetMessage("Would you to add middlewares to this binding").
+			SetDefault("false").
+			SetHelp("Add a middleware properties").
+			SetRequired(true).
+			Render(&boolVal)
+		if err != nil {
+			return nil, err
+		}
+		if !boolVal {
+			return nil, nil
+		}
+	} else {
+		boolVal := false
+		err := survey.NewBool().
+			SetKind("bool").
+			SetName("add-middleware").
+			SetMessage("Would you to change middlewares to this binding").
+			SetDefault("false").
+			SetHelp("Change a middleware properties").
+			SetRequired(true).
+			Render(&boolVal)
+		if err != nil {
+			return nil, err
+		}
+		if !boolVal {
+			return p.Values, nil
+		}
 	}
-	if !boolVal {
-		return nil, nil
-	}
-	if values, err := NewLog().Render(); err != nil {
+
+	if values, err := NewLog().Render(p.Values); err != nil {
 		return nil, err
 	} else {
+		if values == nil {
+			delete(p.Values, "log_level")
+		} else {
+			for key, val := range values {
+				p.Values[key] = val
+			}
+		}
+
+	}
+	if values, err := NewRateLimiter().Render(p.Values); err != nil {
+		return nil, err
+	} else {
+		if values == nil {
+			delete(p.Values, "rate_per_second")
+		}
 		for key, val := range values {
 			p.Values[key] = val
 		}
 	}
-	if values, err := NewRateLimiter().Render(); err != nil {
+
+	if values, err := NewRetry().Render(p.Values); err != nil {
 		return nil, err
 	} else {
-		for key, val := range values {
-			p.Values[key] = val
+		if values == nil {
+			delete(p.Values, "retry_delay_type")
+			delete(p.Values, "retry_attempts")
+			delete(p.Values, "retry_delay_milliseconds")
+			delete(p.Values, "retry_max_jitter_milliseconds")
 		}
-	}
-	if values, err := NewRetry().Render(); err != nil {
-		return nil, err
-	} else {
 		for key, val := range values {
 			p.Values[key] = val
 		}
