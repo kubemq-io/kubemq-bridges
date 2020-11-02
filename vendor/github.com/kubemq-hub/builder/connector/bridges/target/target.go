@@ -145,14 +145,14 @@ func (t *Target) edit() (*Target, error) {
 	*ftConnections = fmt.Sprintf("<c> Edit Target Connections (%s)", edited.Kind)
 
 	form.AddItem(ftKind, func() error {
-		if changed, err := t.editKind(); err != nil {
+		if changed, err := edited.editKind(); err != nil {
 			return err
 		} else {
 			if changed {
-				if err := t.editConnections(); err != nil {
+				if err := edited.editConnections(); err != nil {
 					return err
 				}
-				t.WasEdited = true
+				edited.WasEdited = true
 			}
 		}
 		*ftKind = fmt.Sprintf("<k> Edit Target Kind (%s)", edited.Kind)
@@ -161,7 +161,7 @@ func (t *Target) edit() (*Target, error) {
 	})
 
 	form.AddItem(ftConnections, func() error {
-		if err := t.editConnections(); err != nil {
+		if err := edited.editConnections(); err != nil {
 			return err
 		}
 		*ftConnections = fmt.Sprintf("<c> Edit Target Connections (%s)", edited.Kind)
@@ -196,6 +196,7 @@ func (t *Target) Render() (*Target, error) {
 	} else {
 		return t.add()
 	}
+
 }
 func (t *Target) ColoredYaml() string {
 	t.ConnectionSpec = utils.MapArrayToYaml(t.Connections)

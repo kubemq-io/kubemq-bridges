@@ -45,3 +45,12 @@ func (s *Spec) IsKubemqAddress(address string) bool {
 	}
 	return false
 }
+
+func (s *Spec) Title() string {
+	channel, ok := s.Properties["channel"]
+	if ok {
+		return fmt.Sprintf("%s/%s", s.Kind, channel)
+	} else {
+		return s.Kind
+	}
+}

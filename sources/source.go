@@ -21,31 +21,31 @@ type Source interface {
 
 func Init(ctx context.Context, kind string, connection config.Metadata) (Source, error) {
 	switch kind {
-	case "source.command":
+	case "source.command", "kubemq.command":
 		source := command.New()
 		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
 		return source, nil
-	case "source.query":
+	case "source.query", "kubemq.query":
 		source := query.New()
 		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
 		return source, nil
-	case "source.events":
+	case "source.events", "kubemq.events":
 		source := events.New()
 		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
 		return source, nil
-	case "source.events-store":
+	case "source.events-store", "kubemq.events-store":
 		source := events_store.New()
 		if err := source.Init(ctx, connection); err != nil {
 			return nil, err
 		}
 		return source, nil
-	case "source.queue":
+	case "source.queue", "kubemq.queue":
 		source := queue.New()
 		if err := source.Init(ctx, connection); err != nil {
 			return nil, err

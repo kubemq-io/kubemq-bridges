@@ -259,8 +259,5 @@ func Unmarshal(data []byte) (*Bindings, error) {
 }
 
 func (b *Bindings) Validate() error {
-	if len(b.Bindings) == 0 {
-		return fmt.Errorf("at least one binding must be configured")
-	}
 	return nil
 }

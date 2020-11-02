@@ -145,14 +145,14 @@ func (s *Source) edit() (*Source, error) {
 	*ftConnections = fmt.Sprintf("<c> Edit Source Connections (%s)", edited.Kind)
 
 	form.AddItem(ftKind, func() error {
-		if changed, err := s.editKind(); err != nil {
+		if changed, err := edited.editKind(); err != nil {
 			return err
 		} else {
 			if changed {
-				if err := s.editConnections(); err != nil {
+				if err := edited.editConnections(); err != nil {
 					return err
 				}
-				s.WasEdited = true
+				edited.WasEdited = true
 			}
 		}
 		*ftKind = fmt.Sprintf("<k> Edit Source Kind (%s)", edited.Kind)
@@ -161,7 +161,7 @@ func (s *Source) edit() (*Source, error) {
 	})
 
 	form.AddItem(ftConnections, func() error {
-		if err := s.editConnections(); err != nil {
+		if err := edited.editConnections(); err != nil {
 			return err
 		}
 		*ftConnections = fmt.Sprintf("<c> Edit Source Connections (%s)", edited.Kind)

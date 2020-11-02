@@ -12,6 +12,7 @@ type Connector struct {
 	Kind           string      `json:"kind"`
 	Description    string      `json:"description"`
 	Properties     []*Property `json:"properties"`
+	Metadata       []*Metadata `json:"metadata"`
 	PropertiesSpec string
 	loadedOptions  DefaultOptions
 	values         map[string]string
@@ -19,10 +20,13 @@ type Connector struct {
 
 func NewConnector() *Connector {
 	return &Connector{
-		Kind:          "",
-		Description:   "",
-		Properties:    nil,
-		loadedOptions: nil,
+		Kind:           "",
+		Description:    "",
+		Properties:     nil,
+		Metadata:       nil,
+		PropertiesSpec: "",
+		loadedOptions:  nil,
+		values:         nil,
 	}
 }
 
@@ -37,6 +41,10 @@ func (c *Connector) SetDescription(value string) *Connector {
 }
 func (c *Connector) AddProperty(value *Property) *Connector {
 	c.Properties = append(c.Properties, value)
+	return c
+}
+func (c *Connector) AddMetadata(value *Metadata) *Connector {
+	c.Metadata = append(c.Metadata, value)
 	return c
 }
 func (c *Connector) Validate() error {
