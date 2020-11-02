@@ -31,7 +31,6 @@ func (c *Connection) askAddress() error {
 		SetDefault("").
 		SetHelp("Set address of Kubemq cluster grpc endpoint").
 		SetRequired(true).
-		SetOptions(c.addressOptions).
 		SetValidator(survey.ValidateNoneSpace).
 		Render(&val)
 	if err != nil {
@@ -46,7 +45,6 @@ func (c *Connection) askChannel() error {
 		SetKind("string").
 		SetName("channel").
 		SetMessage("Set source channel").
-		SetDefault(fmt.Sprintf("source.%s", c.kind)).
 		SetHelp("Set source channel").
 		SetRequired(true).
 		SetValidator(survey.ValidateNoneSpace).
@@ -217,19 +215,19 @@ func (c *Connection) renderQueueKind() (map[string]string, error) {
 
 func (c *Connection) Render(kind string) (map[string]string, error) {
 	switch kind {
-	case "source.queue":
+	case "kubemq.queue":
 		c.kind = "queues"
 		return c.renderQueueKind()
-	case "source.events":
+	case "kubemq.events":
 		c.kind = "events"
 		return c.renderEventsKind()
-	case "source.events-store":
+	case "kubemq.events-store":
 		c.kind = "events-store"
 		return c.renderEventsKind()
-	case "source.command":
+	case "kubemq.command":
 		c.kind = "commands"
 		return c.renderRPCKind()
-	case "source.query":
+	case "kubemq.query":
 		c.kind = "queries"
 		return c.renderRPCKind()
 	default:

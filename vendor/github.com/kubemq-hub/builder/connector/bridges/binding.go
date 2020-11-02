@@ -20,7 +20,7 @@ type Binding struct {
 	defaultName    string
 	isEditMode     bool
 	wasEdited      bool
-	kubemqAddress  []string
+	//kubemqAddress  []string
 }
 
 func NewBinding(defaultName string) *Binding {
@@ -40,7 +40,7 @@ func (b *Binding) Clone() *Binding {
 		defaultName:    b.Name,
 		isEditMode:     false,
 		wasEdited:      false,
-		kubemqAddress:  b.kubemqAddress,
+		//	kubemqAddress:  b.kubemqAddress,
 	}
 	for key, val := range b.Properties {
 		newBnd.Properties[key] = val
@@ -60,12 +60,12 @@ func (b *Binding) SetDefaultName(value string) *Binding {
 	return b
 }
 func (b *Binding) SetKubemqAddress(values []string) *Binding {
-	b.kubemqAddress = values
+	//	b.kubemqAddress = values
 	return b
 }
 func (b *Binding) setSource() error {
 	if !b.isEditMode {
-		b.Sources = source.NewSource().SetKubemqAddress(b.kubemqAddress)
+		b.Sources = source.NewSource().SetKubemqAddress(nil)
 	}
 
 	var err error
@@ -78,7 +78,7 @@ func (b *Binding) setSource() error {
 }
 func (b *Binding) setTarget() error {
 	if !b.isEditMode {
-		b.Targets = target.NewTarget().SetKubemqAddress(b.kubemqAddress)
+		b.Targets = target.NewTarget().SetKubemqAddress(nil)
 	}
 	var err error
 	if b.Targets, err = b.Targets.

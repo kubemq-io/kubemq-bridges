@@ -23,7 +23,7 @@ func (k *Kind) Render() (string, error) {
 		SetDefault(k.defaultKind).
 		SetHelp("Set targets kind entry").
 		SetRequired(true).
-		SetOptions([]string{"target.queue", "target.events", "target.events-store", "target.command", "target.query"}).
+		SetOptions([]string{"kubemq.queue", "kubemq.query", "kubemq.events", "kubemq.events-store", "kubemq.command"}).
 		Render(&val)
 	if err != nil {
 		return "", err
