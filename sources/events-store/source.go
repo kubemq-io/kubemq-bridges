@@ -16,18 +16,20 @@ type Source struct {
 	client  *kubemq.Client
 	log     *logger.Logger
 	targets []middleware.Middleware
+	properties config.Metadata
 }
 
 func New() *Source {
 	return &Source{}
 
 }
-func (s *Source) Init(ctx context.Context, connection config.Metadata) error {
+func (s *Source) Init(ctx context.Context, connection config.Metadata,properties config.Metadata) error {
 	var err error
 	s.opts, err = parseOptions(connection)
 	if err != nil {
 		return err
 	}
+	s.properties=properties
 	s.client, err = kubemq.NewClient(ctx,
 		kubemq.WithAddress(s.opts.host, s.opts.port),
 		kubemq.WithClientId(s.opts.clientId),
