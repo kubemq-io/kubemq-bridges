@@ -6,30 +6,33 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/roundrobin"
 
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/nats-io/nuid"
 )
 
 type Source struct {
-	opts    options
-	client  *kubemq.Client
-	log     *logger.Logger
-	targets []middleware.Middleware
-	properties config.Metadata
+	opts              options
+	client            *kubemq.Client
+	log               *logger.Logger
+	targets           []middleware.Middleware
+	properties        config.Metadata
+	roundRobin        *roundrobin.RoundRobin
+	loadBalancingMode bool
 }
 
 func New() *Source {
 	return &Source{}
 
 }
-func (s *Source) Init(ctx context.Context, Source config.Metadata,properties config.Metadata) error {
+func (s *Source) Init(ctx context.Context, Source config.Metadata, properties config.Metadata) error {
 	var err error
 	s.opts, err = parseOptions(Source)
 	if err != nil {
 		return err
 	}
-	s.properties=properties
+	s.properties = properties
 	s.client, err = kubemq.NewClient(ctx,
 		kubemq.WithAddress(s.opts.host, s.opts.port),
 		kubemq.WithClientId(s.opts.clientId),
@@ -46,6 +49,13 @@ func (s *Source) Init(ctx context.Context, Source config.Metadata,properties con
 }
 
 func (s *Source) Start(ctx context.Context, targets []middleware.Middleware, log *logger.Logger) error {
+	s.roundRobin = roundrobin.NewRoundRobin(len(targets))
+	if s.properties != nil {
+		mode, ok := s.properties["load-balancing"]
+		if ok && mode == "true" {
+			s.loadBalancingMode = true
+		}
+	}
 	s.targets = targets
 	s.log = log
 	group := nuid.Next()
@@ -67,14 +77,24 @@ func (s *Source) run(ctx context.Context, eventsCh <-chan *kubemq.Event, errCh c
 	for {
 		select {
 		case event := <-eventsCh:
-			for _, target := range s.targets {
+			if s.loadBalancingMode {
 				go func(event *kubemq.Event, target middleware.Middleware) {
 					_, err := target.Do(ctx, event)
 					if err != nil {
 						s.log.Errorf("error received from target, %s", err.Error())
 					}
-				}(event, target)
+				}(event, s.targets[s.roundRobin.Next()])
+			} else {
+				for _, target := range s.targets {
+					go func(event *kubemq.Event, target middleware.Middleware) {
+						_, err := target.Do(ctx, event)
+						if err != nil {
+							s.log.Errorf("error received from target, %s", err.Error())
+						}
+					}(event, target)
+				}
 			}
+
 		case err := <-errCh:
 			s.log.Errorf("error received from kuebmq server, %s", err.Error())
 			return

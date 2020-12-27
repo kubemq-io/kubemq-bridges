@@ -59,7 +59,7 @@ func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *m
 	}
 
 	for _, connection := range cfg.Sources.Connections {
-		source, err := sources.Init(ctx, cfg.Sources.Kind, connection)
+		source, err := sources.Init(ctx, cfg.Sources.Kind, connection, cfg.Properties)
 		if err != nil {
 			return fmt.Errorf("error loading sources conntector on binding %s, %w", b.name, err)
 		}

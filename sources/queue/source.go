@@ -3,6 +3,7 @@ package queue
 import (
 	"context"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/roundrobin"
 	"time"
 
 	"github.com/kubemq-io/kubemq-go"
@@ -16,25 +17,27 @@ const (
 )
 
 type Source struct {
-	opts      options
-	client    *kubemq.Client
-	log       *logger.Logger
-	targets   []middleware.Middleware
-	isStopped bool
-	properties config.Metadata
+	opts              options
+	client            *kubemq.Client
+	log               *logger.Logger
+	targets           []middleware.Middleware
+	isStopped         bool
+	properties        config.Metadata
+	roundRobin        *roundrobin.RoundRobin
+	loadBalancingMode bool
 }
 
 func New() *Source {
 	return &Source{}
 
 }
-func (s *Source) Init(ctx context.Context, connection config.Metadata,properties config.Metadata) error {
+func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata) error {
 	var err error
 	s.opts, err = parseOptions(connection)
 	if err != nil {
 		return err
 	}
-	s.properties=properties
+	s.properties = properties
 	s.client, err = kubemq.NewClient(ctx,
 		kubemq.WithAddress(s.opts.host, s.opts.port),
 		kubemq.WithClientId(s.opts.clientId),
@@ -49,6 +52,13 @@ func (s *Source) Init(ctx context.Context, connection config.Metadata,properties
 }
 
 func (s *Source) Start(ctx context.Context, targets []middleware.Middleware, log *logger.Logger) error {
+	s.roundRobin = roundrobin.NewRoundRobin(len(targets))
+	if s.properties != nil {
+		mode, ok := s.properties["load-balancing"]
+		if ok && mode == "true" {
+			s.loadBalancingMode = true
+		}
+	}
 	s.log = log
 	s.targets = targets
 	go s.run(ctx)
@@ -66,15 +76,25 @@ func (s *Source) run(ctx context.Context) {
 			time.Sleep(retriesInterval)
 			continue
 		}
-		for _, message := range queueMessages {
-			for _, target := range s.targets {
-				err := s.processQueueMessage(ctx, message, target)
+		if s.loadBalancingMode {
+			for _, message := range queueMessages {
+				err := s.processQueueMessage(ctx, message, s.targets[s.roundRobin.Next()])
 				if err != nil {
 					s.log.Errorf("error received from target, %w", err)
 				}
 			}
+		} else {
+			for _, message := range queueMessages {
+				for _, target := range s.targets {
+					err := s.processQueueMessage(ctx, message, target)
+					if err != nil {
+						s.log.Errorf("error received from target, %w", err)
+					}
+				}
 
+			}
 		}
+
 		select {
 		case <-ctx.Done():
 			return

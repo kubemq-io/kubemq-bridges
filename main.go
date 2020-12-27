@@ -10,6 +10,7 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/binding"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/roundrobin"
 	"io/ioutil"
 	"os"
 	"os/signal"
@@ -113,19 +114,24 @@ func run() error {
 
 }
 func main() {
-	log = logger.NewLogger("main")
-	flag.Parse()
-	if *build {
-		err := buildConfig()
-		if err != nil {
-			log.Error(err)
-			os.Exit(1)
-		}
+	rr := roundrobin.NewRoundRobin(10)
+	for i := 0; i < 11; i++ {
+		fmt.Println(rr.Next())
 	}
-	config.SetConfigFile(*configFile)
-	log.Infof("starting kubemq bridges connector version: %s, commit: %s, date %s", version, commit, date)
-	if err := run(); err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
+	//
+	//log = logger.NewLogger("main")
+	//flag.Parse()
+	//if *build {
+	//	err := buildConfig()
+	//	if err != nil {
+	//		log.Error(err)
+	//		os.Exit(1)
+	//	}
+	//}
+	//config.SetConfigFile(*configFile)
+	//log.Infof("starting kubemq bridges connector version: %s, commit: %s, date %s", version, commit, date)
+	//if err := run(); err != nil {
+	//	log.Error(err)
+	//	os.Exit(1)
+	//}
 }
