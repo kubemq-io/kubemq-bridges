@@ -37,6 +37,15 @@ func New() (*Service, error) {
 	}
 	return s, nil
 }
+
+func NewForExternal() (*Service, error) {
+	s := &Service{
+		Mutex:    sync.Mutex{},
+		bindings: make(map[string]*Binder),
+		log:      logger.NewLogger("binding-service"),
+	}
+	return s, nil
+}
 func (s *Service) Start(ctx context.Context, cfg *config.Config) error {
 	s.currentCtx, s.currentCancelFunc = context.WithCancel(ctx)
 	if len(cfg.Bindings) == 0 {
@@ -79,7 +88,10 @@ func (s *Service) Stop() {
 			s.log.Error(err)
 		}
 	}
-	s.currentCancelFunc()
+	if s.currentCancelFunc != nil {
+		s.currentCancelFunc()
+	}
+
 }
 func (s *Service) Add(ctx context.Context, cfg config.BindingConfig) error {
 	s.Lock()

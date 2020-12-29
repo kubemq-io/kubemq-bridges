@@ -243,7 +243,6 @@ func TestClient_processQuery(t *testing.T) {
 
 //
 func TestClient_Init(t *testing.T) {
-
 	tests := []struct {
 		name       string
 		connection config.Metadata

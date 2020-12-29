@@ -6,7 +6,7 @@ bindings:
     connections:
     - address: localhost:50000
       channel: command1
-    Kind: source.command
+    Kind: queue.command
     Name: da
   targets:
     connections:
