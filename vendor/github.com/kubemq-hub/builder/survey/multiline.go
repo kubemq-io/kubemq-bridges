@@ -83,11 +83,15 @@ func (e *Multiline) Render(target interface{}) error {
 	if err := e.Complete(); err != nil {
 		return err
 	}
-	selectInput := &survey.Multiline{
-		Renderer: survey.Renderer{},
-		Message:  e.Message,
-		Default:  e.Default,
-		Help:     e.Help,
+	selectInput := &survey.Editor{
+		Renderer:      survey.Renderer{},
+		Message:       e.Message,
+		Default:       e.Default,
+		Help:          e.Help,
+		Editor:        "",
+		HideDefault:   false,
+		AppendDefault: false,
+		FileName:      "",
 	}
 	err := survey.AskOne(selectInput, target, e.askOpts...)
 	if err != nil {

@@ -2,6 +2,7 @@ package queue
 
 import (
 	"context"
+	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/roundrobin"
 	"time"
@@ -18,13 +19,14 @@ const (
 
 type Source struct {
 	opts              options
-	client            *kubemq.Client
+	clients           []*kubemq.Client
 	log               *logger.Logger
 	targets           []middleware.Middleware
 	isStopped         bool
 	properties        config.Metadata
 	roundRobin        *roundrobin.RoundRobin
 	loadBalancingMode bool
+	requeueCache      *requeue
 }
 
 func New() *Source {
@@ -37,16 +39,24 @@ func (s *Source) Init(ctx context.Context, connection config.Metadata, propertie
 	if err != nil {
 		return err
 	}
+	s.requeueCache = newRequeue(s.opts.maxRequeue)
 	s.properties = properties
-	s.client, err = kubemq.NewClient(ctx,
-		kubemq.WithAddress(s.opts.host, s.opts.port),
-		kubemq.WithClientId(s.opts.clientId),
-		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
-		kubemq.WithAuthToken(s.opts.authToken),
-		kubemq.WithCheckConnection(true),
-	)
-	if err != nil {
-		return err
+	for i := 0; i < s.opts.sources; i++ {
+		clientId := s.opts.clientId
+		if s.opts.sources > 1 {
+			clientId = fmt.Sprintf("%s-%d", clientId, i)
+		}
+		client, err := kubemq.NewClient(ctx,
+			kubemq.WithAddress(s.opts.host, s.opts.port),
+			kubemq.WithClientId(clientId),
+			kubemq.WithTransportType(kubemq.TransportTypeGRPC),
+			kubemq.WithCheckConnection(true),
+			kubemq.WithAuthToken(s.opts.authToken),
+		)
+		if err != nil {
+			return err
+		}
+		s.clients = append(s.clients, client)
 	}
 	return nil
 }
@@ -61,16 +71,18 @@ func (s *Source) Start(ctx context.Context, targets []middleware.Middleware, log
 	}
 	s.log = log
 	s.targets = targets
-	go s.run(ctx)
+	for i := 0; i < len(s.clients); i++ {
+		go s.run(ctx, s.clients[i])
+	}
 	return nil
 }
 
-func (s *Source) run(ctx context.Context) {
+func (s *Source) run(ctx context.Context, client *kubemq.Client) {
 	for {
 		if s.isStopped {
 			return
 		}
-		queueMessages, err := s.getQueueMessages(ctx)
+		queueMessages, err := s.getQueueMessages(ctx, client)
 		if err != nil {
 			s.log.Error(err.Error())
 			time.Sleep(retriesInterval)
@@ -78,7 +90,7 @@ func (s *Source) run(ctx context.Context) {
 		}
 		if s.loadBalancingMode {
 			for _, message := range queueMessages {
-				err := s.processQueueMessage(ctx, message, s.targets[s.roundRobin.Next()])
+				err := s.processQueueMessage(ctx, message, s.targets[s.roundRobin.Next()], client)
 				if err != nil {
 					s.log.Errorf("error received from target, %w", err)
 				}
@@ -86,7 +98,7 @@ func (s *Source) run(ctx context.Context) {
 		} else {
 			for _, message := range queueMessages {
 				for _, target := range s.targets {
-					err := s.processQueueMessage(ctx, message, target)
+					err := s.processQueueMessage(ctx, message, target, client)
 					if err != nil {
 						s.log.Errorf("error received from target, %w", err)
 					}
@@ -103,8 +115,8 @@ func (s *Source) run(ctx context.Context) {
 		}
 	}
 }
-func (s *Source) getQueueMessages(ctx context.Context) ([]*kubemq.QueueMessage, error) {
-	receiveResult, err := s.client.NewReceiveQueueMessagesRequest().
+func (s *Source) getQueueMessages(ctx context.Context, client *kubemq.Client) ([]*kubemq.QueueMessage, error) {
+	receiveResult, err := client.NewReceiveQueueMessagesRequest().
 		SetChannel(s.opts.channel).
 		SetMaxNumberOfMessages(s.opts.batchSize).
 		SetWaitTimeSeconds(s.opts.waitTimeout).
@@ -115,16 +127,29 @@ func (s *Source) getQueueMessages(ctx context.Context) ([]*kubemq.QueueMessage, 
 	return receiveResult.Messages, nil
 }
 
-func (s *Source) processQueueMessage(ctx context.Context, msg *kubemq.QueueMessage, target middleware.Middleware) error {
+func (s *Source) processQueueMessage(ctx context.Context, msg *kubemq.QueueMessage, target middleware.Middleware, client *kubemq.Client) error {
 	_, err := target.Do(ctx, msg)
-	if err != nil {
-		return err
+	if err == nil {
+		s.requeueCache.remove(msg.MessageID)
+		return nil
 	}
-	return nil
-
+	if s.requeueCache.isRequeue(msg.MessageID) {
+		_, requeueErr := client.SetQueueMessage(msg).Send(ctx)
+		if requeueErr != nil {
+			s.requeueCache.remove(msg.MessageID)
+			s.log.Errorf("message id %s wasn't requeue due to an error , %s", msg.MessageID, requeueErr.Error())
+			return nil
+		}
+		s.log.Infof("message id %s, requeued back to channel", msg.MessageID)
+		return nil
+	} else {
+		return nil
+	}
 }
 
 func (s *Source) Stop() error {
-	s.isStopped = true
-	return s.client.Close()
+	for _, client := range s.clients {
+		_ = client.Close()
+	}
+	return nil
 }

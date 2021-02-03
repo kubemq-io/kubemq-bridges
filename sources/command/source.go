@@ -6,15 +6,15 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 	"github.com/kubemq-io/kubemq-go"
-	"github.com/nats-io/nuid"
 )
 
 type Source struct {
-	opts    options
-	client  *kubemq.Client
-	log     *logger.Logger
-	targets []middleware.Middleware
+	opts       options
+	clients    []*kubemq.Client
+	log        *logger.Logger
+	targets    []middleware.Middleware
 	properties config.Metadata
 }
 
@@ -22,63 +22,73 @@ func New() *Source {
 	return &Source{}
 
 }
-func (s *Source) Init(ctx context.Context, connection config.Metadata,properties config.Metadata) error {
+func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata) error {
 	var err error
 	s.opts, err = parseOptions(connection)
 	if err != nil {
 		return err
 	}
-	s.properties=properties
-	s.client, err = kubemq.NewClient(ctx,
-		kubemq.WithAddress(s.opts.host, s.opts.port),
-		kubemq.WithClientId(s.opts.clientId),
-		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
-		kubemq.WithAuthToken(s.opts.authToken),
-		kubemq.WithCheckConnection(true),
-		kubemq.WithMaxReconnects(s.opts.maxReconnects),
-		kubemq.WithAutoReconnect(s.opts.autoReconnect),
-		kubemq.WithReconnectInterval(s.opts.reconnectIntervalSeconds))
-	if err != nil {
-		return err
+	s.properties = properties
+	for i := 0; i < s.opts.sources; i++ {
+		clientId := s.opts.clientId
+		if s.opts.sources > 1 {
+			clientId = fmt.Sprintf("%s-%d", clientId, i)
+		}
+		client, err := kubemq.NewClient(ctx,
+			kubemq.WithAddress(s.opts.host, s.opts.port),
+			kubemq.WithClientId(clientId),
+			kubemq.WithTransportType(kubemq.TransportTypeGRPC),
+			kubemq.WithCheckConnection(true),
+			kubemq.WithAuthToken(s.opts.authToken),
+			kubemq.WithMaxReconnects(s.opts.maxReconnects),
+			kubemq.WithAutoReconnect(s.opts.autoReconnect),
+			kubemq.WithReconnectInterval(s.opts.reconnectIntervalSeconds))
+		if err != nil {
+			return err
+		}
+		s.clients = append(s.clients, client)
 	}
 	return nil
 }
 func (s *Source) Start(ctx context.Context, targets []middleware.Middleware, log *logger.Logger) error {
 	s.targets = targets
 	s.log = log
-	group := nuid.Next()
-	if s.opts.group != "" {
-		group = s.opts.group
+
+	if s.opts.sources > 1 && s.opts.group == "" {
+		s.opts.group = uuid.New().String()
 	}
-	for _, target := range targets {
-		err := s.runSubscriber(ctx, s.opts.channel, group, target)
-		if err != nil {
-			return err
+	for _, client := range s.clients {
+		for _, target := range targets {
+			err := s.runSubscriber(ctx, s.opts.channel, s.opts.group, target, client)
+			if err != nil {
+				return err
+			}
 		}
 	}
+
 	return nil
 }
 
-func (s *Source) runSubscriber(ctx context.Context, channel, group string, target middleware.Middleware) error {
+func (s *Source) runSubscriber(ctx context.Context, channel, group string, target middleware.Middleware, client *kubemq.Client) error {
 	errCh := make(chan error, 1)
-	commandsCh, err := s.client.SubscribeToCommands(ctx, channel, group, errCh)
+	commandsCh, err := client.SubscribeToCommands(ctx, channel, group, errCh)
 	if err != nil {
 		return fmt.Errorf("error on subscribing to command channel, %w", err)
 	}
-	go func(ctx context.Context, commandCh <-chan *kubemq.CommandReceive, errCh chan error, target middleware.Middleware) {
-		s.run(ctx, commandsCh, errCh, target)
-	}(ctx, commandsCh, errCh, target)
+	go func(ctx context.Context, commandCh <-chan *kubemq.CommandReceive, errCh chan error, target middleware.Middleware, client *kubemq.Client) {
+		s.run(ctx, commandsCh, errCh, target, client)
+	}(ctx, commandsCh, errCh, target, client)
 	return nil
 }
-func (s *Source) run(ctx context.Context, commandCh <-chan *kubemq.CommandReceive, errCh chan error, target middleware.Middleware) {
+func (s *Source) run(ctx context.Context, commandCh <-chan *kubemq.CommandReceive, errCh chan error, target middleware.Middleware, client *kubemq.Client) {
 	for {
 		select {
 		case command := <-commandCh:
 			go func(q *kubemq.CommandReceive) {
 				var cmdResponse *kubemq.Response
-				cmdResponse, err := s.processCommand(ctx, command, target)
+				cmdResponse, err := s.processCommand(ctx, command, target, client)
 				if err != nil {
-					cmdResponse = s.client.NewResponse().
+					cmdResponse = client.NewResponse().
 						SetRequestId(command.Id).
 						SetResponseTo(command.ResponseTo).
 						SetError(err)
@@ -103,7 +113,7 @@ func (s *Source) run(ctx context.Context, commandCh <-chan *kubemq.CommandReceiv
 	}
 }
 
-func (s *Source) processCommand(ctx context.Context, command *kubemq.CommandReceive, target middleware.Middleware) (*kubemq.Response, error) {
+func (s *Source) processCommand(ctx context.Context, command *kubemq.CommandReceive, target middleware.Middleware, client *kubemq.Client) (*kubemq.Response, error) {
 
 	result, err := target.Do(ctx, command)
 	if err != nil {
@@ -111,16 +121,16 @@ func (s *Source) processCommand(ctx context.Context, command *kubemq.CommandRece
 	}
 	switch val := result.(type) {
 	case *kubemq.CommandResponse:
-		return s.parseCommandResponse(val), nil
+		return s.parseCommandResponse(val, client), nil
 	case *kubemq.QueryResponse:
-		return s.parseQueryResponse(val), nil
+		return s.parseQueryResponse(val, client), nil
 	default:
-		return s.client.NewResponse(), nil
+		return client.NewResponse(), nil
 	}
 }
 
-func (s *Source) parseCommandResponse(cmd *kubemq.CommandResponse) *kubemq.Response {
-	resp := s.client.NewResponse().SetTags(cmd.Tags)
+func (s *Source) parseCommandResponse(cmd *kubemq.CommandResponse, client *kubemq.Client) *kubemq.Response {
+	resp := client.NewResponse().SetTags(cmd.Tags)
 	if cmd.Executed {
 		resp.SetExecutedAt(cmd.ExecutedAt)
 	} else {
@@ -128,8 +138,8 @@ func (s *Source) parseCommandResponse(cmd *kubemq.CommandResponse) *kubemq.Respo
 	}
 	return resp
 }
-func (s *Source) parseQueryResponse(query *kubemq.QueryResponse) *kubemq.Response {
-	resp := s.client.NewResponse().SetTags(query.Tags)
+func (s *Source) parseQueryResponse(query *kubemq.QueryResponse, client *kubemq.Client) *kubemq.Response {
+	resp := client.NewResponse().SetTags(query.Tags)
 	if query.Executed {
 		resp.SetExecutedAt(query.ExecutedAt)
 	} else {
@@ -139,5 +149,8 @@ func (s *Source) parseQueryResponse(query *kubemq.QueryResponse) *kubemq.Respons
 }
 
 func (s *Source) Stop() error {
-	return s.client.Close()
+	for _, client := range s.clients {
+		_ = client.Close()
+	}
+	return nil
 }

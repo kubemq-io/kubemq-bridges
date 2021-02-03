@@ -71,7 +71,7 @@ func (b *Binding) setSource() error {
 	var err error
 	if b.Sources, err = b.Sources.
 		SetIsEdit(b.isEditMode).
-		Render(); err != nil {
+		Render(b.Name); err != nil {
 		return err
 	}
 	return nil
@@ -83,7 +83,7 @@ func (b *Binding) setTarget() error {
 	var err error
 	if b.Targets, err = b.Targets.
 		SetIsEdit(b.isEditMode).
-		Render(); err != nil {
+		Render(b.Name); err != nil {
 		return err
 	}
 	return nil
@@ -153,7 +153,7 @@ func (b *Binding) edit() (*Binding, error) {
 	*ftSource = fmt.Sprintf("<s> Edit Binding's Source (%s)", edited.Sources.Kind)
 	form.AddItem(ftSource, func() error {
 		var err error
-		if edited.Sources, err = edited.Sources.Render(); err != nil {
+		if edited.Sources, err = edited.Sources.Render(edited.Name); err != nil {
 			return err
 		}
 		*ftSource = fmt.Sprintf("<s> Edit Binding's Source (%s)", edited.Sources.Kind)
@@ -164,7 +164,7 @@ func (b *Binding) edit() (*Binding, error) {
 	*ftTarget = fmt.Sprintf("<t> Edit Binding's Target (%s)", edited.Targets.Kind)
 	form.AddItem(ftTarget, func() error {
 		var err error
-		if edited.Targets, err = edited.Targets.Render(); err != nil {
+		if edited.Targets, err = edited.Targets.Render(edited.Name); err != nil {
 			return err
 		}
 		*ftTarget = fmt.Sprintf("<t> Edit Binding's Target (%s)", edited.Targets.Kind)

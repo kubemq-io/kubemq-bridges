@@ -3,8 +3,8 @@ package queue
 import (
 	"context"
 	"github.com/kubemq-hub/kubemq-bridges/config"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 	"github.com/kubemq-io/kubemq-go"
-	"github.com/nats-io/nuid"
 
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -31,7 +31,7 @@ func (m *mockQueueReceiver) run(ctx context.Context) (*kubemq.QueueMessage, erro
 
 	queueMessages, err := client.ReceiveQueueMessages(ctx, &kubemq.ReceiveQueueMessagesRequest{
 		RequestID:           "id",
-		ClientID:            nuid.Next(),
+		ClientID:            uuid.New().String(),
 		Channel:             m.channel,
 		MaxNumberOfMessages: 1,
 		WaitTimeSeconds:     m.timeout,

@@ -3,7 +3,7 @@ package command
 import (
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/nats-io/nuid"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 	"math"
 )
 
@@ -29,7 +29,7 @@ func parseOptions(cfg config.Metadata) (options, error) {
 		return options{}, fmt.Errorf("error parsing address value, %w", err)
 	}
 	o.authToken = cfg.ParseString("auth_token", "")
-	o.clientId = cfg.ParseString("client_id", nuid.Next())
+	o.clientId = cfg.ParseString("client_id", uuid.New().String())
 	o.defaultChannel = cfg.ParseString("default_channel", "")
 	o.timeoutSeconds, err = cfg.ParseIntWithRange("timeout_seconds", defaultTimeoutSeconds, 1, math.MaxInt32)
 	if err != nil {

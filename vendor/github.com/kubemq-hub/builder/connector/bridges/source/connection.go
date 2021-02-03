@@ -9,6 +9,7 @@ type Connection struct {
 	addressOptions []string
 	properties     map[string]string
 	kind           string
+	bindingName    string
 }
 
 func NewConnection() *Connection {
@@ -48,6 +49,7 @@ func (c *Connection) askChannel() error {
 		SetHelp("Set source channel").
 		SetRequired(true).
 		SetValidator(survey.ValidateNoneSpace).
+		SetDefault(fmt.Sprintf("%s.%s", c.kind, c.bindingName)).
 		Render(&val)
 	if err != nil {
 		return err
@@ -158,6 +160,26 @@ func (c *Connection) renderEventsKind() (map[string]string, error) {
 	if err := c.askChannel(); err != nil {
 		return nil, err
 	}
+	options := []string{
+		"Set them to defaults values",
+		"Let me configure them",
+	}
+	val := ""
+	err := survey.NewString().
+		SetKind("string").
+		SetName("check not required").
+		SetMessage("There are 3 values which are not mandatory to configure:").
+		SetDefault(options[0]).
+		SetOptions(options).
+		SetRequired(true).
+		Render(&val)
+	if err != nil {
+		return nil, err
+	}
+	if val == options[0] {
+		return c.properties, nil
+	}
+
 	if err := c.askGroup(); err != nil {
 		return nil, err
 	}
@@ -177,6 +199,25 @@ func (c *Connection) renderRPCKind() (map[string]string, error) {
 	if err := c.askChannel(); err != nil {
 		return nil, err
 	}
+	options := []string{
+		"Set them to defaults values",
+		"Let me configure them",
+	}
+	val := ""
+	err := survey.NewString().
+		SetKind("string").
+		SetName("check not required").
+		SetMessage("There are 3 values which are not mandatory to configure:").
+		SetDefault(options[0]).
+		SetOptions(options).
+		SetRequired(true).
+		Render(&val)
+	if err != nil {
+		return nil, err
+	}
+	if val == options[0] {
+		return c.properties, nil
+	}
 	if err := c.askGroup(); err != nil {
 		return nil, err
 	}
@@ -194,6 +235,25 @@ func (c *Connection) renderQueueKind() (map[string]string, error) {
 	}
 	if err := c.askChannel(); err != nil {
 		return nil, err
+	}
+	options := []string{
+		"Set them to defaults values",
+		"Let me configure them",
+	}
+	val := ""
+	err := survey.NewString().
+		SetKind("string").
+		SetName("check not required").
+		SetMessage("There are 4 values which are not mandatory to configure:").
+		SetDefault(options[0]).
+		SetOptions(options).
+		SetRequired(true).
+		Render(&val)
+	if err != nil {
+		return nil, err
+	}
+	if val == options[0] {
+		return c.properties, nil
 	}
 	if err := c.askClientID(); err != nil {
 		return nil, err
@@ -213,10 +273,11 @@ func (c *Connection) renderQueueKind() (map[string]string, error) {
 	return c.properties, nil
 }
 
-func (c *Connection) Render(kind string) (map[string]string, error) {
+func (c *Connection) Render(kind string, bindingName string) (map[string]string, error) {
+	c.bindingName = bindingName
 	switch kind {
 	case "kubemq.queue":
-		c.kind = "queues"
+		c.kind = "queue"
 		return c.renderQueueKind()
 	case "kubemq.events":
 		c.kind = "events"
@@ -225,10 +286,10 @@ func (c *Connection) Render(kind string) (map[string]string, error) {
 		c.kind = "events-store"
 		return c.renderEventsKind()
 	case "kubemq.command":
-		c.kind = "commands"
+		c.kind = "command"
 		return c.renderRPCKind()
 	case "kubemq.query":
-		c.kind = "queries"
+		c.kind = "query"
 		return c.renderRPCKind()
 	default:
 		return nil, fmt.Errorf("invalid kind")

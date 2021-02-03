@@ -18,6 +18,8 @@ Queue source configuration properties:
 | address      | yes      | kubemq server address (gRPC interface)                  | kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000 |
 | client_id    | no       | sets client_id value for connection                     | "cluster-a-queue-connection"                         |
 | auth_token   | no       | JWT auth token for connection authentication            | JWT token                                            |
+| sources       | no       | set how many queue sources to subscribe              |    "1"            |
+| max_requeue   | yes      | set how many times to requeue the requests due to target error| "0" no requeue       |
 | channel      | yes      | kubemq channel to pull queue messages                   | queue.a                                              |
 | batch_size   | no       | sets how many messages the source will pull in one call | default - 1                                          |
 | wait_timeout | no       | sets how many seconds to wait per each pull             | 60                                                   |
@@ -45,18 +47,24 @@ bindings:
           channel: "queue"
           batch_size: 1
           wait_timeout: 60
+          sources: 1 
+          max_requeue: 0 
         - address: "kubemq-cluster-b-grpc.kubemq.svc.cluster.local:50000"
           client_id: "cluster-b-queue-connection"
           auth_token: ""
           channel: "queue"
           batch_size: 1
           wait_timeout: 60
+          sources: 1 
+          max_requeue: 0
         - address: "kubemq-cluster-c-grpc.kubemq.svc.cluster.local:50000"
           client_id: "cluster-c-queue-connection"
           auth_token: ""
           channel: "queue"
           batch_size: 1
-          wait_timeout: 60    
+          wait_timeout: 60
+          sources: 1 
+          max_requeue: 0    
     targets:
     .....
 ```

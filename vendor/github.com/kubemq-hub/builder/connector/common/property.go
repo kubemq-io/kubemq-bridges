@@ -6,16 +6,17 @@ import (
 )
 
 type Property struct {
-	Name          string   `json:"name"`
-	Kind          string   `json:"kind"`
-	Description   string   `json:"description"`
-	Default       string   `json:"default"`
-	Options       []string `json:"options"`
-	Must          bool     `json:"must"`
-	Min           int      `json:"min"`
-	Max           int      `json:"max"`
-	Conditional   map[string][]*Property
-	LoadedOptions string
+	Name           string   `json:"name"`
+	Kind           string   `json:"kind"`
+	Description    string   `json:"description"`
+	Default        string   `json:"default"`
+	Options        []string `json:"options"`
+	Must           bool     `json:"must"`
+	Min            int      `json:"min"`
+	Max            int      `json:"max"`
+	Conditional    map[string][]*Property
+	DefaultFromKey string `json:"default_from_key"`
+	LoadedOptions  string
 }
 
 func NewProperty() *Property {
@@ -33,6 +34,11 @@ func (p *Property) SetKind(value string) *Property {
 }
 func (p *Property) SetDescription(value string) *Property {
 	p.Description = value
+	return p
+}
+
+func (p *Property) SetDefaultFromKey(value string) *Property {
+	p.DefaultFromKey = value
 	return p
 }
 

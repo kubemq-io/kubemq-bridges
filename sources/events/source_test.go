@@ -6,8 +6,8 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 	"github.com/kubemq-io/kubemq-go"
-	"github.com/nats-io/nuid"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
@@ -34,6 +34,7 @@ func setupSource(ctx context.Context, targets []middleware.Middleware) (*Source,
 		"auto_reconnect":             "true",
 		"reconnect_interval_seconds": "1",
 		"max_reconnects":             "0",
+		"sources":                    "2",
 	}, config.Metadata{})
 	if err != nil {
 		return nil, err
@@ -49,7 +50,7 @@ func setupSource(ctx context.Context, targets []middleware.Middleware) (*Source,
 func sendEvent(t *testing.T, ctx context.Context, req *kubemq.Event, sendChannel string) error {
 	client, err := kubemq.NewClient(ctx,
 		kubemq.WithAddress("localhost", 50000),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC))
 
 	if err != nil {
@@ -129,6 +130,7 @@ func TestClient_Init(t *testing.T) {
 				"auto_reconnect":             "true",
 				"reconnect_interval_seconds": "1",
 				"max_reconnects":             "0",
+				"sources":                    "1",
 			},
 			wantErr: false,
 		},
@@ -150,6 +152,7 @@ func TestClient_Init(t *testing.T) {
 				"auto_reconnect":             "true",
 				"reconnect_interval_seconds": "1",
 				"max_reconnects":             "0",
+				"sources":                    "1",
 			},
 			wantErr: true,
 		},
@@ -164,6 +167,7 @@ func TestClient_Init(t *testing.T) {
 				"auto_reconnect":             "true",
 				"reconnect_interval_seconds": "1",
 				"max_reconnects":             "0",
+				"sources":                    "1",
 			},
 			wantErr: true,
 		},
@@ -178,6 +182,22 @@ func TestClient_Init(t *testing.T) {
 				"auto_reconnect":             "true",
 				"reconnect_interval_seconds": "-1",
 				"max_reconnects":             "0",
+				"sources":                    "1",
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad sources",
+			connection: config.Metadata{
+				"address":                    "localhost:50000",
+				"client_id":                  "",
+				"auth_token":                 "some-auth token",
+				"channel":                    "some-channel",
+				"group":                      "",
+				"auto_reconnect":             "true",
+				"reconnect_interval_seconds": "1",
+				"max_reconnects":             "0",
+				"sources":                    "-1",
 			},
 			wantErr: true,
 		},

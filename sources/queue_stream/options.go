@@ -1,4 +1,4 @@
-package queue
+package queue_stream
 
 import (
 	"fmt"
@@ -7,21 +7,20 @@ import (
 )
 
 const (
-	defaultBatchSize   = 1
-	defaultWaitTimeout = 60
-	defaultSources     = 1
+	defaultWaitTimeout       = 3600
+	defaultVisibilityTimeout = 3600
+	defaultSources           = 1
 )
 
 type options struct {
-	host        string
-	port        int
-	clientId    string
-	authToken   string
-	channel     string
-	sources     int
-	batchSize   int
-	waitTimeout int
-	maxRequeue  int
+	host              string
+	port              int
+	clientId          string
+	authToken         string
+	channel           string
+	sources           int
+	visibilityTimeout int
+	waitTimeout       int
 }
 
 func parseOptions(cfg config.Metadata) (options, error) {
@@ -39,22 +38,18 @@ func parseOptions(cfg config.Metadata) (options, error) {
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing channel value, %w", err)
 	}
-	o.sources, err = cfg.ParseIntWithRange("sources", defaultSources, 1, 1024)
+	o.sources, err = cfg.ParseIntWithRange("sources", defaultSources, 1, 100)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing sources value, %w", err)
 	}
 
-	o.batchSize, err = cfg.ParseIntWithRange("batch_size", defaultBatchSize, 1, 1024)
+	o.visibilityTimeout, err = cfg.ParseIntWithRange("visibility_timeout_seconds", defaultVisibilityTimeout, 1, 24*60*60)
 	if err != nil {
-		return options{}, fmt.Errorf("error parsing batch size value, %w", err)
+		return options{}, fmt.Errorf("error parsing visibility timeout value, %w", err)
 	}
 	o.waitTimeout, err = cfg.ParseIntWithRange("wait_timeout", defaultWaitTimeout, 1, 24*60*60)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing wait timeout value, %w", err)
-	}
-	o.maxRequeue, err = cfg.ParseIntWithRange("max_requeue", 0, 0, 1024)
-	if err != nil {
-		return options{}, fmt.Errorf("error parsing max requeue value, %w", err)
 	}
 	return o, nil
 }

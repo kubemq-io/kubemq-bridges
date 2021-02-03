@@ -20,9 +20,10 @@ Events source connector configuration properties:
 | auth_token                 | no       | set authentication token               | JWT token                                            |
 | channel                    | yes      | set channel to subscribe               |                                                      |
 | group                      | no       | set subscriber group                   |                                                      |
+|sources                    | no       | set how many events sources to subscribe              |    "1"            |
 | auto_reconnect             | no       | set auto reconnect on lost connection  | "false", "true"                                      |
 | reconnect_interval_seconds | no       | set reconnection seconds               | "5"                                                  |
-| max_reconnects             | no       | set how many time to reconnect         | "0"                                                  |
+| max_reconnects             | no       | set how many times to reconnect         | "0"                                                  |
 
 
 Example:
@@ -46,16 +47,19 @@ bindings:
           auth_token: ""
           channel: "events"
           group: ""
+          sources: "1"
         - address: "kubemq-cluster-b-grpc.kubemq.svc.cluster.local:50000"
           client_id: "cluster-b-events-connection"
           auth_token: ""
           channel: "events"
           group: ""
+          sources: "1"
         - address: "kubemq-cluster-c-grpc.kubemq.svc.cluster.local:50000"
           client_id: "cluster-c-events-connection"
           auth_token: ""
           channel: "events"
-          group: ""              
+          group: ""
+          sources: "1"              
     targets:
     .....
 ```

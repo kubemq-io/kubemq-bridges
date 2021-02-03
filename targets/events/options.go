@@ -3,7 +3,7 @@ package events
 import (
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/nats-io/nuid"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 )
 
 const (
@@ -26,7 +26,7 @@ func parseOptions(cfg config.Metadata) (options, error) {
 		return options{}, fmt.Errorf("error parsing address value, %w", err)
 	}
 	o.authToken = cfg.ParseString("auth_token", "")
-	o.clientId = cfg.ParseString("client_id", nuid.Next())
+	o.clientId = cfg.ParseString("client_id", uuid.New().String())
 	o.channels = cfg.ParseStringList("channels")
 	return o, nil
 }

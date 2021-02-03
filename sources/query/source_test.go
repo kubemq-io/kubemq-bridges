@@ -6,8 +6,8 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 	"github.com/kubemq-io/kubemq-go"
-	"github.com/nats-io/nuid"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
@@ -36,6 +36,7 @@ func setupSource(ctx context.Context, targets []middleware.Middleware) (*Source,
 		"auto_reconnect":             "true",
 		"reconnect_interval_seconds": "1",
 		"max_reconnects":             "0",
+		"sources":                    "1",
 	}, config.Metadata{})
 	if err != nil {
 		return nil, err
@@ -50,7 +51,7 @@ func setupSource(ctx context.Context, targets []middleware.Middleware) (*Source,
 func sendQuery(t *testing.T, ctx context.Context, req *kubemq.Query, sendChannel string, timeout time.Duration) (*kubemq.QueryResponse, error) {
 	client, err := kubemq.NewClient(ctx,
 		kubemq.WithAddress("localhost", 50000),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC))
 	require.NoError(t, err)
 	return client.SetQuery(req).SetChannel(sendChannel).SetTimeout(timeout).Send(ctx)
@@ -260,6 +261,7 @@ func TestClient_Init(t *testing.T) {
 				"auto_reconnect":             "true",
 				"reconnect_interval_seconds": "1",
 				"max_reconnects":             "0",
+				"sources":                    "2",
 			},
 			wantErr: false,
 		},
@@ -282,13 +284,14 @@ func TestClient_Init(t *testing.T) {
 				"auto_reconnect":             "true",
 				"reconnect_interval_seconds": "1",
 				"max_reconnects":             "0",
+				"sources":                    "2",
 			},
 			wantErr: true,
 		},
 		{
 			name: "init - bad Source",
 			connection: config.Metadata{
-				"address":                    "localhost:40000",
+				"address":                    "localhost",
 				"client_id":                  "",
 				"auth_token":                 "some-auth token",
 				"channel":                    "some-channel",
@@ -296,6 +299,7 @@ func TestClient_Init(t *testing.T) {
 				"auto_reconnect":             "true",
 				"reconnect_interval_seconds": "1",
 				"max_reconnects":             "0",
+				"sources":                    "2",
 			},
 			wantErr: true,
 		},
@@ -310,6 +314,22 @@ func TestClient_Init(t *testing.T) {
 				"auto_reconnect":             "true",
 				"reconnect_interval_seconds": "-1",
 				"max_reconnects":             "0",
+				"sources":                    "2",
+			},
+			wantErr: true,
+		},
+		{
+			name: "init - bad sources",
+			connection: config.Metadata{
+				"address":                    "localhost:50000",
+				"client_id":                  "",
+				"auth_token":                 "some-auth token",
+				"channel":                    "some-channel",
+				"group":                      "",
+				"auto_reconnect":             "true",
+				"reconnect_interval_seconds": "1",
+				"max_reconnects":             "0",
+				"sources":                    "-1",
 			},
 			wantErr: true,
 		},

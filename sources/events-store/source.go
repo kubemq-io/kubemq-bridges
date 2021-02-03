@@ -9,12 +9,13 @@ import (
 	"github.com/kubemq-hub/kubemq-bridges/pkg/roundrobin"
 
 	"github.com/kubemq-io/kubemq-go"
-	"github.com/nats-io/nuid"
+
+	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 )
 
 type Source struct {
 	opts              options
-	client            *kubemq.Client
+	clients           []*kubemq.Client
 	log               *logger.Logger
 	targets           []middleware.Middleware
 	properties        config.Metadata
@@ -33,17 +34,24 @@ func (s *Source) Init(ctx context.Context, connection config.Metadata, propertie
 		return err
 	}
 	s.properties = properties
-	s.client, err = kubemq.NewClient(ctx,
-		kubemq.WithAddress(s.opts.host, s.opts.port),
-		kubemq.WithClientId(s.opts.clientId),
-		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
-		kubemq.WithAuthToken(s.opts.authToken),
-		kubemq.WithCheckConnection(true),
-		kubemq.WithMaxReconnects(s.opts.maxReconnects),
-		kubemq.WithAutoReconnect(s.opts.autoReconnect),
-		kubemq.WithReconnectInterval(s.opts.reconnectIntervalSeconds))
-	if err != nil {
-		return err
+	for i := 0; i < s.opts.sources; i++ {
+		clientId := s.opts.clientId
+		if s.opts.sources > 1 {
+			clientId = fmt.Sprintf("%s-%d", clientId, i)
+		}
+		client, err := kubemq.NewClient(ctx,
+			kubemq.WithAddress(s.opts.host, s.opts.port),
+			kubemq.WithClientId(clientId),
+			kubemq.WithTransportType(kubemq.TransportTypeGRPC),
+			kubemq.WithCheckConnection(true),
+			kubemq.WithAuthToken(s.opts.authToken),
+			kubemq.WithMaxReconnects(s.opts.maxReconnects),
+			kubemq.WithAutoReconnect(s.opts.autoReconnect),
+			kubemq.WithReconnectInterval(s.opts.reconnectIntervalSeconds))
+		if err != nil {
+			return err
+		}
+		s.clients = append(s.clients, client)
 	}
 	return nil
 }
@@ -58,18 +66,21 @@ func (s *Source) Start(ctx context.Context, targets []middleware.Middleware, log
 	}
 	s.log = log
 	s.targets = targets
-	group := nuid.Next()
-	if s.opts.group != "" {
-		group = s.opts.group
+
+	if s.opts.sources > 1 && s.opts.group == "" {
+		s.opts.group = uuid.New().String()
 	}
-	errCh := make(chan error, 1)
-	eventsCh, err := s.client.SubscribeToEventsStore(ctx, s.opts.channel, group, errCh, kubemq.StartFromNewEvents())
-	if err != nil {
-		return fmt.Errorf("error on subscribing to events store channel, %w", err)
+
+	for _, client := range s.clients {
+		errCh := make(chan error, 1)
+		eventsCh, err := client.SubscribeToEventsStore(ctx, s.opts.channel, s.opts.group, errCh, kubemq.StartFromNewEvents())
+		if err != nil {
+			return fmt.Errorf("error on subscribing to events store channel, %w", err)
+		}
+		go func(ctx context.Context, eventsCh <-chan *kubemq.EventStoreReceive, errCh chan error) {
+			s.run(ctx, eventsCh, errCh)
+		}(ctx, eventsCh, errCh)
 	}
-	go func(ctx context.Context, eventsCh <-chan *kubemq.EventStoreReceive, errCh chan error) {
-		s.run(ctx, eventsCh, errCh)
-	}(ctx, eventsCh, errCh)
 
 	return nil
 }
@@ -108,5 +119,8 @@ func (s *Source) run(ctx context.Context, eventsCh <-chan *kubemq.EventStoreRece
 }
 
 func (s *Source) Stop() error {
-	return s.client.Close()
+	for _, client := range s.clients {
+		_ = client.Close()
+	}
+	return nil
 }

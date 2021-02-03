@@ -13,6 +13,7 @@ type Source struct {
 	WasEdited      bool                `json:"-" yaml:"-"`
 	isEdit         bool
 	kubemqAddress  []string
+	bindingName    string
 }
 
 func NewSource() *Source {
@@ -26,6 +27,7 @@ func (s *Source) Clone() *Source {
 		WasEdited:      s.WasEdited,
 		isEdit:         s.isEdit,
 		kubemqAddress:  s.kubemqAddress,
+		bindingName:    s.bindingName,
 	}
 	for _, connection := range s.Connections {
 		newConnection := map[string]string{}
@@ -63,7 +65,7 @@ func (s *Source) askAddConnection() (bool, error) {
 func (s *Source) addConnection() error {
 	if connection, err := NewConnection().
 		SetAddress(s.kubemqAddress).
-		Render(s.Kind); err != nil {
+		Render(s.Kind, s.bindingName); err != nil {
 		return err
 	} else {
 		s.Connections = append(s.Connections, connection)
@@ -190,7 +192,8 @@ func (s *Source) edit() (*Source, error) {
 	}
 	return result, nil
 }
-func (s *Source) Render() (*Source, error) {
+func (s *Source) Render(bindingName string) (*Source, error) {
+	s.bindingName = bindingName
 	if s.isEdit {
 		return s.edit()
 	}

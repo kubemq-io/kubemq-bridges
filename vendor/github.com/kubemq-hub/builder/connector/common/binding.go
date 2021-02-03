@@ -113,7 +113,7 @@ func (b *Binding) addSource(defaultName string) error {
 		return err
 	}
 	connector := sources[b.Source.Kind]
-	if b.Source.Properties, err = connector.Render(b.loadedOptions); err != nil {
+	if b.Source.Properties, err = connector.RenderProperties(b.loadedOptions, generateChannelDefaultKeys(b.Name)); err != nil {
 		return err
 	}
 	return nil
@@ -152,7 +152,7 @@ func (b *Binding) editSource() (*Spec, error) {
 		}
 		if lastKind != edited.Source.Kind {
 			connector := sources[edited.Source.Kind]
-			if edited.Source.Properties, err = connector.Render(edited.loadedOptions); err != nil {
+			if edited.Source.Properties, err = connector.RenderProperties(edited.loadedOptions, generateChannelDefaultKeys(edited.Name)); err != nil {
 				return err
 			}
 		}
@@ -173,7 +173,7 @@ func (b *Binding) editSource() (*Spec, error) {
 		}
 		var err error
 		connector := sources[edited.Source.Kind]
-		if edited.Source.Properties, err = connector.Render(edited.loadedOptions); err != nil {
+		if edited.Source.Properties, err = connector.RenderProperties(edited.loadedOptions, generateChannelDefaultKeys(edited.Name)); err != nil {
 			return err
 		}
 		*ftProperties = fmt.Sprintf("<p> Edit Source Properties (%s)", edited.Source.Kind)
@@ -219,7 +219,7 @@ func (b *Binding) addTarget(defaultName string) error {
 		return err
 	}
 	connector := targets[b.Target.Kind]
-	if b.Target.Properties, err = connector.Render(b.loadedOptions); err != nil {
+	if b.Target.Properties, err = connector.RenderProperties(b.loadedOptions, generateChannelDefaultKeys(b.Name)); err != nil {
 		return err
 	}
 	return nil
@@ -258,7 +258,7 @@ func (b *Binding) editTarget() (*Spec, error) {
 
 		if lastKind != edited.Target.Kind {
 			connector := targets[edited.Target.Kind]
-			if edited.Target.Properties, err = connector.Render(edited.loadedOptions); err != nil {
+			if edited.Target.Properties, err = connector.RenderProperties(edited.loadedOptions, generateChannelDefaultKeys(edited.Name)); err != nil {
 				return err
 			}
 		}
@@ -279,7 +279,7 @@ func (b *Binding) editTarget() (*Spec, error) {
 		}
 		var err error
 		connector := targets[edited.Target.Kind]
-		if edited.Target.Properties, err = connector.Render(edited.loadedOptions); err != nil {
+		if edited.Target.Properties, err = connector.RenderProperties(edited.loadedOptions, generateChannelDefaultKeys(edited.Name)); err != nil {
 			return err
 		}
 		*ftProperties = fmt.Sprintf("<p> Edit Target Properties (%s)", edited.Target.Kind)
@@ -541,7 +541,7 @@ func AddSourceIntegration(takenNames []string, connectorsManifest []byte, loaded
 		return nil, err
 	}
 
-	if b.Source.Properties, err = sources[b.Source.Kind].Render(b.loadedOptions); err != nil {
+	if b.Source.Properties, err = sources[b.Source.Kind].RenderProperties(b.loadedOptions, generateChannelDefaultKeys(b.Name)); err != nil {
 		return nil, err
 	}
 
@@ -574,7 +574,7 @@ func AddSourceIntegration(takenNames []string, connectorsManifest []byte, loaded
 		return nil, err
 	}
 
-	if b.Target.Properties, err = targets[b.Target.Kind].Render(b.loadedOptions); err != nil {
+	if b.Target.Properties, err = targets[b.Target.Kind].RenderProperties(b.loadedOptions, generateChannelDefaultKeys(b.Name)); err != nil {
 		return nil, err
 	}
 
@@ -669,7 +669,7 @@ func AddTargetIntegration(takenNames []string, connectorsManifest []byte, loaded
 		return nil, err
 	}
 
-	if b.Target.Properties, err = targets[b.Target.Kind].Render(b.loadedOptions); err != nil {
+	if b.Target.Properties, err = targets[b.Target.Kind].RenderProperties(b.loadedOptions, generateChannelDefaultKeys(b.Name)); err != nil {
 		return nil, err
 	}
 
@@ -702,7 +702,7 @@ func AddTargetIntegration(takenNames []string, connectorsManifest []byte, loaded
 		return nil, err
 	}
 
-	if b.Source.Properties, err = sources[b.Source.Kind].Render(b.loadedOptions); err != nil {
+	if b.Source.Properties, err = sources[b.Source.Kind].RenderProperties(b.loadedOptions, generateChannelDefaultKeys(b.Name)); err != nil {
 		return nil, err
 	}
 
@@ -728,4 +728,14 @@ func AddTargetIntegration(takenNames []string, connectorsManifest []byte, loaded
 		return b, nil
 	}
 	return nil, nil
+}
+
+func generateChannelDefaultKeys(bindingName string) map[string]string {
+	return map[string]string{
+		"channel.command":      fmt.Sprintf("command.%s", bindingName),
+		"channel.query":        fmt.Sprintf("query.%s", bindingName),
+		"channel.events":       fmt.Sprintf("events.%s", bindingName),
+		"channel.events-store": fmt.Sprintf("events-store.%s", bindingName),
+		"channel.queue":        fmt.Sprintf("queue.%s", bindingName),
+	}
 }

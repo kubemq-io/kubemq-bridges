@@ -234,11 +234,13 @@ Sources section contains sources configuration for binding as follows:
 |:------------|:--------------------------------------------------|:--------------------------------------------------------------|
 | name        | sources name (will show up in logs)               | string without white spaces                                   |
 | kind        | source kind type                                  | source.queue                                                  |
+|             |                                                   | source.queue-stream                                           |
 |             |                                                   | source.query                                                  |
 |             |                                                   | source.command                                                |
 |             |                                                   | source.events                                                 |
 |             |                                                   | source.events-store                                           |
 | connections | an array of connection properties for each source | [queue configuration](/sources/queue)               |
+|             |                                                   | [queue-stream configuration](/sources/queue_stream)             |
 |             |                                                   | [query configuration](/sources/query)               |
 |             |                                                   | [command configuration](/sources/command)           |
 |             |                                                   | [events configuration](/sources/events)             |

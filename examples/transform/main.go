@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 	"github.com/kubemq-io/kubemq-go"
-	"github.com/nats-io/nuid"
 	"log"
 	"os"
 	"os/signal"
@@ -17,7 +17,7 @@ func main() {
 	defer cancel()
 	clientA, err := kubemq.NewClient(context.Background(),
 		kubemq.WithAddress("localhost", 30501),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithCheckConnection(true))
 	if err != nil {
@@ -25,7 +25,7 @@ func main() {
 	}
 	clientB, err := kubemq.NewClient(context.Background(),
 		kubemq.WithAddress("localhost", 30502),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithCheckConnection(true))
 	if err != nil {
@@ -33,7 +33,7 @@ func main() {
 	}
 	clientC, err := kubemq.NewClient(context.Background(),
 		kubemq.WithAddress("localhost", 30503),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithCheckConnection(true))
 	if err != nil {
@@ -41,7 +41,7 @@ func main() {
 	}
 	clientD, err := kubemq.NewClient(context.Background(),
 		kubemq.WithAddress("localhost", 30504),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithCheckConnection(true))
 	if err != nil {
@@ -49,7 +49,7 @@ func main() {
 	}
 	clientE, err := kubemq.NewClient(context.Background(),
 		kubemq.WithAddress("localhost", 30505),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithCheckConnection(true))
 	if err != nil {
@@ -57,7 +57,7 @@ func main() {
 	}
 	clientF, err := kubemq.NewClient(context.Background(),
 		kubemq.WithAddress("localhost", 30506),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithCheckConnection(true))
 	if err != nil {
@@ -65,7 +65,7 @@ func main() {
 	}
 	clientG, err := kubemq.NewClient(context.Background(),
 		kubemq.WithAddress("localhost", 30507),
-		kubemq.WithClientId(nuid.Next()),
+		kubemq.WithClientId(uuid.New().String()),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithCheckConnection(true))
 	if err != nil {
