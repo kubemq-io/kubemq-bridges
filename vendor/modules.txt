@@ -70,7 +70,7 @@ github.com/json-iterator/go
 github.com/kballard/go-shellquote
 # github.com/kr/pretty v0.2.0
 ## explicit
-# github.com/kubemq-hub/builder v0.6.1
+# github.com/kubemq-hub/builder v0.6.2
 ## explicit
 github.com/kubemq-hub/builder/connector/bridges
 github.com/kubemq-hub/builder/connector/bridges/source

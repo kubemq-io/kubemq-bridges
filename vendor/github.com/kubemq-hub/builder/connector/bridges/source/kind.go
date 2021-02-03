@@ -22,7 +22,7 @@ func (k *Kind) Render() (string, error) {
 		SetDefault(k.defaultKind).
 		SetHelp("Set sources kind entry").
 		SetRequired(true).
-		SetOptions([]string{"kubemq.queue", "kubemq.query", "kubemq.events", "kubemq.events-store", "kubemq.command"}).
+		SetOptions([]string{"kubemq.queue", "kubemq.queue-stream", "kubemq.query", "kubemq.events", "kubemq.events-store", "kubemq.command"}).
 		Render(&val)
 	if err != nil {
 		return "", err

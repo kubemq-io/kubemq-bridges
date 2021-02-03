@@ -16,19 +16,21 @@ const (
 )
 
 type Service struct {
-	sync.Mutex
-	bindings          map[string]*Binder
+	bindings          sync.Map
 	log               *logger.Logger
 	exporter          *metrics.Exporter
 	currentCtx        context.Context
 	currentCancelFunc context.CancelFunc
+	bindingStatus     sync.Map
+	cfg               *config.Config
 }
 
 func New() (*Service, error) {
 	s := &Service{
-		Mutex:    sync.Mutex{},
-		bindings: make(map[string]*Binder),
-		log:      logger.NewLogger("binding-service"),
+
+		bindings:      sync.Map{},
+		log:           logger.NewLogger("binding-service"),
+		bindingStatus: sync.Map{},
 	}
 	var err error
 	s.exporter, err = metrics.NewExporter()
@@ -40,13 +42,14 @@ func New() (*Service, error) {
 
 func NewForExternal() (*Service, error) {
 	s := &Service{
-		Mutex:    sync.Mutex{},
-		bindings: make(map[string]*Binder),
-		log:      logger.NewLogger("binding-service"),
+		bindings:      sync.Map{},
+		log:           logger.NewLogger("binding-service"),
+		bindingStatus: sync.Map{},
 	}
 	return s, nil
 }
 func (s *Service) Start(ctx context.Context, cfg *config.Config) error {
+	s.cfg = cfg
 	s.currentCtx, s.currentCancelFunc = context.WithCancel(ctx)
 	if len(cfg.Bindings) == 0 {
 		return nil
@@ -82,21 +85,24 @@ func (s *Service) Start(ctx context.Context, cfg *config.Config) error {
 }
 
 func (s *Service) Stop() {
-	for _, binder := range s.bindings {
+	if s.currentCancelFunc != nil {
+		s.currentCancelFunc()
+	}
+	s.bindings.Range(func(key, value interface{}) bool {
+		binder := value.(*Binder)
 		err := s.Remove(binder.name)
 		if err != nil {
 			s.log.Error(err)
 		}
-	}
-	if s.currentCancelFunc != nil {
-		s.currentCancelFunc()
-	}
+		return true
+	})
 
 }
 func (s *Service) Add(ctx context.Context, cfg config.BindingConfig) error {
-	s.Lock()
-	defer s.Unlock()
+
 	binder := NewBinder()
+	status := newStatus(cfg)
+	s.bindingStatus.Store(cfg.Name, status)
 	err := binder.Init(ctx, cfg, s.exporter)
 	if err != nil {
 		return err
@@ -105,22 +111,24 @@ func (s *Service) Add(ctx context.Context, cfg config.BindingConfig) error {
 	if err != nil {
 		return err
 	}
-	s.bindings[cfg.Name] = binder
+	s.bindings.Store(cfg.Name, binder)
+	status.Ready = true
+	s.bindingStatus.Store(cfg.Name, status)
 	return nil
 }
 
 func (s *Service) Remove(name string) error {
-	s.Lock()
-	defer s.Unlock()
-	binder, ok := s.bindings[name]
+	val, ok := s.bindings.Load(name)
 	if !ok {
-		return fmt.Errorf("binding %s no found", name)
+		return fmt.Errorf("binding %s not found", name)
 	}
+	binder := val.(*Binder)
 	err := binder.Stop()
 	if err != nil {
 		return err
 	}
-	delete(s.bindings, name)
+	s.bindings.Delete(name)
+	s.bindingStatus.Delete(name)
 	return nil
 }
 
@@ -129,4 +137,14 @@ func (s *Service) PrometheusHandler() http.Handler {
 }
 func (s *Service) Stats() []*metrics.Report {
 	return s.exporter.Store.List()
+}
+func (s *Service) GetStatus() []*Status {
+	var list []*Status
+	for _, binding := range s.cfg.Bindings {
+		val, ok := s.bindingStatus.Load(binding.Name)
+		if ok {
+			list = append(list, val.(*Status))
+		}
+	}
+	return list
 }

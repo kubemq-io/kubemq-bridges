@@ -1,77 +1,80 @@
 bindings:
+- name: as2344
+  properties:
+    log_level: debug
+  sources:
+    connections:
+    - address: localhost:50000
+      channel: target1
+    kind: kubemq.queue
+  targets:
+    connections:
+    - address: localhost:50000
+      channels: target2
+    kind: kubemq.queue
+- name: binding-6
+  properties: null
+  sources:
+    connections:
+    - address: kubemq-cluster-grpc.kubemq:50000
+      channel: queue-stream.binding-6
+      sources: "3"
+      visibility_timeout_seconds: "60"
+    kind: kubemq.queue-stream
+  targets:
+    connections:
+    - address: localhost:50000
+      channels: queue.binding-6
+    kind: kubemq.queue
 - name: command
   properties:
-    log_level: "debug"
+    log_level: debug
   sources:
     connections:
     - address: localhost:50000
       channel: command1
-    Kind: queue.command
-    Name: da
+    kind: kubemq.command
   targets:
     connections:
     - address: localhost:50000
       channels: target1
-    Kind: target.queue
-    Name: sds
-- name: query
-  properties:
-    log_level: "debug"
-  sources:
-    connections:
-      - address: localhost:50000
-        channel: query1
-    Kind: source.query
-    Name: da
-  targets:
-    connections:
-      - address: localhost:50000
-        channels: target1
-    Kind: target.queue
-    Name: sds
+    kind: kubemq.queue
 - name: events
   properties:
-    log_level: "debug"
+    log_level: debug
   sources:
     connections:
-      - address: localhost:50000
-        channel: events1
-    Kind: source.events
-    Name: da
+    - address: localhost:50000
+      channel: events1
+    kind: kubemq.events
   targets:
     connections:
-      - address: localhost:50000
-        channels: target1
-    Kind: target.queue
-    Name: sds
+    - address: localhost:50000
+      channels: target1
+    kind: kubemq.queue
 - name: events-store
   properties:
-    log_level: "debug"
+    log_level: debug
   sources:
     connections:
-      - address: localhost:50000
-        channel: events-store1
-    Kind: source.events-store
-    Name: da
+    - address: localhost:50000
+      channel: events-store1
+    kind: source.events-store
   targets:
     connections:
-      - address: localhost:50000
-        channels: target1
-    Kind: target.queue
-    Name: sds
-- name: as2344
+    - address: localhost:50000
+      channels: target1
+    kind: kubemq.queue
+- name: query
   properties:
-    log_level: "debug"
+    log_level: debug
   sources:
     connections:
-      - address: localhost:50000
-        channel: target1
-    Kind: source.queue
-    Name: da
+    - address: localhost:50000
+      channel: query1
+    kind: kubemq.query
   targets:
     connections:
-      - address: localhost:50000
-        channels: target2
-    Kind: target.queue
-    Name: sd
-
+    - address: localhost:50000
+      channels: target1
+    kind: kubemq.queue

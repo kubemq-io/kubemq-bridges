@@ -33,10 +33,11 @@ func Start(ctx context.Context, port int, bs *binding.Service) (*Server, error) 
 
 	})
 	s.echoWebServer.GET("/metrics", echo.WrapHandler(s.bindingService.PrometheusHandler()))
-	s.echoWebServer.GET("/stats", func(c echo.Context) error {
-
+	s.echoWebServer.GET("/bindings", func(c echo.Context) error {
+		return c.JSONPretty(200, s.bindingService.GetStatus(), "\t")
+	})
+	s.echoWebServer.GET("/bindings/stats", func(c echo.Context) error {
 		return c.JSONPretty(200, s.bindingService.Stats(), "\t")
-
 	})
 	errCh := make(chan error, 1)
 	go func() {

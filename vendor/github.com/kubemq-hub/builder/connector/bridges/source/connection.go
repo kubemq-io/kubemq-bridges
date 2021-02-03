@@ -153,83 +153,65 @@ func (c *Connection) askWaitTimeout() error {
 	}
 	return nil
 }
+func (c *Connection) askSources() error {
+	val := 0
+	err := survey.NewInt().
+		SetKind("int").
+		SetName("sources").
+		SetMessage("Set how many sources to subscribe").
+		SetDefault("1").
+		SetHelp("Set how many sources to subscribe").
+		SetRange(1, 1024).
+		SetRequired(false).
+		Render(&val)
+	if err != nil {
+		return err
+	}
+	if val != 1 {
+		c.properties["sources"] = fmt.Sprintf("%d", val)
+	}
+	return nil
+}
+func (c *Connection) askMaxRequeue() error {
+	val := 0
+	err := survey.NewInt().
+		SetKind("int").
+		SetName("max_requeue").
+		SetMessage("Set how many times to requeue a request due to target error").
+		SetDefault("0").
+		SetHelp("Set how many times to requeue a request due to target error").
+		SetRange(0, 1024).
+		SetRequired(true).
+		Render(&val)
+	if err != nil {
+		return err
+	}
+	if val != 0 {
+		c.properties["max_requeue"] = fmt.Sprintf("%d", val)
+	}
+	return nil
+}
+func (c *Connection) askVisibilityTimeout() error {
+	val := 0
+	err := survey.NewInt().
+		SetKind("int").
+		SetName("visibility_timeout_seconds").
+		SetMessage("Set how long to keep current queue message for target processing").
+		SetDefault("60").
+		SetHelp("Set how long to keep current queue message for target processing (visibility)").
+		SetRange(1, 24*60*60).
+		SetRequired(true).
+		Render(&val)
+	if err != nil {
+		return err
+	}
+	if val != 60 {
+		c.properties["visibility_timeout_seconds"] = fmt.Sprintf("%d", val)
+	}
+	return nil
+}
+
 func (c *Connection) renderEventsKind() (map[string]string, error) {
-	if err := c.askAddress(); err != nil {
-		return nil, err
-	}
-	if err := c.askChannel(); err != nil {
-		return nil, err
-	}
-	options := []string{
-		"Set them to defaults values",
-		"Let me configure them",
-	}
-	val := ""
-	err := survey.NewString().
-		SetKind("string").
-		SetName("check not required").
-		SetMessage("There are 3 values which are not mandatory to configure:").
-		SetDefault(options[0]).
-		SetOptions(options).
-		SetRequired(true).
-		Render(&val)
-	if err != nil {
-		return nil, err
-	}
-	if val == options[0] {
-		return c.properties, nil
-	}
-
-	if err := c.askGroup(); err != nil {
-		return nil, err
-	}
-
-	if err := c.askClientID(); err != nil {
-		return nil, err
-	}
-	if err := c.askAuthToken(); err != nil {
-		return nil, err
-	}
-	return c.properties, nil
-}
-func (c *Connection) renderRPCKind() (map[string]string, error) {
-	if err := c.askAddress(); err != nil {
-		return nil, err
-	}
-	if err := c.askChannel(); err != nil {
-		return nil, err
-	}
-	options := []string{
-		"Set them to defaults values",
-		"Let me configure them",
-	}
-	val := ""
-	err := survey.NewString().
-		SetKind("string").
-		SetName("check not required").
-		SetMessage("There are 3 values which are not mandatory to configure:").
-		SetDefault(options[0]).
-		SetOptions(options).
-		SetRequired(true).
-		Render(&val)
-	if err != nil {
-		return nil, err
-	}
-	if val == options[0] {
-		return c.properties, nil
-	}
-	if err := c.askGroup(); err != nil {
-		return nil, err
-	}
-	if err := c.askClientID(); err != nil {
-		return nil, err
-	}
-	if err := c.askAuthToken(); err != nil {
-		return nil, err
-	}
-	return c.properties, nil
-}
-func (c *Connection) renderQueueKind() (map[string]string, error) {
 	if err := c.askAddress(); err != nil {
 		return nil, err
 	}
@@ -255,6 +237,94 @@ func (c *Connection) renderQueueKind() (map[string]string, error) {
 	if val == options[0] {
 		return c.properties, nil
 	}
+	if err := c.askGroup(); err != nil {
+		return nil, err
+	}
+	if err := c.askSources(); err != nil {
+		return nil, err
+	}
+	if err := c.askClientID(); err != nil {
+		return nil, err
+	}
+	if err := c.askAuthToken(); err != nil {
+		return nil, err
+	}
+
+	return c.properties, nil
+}
+func (c *Connection) renderRPCKind() (map[string]string, error) {
+	if err := c.askAddress(); err != nil {
+		return nil, err
+	}
+	if err := c.askChannel(); err != nil {
+		return nil, err
+	}
+	options := []string{
+		"Set them to defaults values",
+		"Let me configure them",
+	}
+	val := ""
+	err := survey.NewString().
+		SetKind("string").
+		SetName("check not required").
+		SetMessage("There are 4 values which are not mandatory to configure:").
+		SetDefault(options[0]).
+		SetOptions(options).
+		SetRequired(true).
+		Render(&val)
+	if err != nil {
+		return nil, err
+	}
+	if val == options[0] {
+		return c.properties, nil
+	}
+	if err := c.askGroup(); err != nil {
+		return nil, err
+	}
+	if err := c.askSources(); err != nil {
+		return nil, err
+	}
+	if err := c.askClientID(); err != nil {
+		return nil, err
+	}
+	if err := c.askAuthToken(); err != nil {
+		return nil, err
+	}
+
+	return c.properties, nil
+}
+func (c *Connection) renderQueueKind() (map[string]string, error) {
+	if err := c.askAddress(); err != nil {
+		return nil, err
+	}
+	if err := c.askChannel(); err != nil {
+		return nil, err
+	}
+	options := []string{
+		"Set them to defaults values",
+		"Let me configure them",
+	}
+	val := ""
+	err := survey.NewString().
+		SetKind("string").
+		SetName("check not required").
+		SetMessage("There are 6 values which are not mandatory to configure:").
+		SetDefault(options[0]).
+		SetOptions(options).
+		SetRequired(true).
+		Render(&val)
+	if err != nil {
+		return nil, err
+	}
+	if val == options[0] {
+		return c.properties, nil
+	}
+	if err := c.askSources(); err != nil {
+		return nil, err
+	}
+	if err := c.askMaxRequeue(); err != nil {
+		return nil, err
+	}
 	if err := c.askClientID(); err != nil {
 		return nil, err
 	}
@@ -272,13 +342,62 @@ func (c *Connection) renderQueueKind() (map[string]string, error) {
 
 	return c.properties, nil
 }
+func (c *Connection) renderQueueStreamKind() (map[string]string, error) {
+	if err := c.askAddress(); err != nil {
+		return nil, err
+	}
+	if err := c.askChannel(); err != nil {
+		return nil, err
+	}
+	options := []string{
+		"Set them to defaults values",
+		"Let me configure them",
+	}
+	val := ""
+	err := survey.NewString().
+		SetKind("string").
+		SetName("check not required").
+		SetMessage("There are 5 values which are not mandatory to configure:").
+		SetDefault(options[0]).
+		SetOptions(options).
+		SetRequired(true).
+		Render(&val)
+	if err != nil {
+		return nil, err
+	}
+	if val == options[0] {
+		return c.properties, nil
+	}
+	if err := c.askSources(); err != nil {
+		return nil, err
+	}
 
+	if err := c.askClientID(); err != nil {
+		return nil, err
+	}
+	if err := c.askAuthToken(); err != nil {
+		return nil, err
+	}
+
+	if err := c.askVisibilityTimeout(); err != nil {
+		return nil, err
+	}
+
+	if err := c.askWaitTimeout(); err != nil {
+		return nil, err
+	}
+
+	return c.properties, nil
+}
 func (c *Connection) Render(kind string, bindingName string) (map[string]string, error) {
 	c.bindingName = bindingName
 	switch kind {
 	case "kubemq.queue":
 		c.kind = "queue"
 		return c.renderQueueKind()
+	case "kubemq.queue-stream":
+		c.kind = "queue-stream"
+		return c.renderQueueStreamKind()
 	case "kubemq.events":
 		c.kind = "events"
 		return c.renderEventsKind()
