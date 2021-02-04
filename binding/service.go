@@ -27,7 +27,6 @@ type Service struct {
 
 func New() (*Service, error) {
 	s := &Service{
-
 		bindings:      sync.Map{},
 		log:           logger.NewLogger("binding-service"),
 		bindingStatus: sync.Map{},
@@ -43,7 +42,7 @@ func New() (*Service, error) {
 func NewForExternal() (*Service, error) {
 	s := &Service{
 		bindings:      sync.Map{},
-		log:           logger.NewLogger("binding-service"),
+		log:           logger.NewLogger("bridges-service"),
 		bindingStatus: sync.Map{},
 	}
 	return s, nil
