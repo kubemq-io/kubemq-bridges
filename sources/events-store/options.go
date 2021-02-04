@@ -8,6 +8,7 @@ import (
 )
 
 const (
+	defaultAddress       = "0.0.0.0:50000"
 	defaultAutoReconnect = true
 	defaultSources       = 1
 )
@@ -28,7 +29,7 @@ type options struct {
 func parseOptions(cfg config.Metadata) (options, error) {
 	o := options{}
 	var err error
-	o.host, o.port, err = cfg.MustParseAddress("address", "")
+	o.host, o.port, err = cfg.MustParseAddress("address", defaultAddress)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing address value, %w", err)
 	}

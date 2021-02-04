@@ -27,7 +27,7 @@ func setupSource(ctx context.Context, targets []middleware.Middleware, ch string
 	s := New()
 
 	err := s.Init(ctx, config.Metadata{
-		"address":      "localhost:50000",
+		"address":      "0.0.0.0:50000",
 		"client_id":    "some-client-id",
 		"auth_token":   "",
 		"channel":      ch,
