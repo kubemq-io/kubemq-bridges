@@ -78,7 +78,7 @@ github.com/kubemq-hub/builder/connector/bridges/target
 github.com/kubemq-hub/builder/connector/common
 github.com/kubemq-hub/builder/pkg/utils
 github.com/kubemq-hub/builder/survey
-# github.com/kubemq-io/kubemq-go v1.4.4
+# github.com/kubemq-io/kubemq-go v1.4.6
 ## explicit
 github.com/kubemq-io/kubemq-go
 # github.com/kubemq-io/protobuf v1.1.0

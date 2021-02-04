@@ -197,6 +197,8 @@ github.com/kubemq-hub/builder v0.6.2 h1:pNFhWZPl8kdkXim7PVL5RwDP9epJNaljl7C4XHqX
 github.com/kubemq-hub/builder v0.6.2/go.mod h1:13YdFANeN6qmwv4FsB9n7ZLi/9GaTWjCTLzHSJXTm8w=
 github.com/kubemq-io/kubemq-go v1.4.4 h1:S+GjYJDjKPhTOqDdSYn2RRtsxJbb5Amk75xSSQeC2Hk=
 github.com/kubemq-io/kubemq-go v1.4.4/go.mod h1:J8TEMk85d+00r+H3KIaSy/zLTXdQ7OLhVyF1WuXuZt0=
+github.com/kubemq-io/kubemq-go v1.4.6 h1:rtecoRpjW4CuJbCPz5QqxunOriHJjAQYi+Ekbs4d7/0=
+github.com/kubemq-io/kubemq-go v1.4.6/go.mod h1:J8TEMk85d+00r+H3KIaSy/zLTXdQ7OLhVyF1WuXuZt0=
 github.com/kubemq-io/protobuf v1.1.0 h1:MaNkRULq/wlU9o9jwx6HORtz2RngpudmxShQ+86CqcU=
 github.com/kubemq-io/protobuf v1.1.0/go.mod h1:WdYSkchIYDxFu2qLBjHY9ma+6tglnERShgGk9MEGW/k=
 github.com/labstack/echo/v4 v4.1.17 h1:PQIBaRplyRy3OjwILGkPg89JRtH2x5bssi59G2EL3fo=
