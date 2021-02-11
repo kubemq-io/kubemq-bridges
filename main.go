@@ -49,7 +49,7 @@ func buildConfig() error {
 		Render(); err != nil {
 		return err
 	}
-	return ioutil.WriteFile("config.yaml", bindingsYaml, 0644)
+	return ioutil.WriteFile("config.yaml", bindingsYaml, 0600)
 }
 
 func run() error {
