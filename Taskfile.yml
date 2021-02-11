@@ -20,6 +20,9 @@ tasks:
   test:
     cmds:
       - go test -timeout 30m ./...
+  goreleaser:
+    cmds:
+      - goreleaser --snapshot --skip-publish --rm-dist
   build:
     env:
       GOOS: '{{OS}}'

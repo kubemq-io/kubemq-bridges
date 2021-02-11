@@ -1,7 +1,9 @@
 package config
 
 import (
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
@@ -18,14 +20,37 @@ const defaultApiPort = 8080
 
 var configFile string
 var logr = logger.NewLogger("config")
+var lastConf *Config
+var defaultConfig = &Config{
+	Bindings: []BindingConfig{},
+	ApiPort:  defaultApiPort,
+	LogLevel: "info",
+}
 
 type Config struct {
 	Bindings []BindingConfig `json:"bindings"`
-	ApiPort  int             `json:"api_port"`
+	ApiPort  int             `json:"apiPort"`
+	LogLevel string          `json:"logLevel"`
 }
 
 func SetConfigFile(filename string) {
 	configFile = filename
+}
+func (c *Config) hash() string {
+	b, err := json.Marshal(c)
+	if err != nil {
+		return ""
+	}
+	h := sha256.New()
+	_, _ = h.Write(b)
+	hash := hex.EncodeToString(h.Sum(nil))
+	return hash
+}
+func (c *Config) copy() *Config {
+	b, _ := json.Marshal(c)
+	n := &Config{}
+	_ = json.Unmarshal(b, n)
+	return n
 }
 func (c *Config) Validate() error {
 	if c.ApiPort == 0 {
@@ -134,6 +159,7 @@ func load() (*Config, error) {
 		return nil, err
 	}
 	logr.Infof("%d bindings loaded", len(cfg.Bindings))
+	logger.SetLogLevel(cfg.LogLevel)
 	return cfg, err
 }
 
@@ -143,13 +169,17 @@ func Load(cfgCh chan *Config) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	lastConf = cfg.copy()
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		logr.Info("config file changed, reloading...")
 		cfg, err := load()
 		if err != nil {
 			logr.Errorf("error loading new configuration file: %s", err.Error())
-		} else {
+			return
+		}
+		if cfg.hash() != lastConf.hash() {
+			logr.Info("config file changed, reloading...")
+			lastConf = cfg.copy()
 			cfgCh <- cfg
 		}
 	})

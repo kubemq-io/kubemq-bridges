@@ -1,3 +1,5 @@
+apiPort: 8083
+logLevel: info
 bindings:
 - name: as2344
   properties:
