@@ -118,7 +118,7 @@ func getConfigDataFromEnv() (string, error) {
 			return "", err
 		}
 		/* #nosec */
-		err = ioutil.WriteFile("./config."+fileExt, []byte(envConfigData), 0600)
+		err = ioutil.WriteFile("./config."+fileExt, []byte(envConfigData), 0644)
 		if err != nil {
 			return "", fmt.Errorf("cannot save environment config file")
 		}
@@ -146,7 +146,8 @@ func createDefaultConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = ioutil.WriteFile(configFile, data, 0600)
+	/* #nosec */
+	err = ioutil.WriteFile(configFile, data, 0644)
 	if err != nil {
 		return nil, err
 	}
