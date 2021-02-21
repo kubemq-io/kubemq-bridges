@@ -18,7 +18,7 @@ Queue target connector configuration properties:
 | address            | yes      | kubemq server address (gRPC interface)                                | kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000 |
 | client_id          | no       | set client id                                                         | "client_id"                                          |
 | auth_token         | no       | set authentication token                                              | JWT token                                            |
-| channels           | no       | set array of channels values to send the event                        | "queue.a,queue.b,queue.c"                            |
+| channels           | no       | set array of channels values to send the queue message                        | "queue.a,queue.b,queue.c"                            |
 | expiration_seconds | no       | set default expiration seconds for each queue message                 | 0 - default, no expiration                           |
 | delay_seconds      | no       | set default delay seconds for each queue message                      | 0 - default, no delay                                |
 | max_receive_count  | no       | set how many failed queue messages before routes to dead-letter queue | 0 - default, no routes to dead-letter queue          |
