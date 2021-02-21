@@ -18,7 +18,7 @@ Query target connector configuration properties:
 | address         | yes      | kubemq server address (gRPC interface)             | kubemq-cluster-a-grpc.kubemq.svc.cluster.local:50000 |
 | client_id       | no       | set client id                                      | "client_id"                                          |
 | auth_token      | no       | set authentication token                           | JWT token                                            |
-| default_channel | no       | set default channel to send request                |                                                      |
+| channel | no       | set default channel to send request                |                                                      |
 | timeout_seconds | no       | sets query request default timeout (600 seconds) |                                                      |
 
 
