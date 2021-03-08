@@ -64,7 +64,7 @@ metadata:
   name: kubemq-bridges
 spec:
   type: bridges
-  replicas: 3
+  replicas: 1
   image: kubemq/kubemq-bridges:latest
   config: |-
     bindings:
