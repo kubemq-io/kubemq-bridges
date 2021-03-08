@@ -26,7 +26,7 @@ metadata:
   name: kubemq-cluster-c
   namespace: kubemq
 spec:
-  replicas: 3
+  replicas: 1
   grpc:
     expose: NodePort
     nodePort: 30503
