@@ -26,7 +26,7 @@ metadata:
   name: kubemq-cluster-c
   namespace: kubemq
 spec:
-  replicas: 1
+  replicas: 3
   grpc:
     expose: NodePort
     nodePort: 30503
@@ -49,7 +49,7 @@ metadata:
   namespace: kubemq
 spec:
   type: bridges
-  replicas: 3
+  replicas: 1
   image: kubemq/kubemq-bridges:latest
   config: |-
     bindings:
