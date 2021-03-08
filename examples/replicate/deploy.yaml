@@ -46,6 +46,7 @@ apiVersion: core.k8s.kubemq.io/v1alpha1
 kind: KubemqConnector
 metadata:
   name: kubemq-bridges
+  namespace: kubemq
 spec:
   type: bridges
   replicas: 3
