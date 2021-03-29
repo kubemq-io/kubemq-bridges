@@ -50,8 +50,6 @@ github.com/hashicorp/hcl/json/token
 github.com/json-iterator/go
 # github.com/kr/pretty v0.2.0
 ## explicit
-# github.com/kubemq-hub/builder v0.6.2
-## explicit
 # github.com/kubemq-io/kubemq-go v1.4.6
 ## explicit
 github.com/kubemq-io/kubemq-go
