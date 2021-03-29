@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const defaultApiPort = 8080
+const defaultApiPort = 8083
 
 var configFile string
 var logr = logger.NewLogger("config")

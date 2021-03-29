@@ -1,82 +1,17 @@
-apiPort: 8083
-logLevel: info
+apiPort: 0
 bindings:
-- name: as2344
-  properties:
-    log_level: debug
-  sources:
-    connections:
-    - address: localhost:50000
-      channel: target1
-    kind: kubemq.queue
-  targets:
-    connections:
-    - address: localhost:50000
-      channels: target2
-    kind: kubemq.queue
-- name: binding-6
-  properties: null
+- name: bridge-1
+  properties: {}
   sources:
     connections:
     - address: kubemq-cluster-grpc.kubemq:50000
-      channel: queue-stream.binding-6
-      sources: "3"
-      visibility_timeout_seconds: "60"
-    kind: kubemq.queue-stream
+      channel: sad
+      setDefaults: "true"
+    kind: source.queue-stream
   targets:
     connections:
-    - address: localhost:50000
-      channels: queue.binding-6
-    kind: kubemq.queue
-- name: command
-  properties:
-    log_level: debug
-  sources:
-    connections:
-    - address: localhost:50000
-      channel: command1
-    kind: kubemq.command
-  targets:
-    connections:
-    - address: localhost:50000
-      channels: target1
-    kind: kubemq.queue
-- name: events
-  properties:
-    log_level: debug
-  sources:
-    connections:
-    - address: localhost:50000
-      channel: events1
-    kind: kubemq.events
-  targets:
-    connections:
-    - address: localhost:50000
-      channels: target1
-    kind: kubemq.queue
-- name: events-store
-  properties:
-    log_level: debug
-  sources:
-    connections:
-    - address: localhost:50000
-      channel: events-store1
-    kind: source.events-store
-  targets:
-    connections:
-    - address: localhost:50000
-      channels: target1
-    kind: kubemq.queue
-- name: query
-  properties:
-    log_level: debug
-  sources:
-    connections:
-    - address: localhost:50000
-      channel: query1
-    kind: kubemq.query
-  targets:
-    connections:
-    - address: localhost:50000
-      channels: target1
-    kind: kubemq.queue
+    - address: kubemq-cluster-grpc.kubemq:50000
+      default_channel: asd
+      setDefaults: "true"
+    kind: target.command
+logLevel: ""
