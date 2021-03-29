@@ -6,11 +6,11 @@ require (
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-resty/resty/v2 v2.3.0 // indirect
+	github.com/go-resty/resty/v2 v2.3.0
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/json-iterator/go v1.1.10
 	github.com/kr/pretty v0.2.0 // indirect
-	github.com/kubemq-hub/builder v0.6.2
+	github.com/kubemq-hub/builder v0.6.2 // indirect
 	github.com/kubemq-io/kubemq-go v1.4.6
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/pelletier/go-toml v1.4.0 // indirect
@@ -29,6 +29,7 @@ require (
 	google.golang.org/genproto v0.0.0-20200626011028-ee7919e894b5 // indirect
 	google.golang.org/grpc v1.30.0 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
+	gopkg.in/yaml.v2 v2.3.0
 )
 
 //replace github.com/kubemq-hub/builder => ../builder
