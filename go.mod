@@ -13,8 +13,7 @@ require (
 	github.com/kubemq-io/kubemq-go v1.4.6
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/pelletier/go-toml v1.4.0 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
-	github.com/prometheus/client_golang v1.7.1
+	github.com/prometheus/client_golang v1.10.0
 	github.com/smartystreets/assertions v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1
