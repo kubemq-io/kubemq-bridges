@@ -33,7 +33,11 @@ func New() *Source {
 	return &Source{}
 
 }
-func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata) error {
+func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata, log *logger.Logger) error {
+	s.log = log
+	if s.log == nil {
+		s.log = logger.NewLogger("queue")
+	}
 	var err error
 	s.opts, err = parseOptions(connection)
 	if err != nil {
@@ -61,16 +65,15 @@ func (s *Source) Init(ctx context.Context, connection config.Metadata, propertie
 	return nil
 }
 
-func (s *Source) Start(ctx context.Context, targets []middleware.Middleware, log *logger.Logger) error {
-	s.roundRobin = roundrobin.NewRoundRobin(len(targets))
+func (s *Source) Start(ctx context.Context, target []middleware.Middleware) error {
+	s.roundRobin = roundrobin.NewRoundRobin(len(target))
 	if s.properties != nil {
 		mode, ok := s.properties["load-balancing"]
 		if ok && mode == "true" {
 			s.loadBalancingMode = true
 		}
 	}
-	s.log = log
-	s.targets = targets
+	s.targets = target
 	for i := 0; i < len(s.clients); i++ {
 		go s.run(ctx, s.clients[i])
 	}

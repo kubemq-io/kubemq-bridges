@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
 	"github.com/kubemq-hub/kubemq-bridges/middleware"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/stretchr/testify/require"
@@ -34,11 +33,11 @@ func setupSource(ctx context.Context, targets []middleware.Middleware, ch string
 		"visibility_timeout_seconds": "60",
 		"wait_timeout":               "60",
 		"sources":                    "1",
-	}, config.Metadata{})
+	}, config.Metadata{}, nil)
 	if err != nil {
 		return nil, err
 	}
-	err = s.Start(ctx, targets, logger.NewLogger("source"))
+	err = s.Start(ctx, targets)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +207,7 @@ func TestClient_Init(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 			c := New()
-			if err := c.Init(ctx, tt.connection, config.Metadata{}); (err != nil) != tt.wantErr {
+			if err := c.Init(ctx, tt.connection, config.Metadata{}, nil); (err != nil) != tt.wantErr {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
 			}
 

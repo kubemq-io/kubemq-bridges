@@ -3,23 +3,19 @@
 
 package kubemq
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/gogo/protobuf/gogoproto"
-
-import strconv "strconv"
-
-import bytes "bytes"
-
-import strings "strings"
-import reflect "reflect"
-import github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
-
-import context "golang.org/x/net/context"
-import grpc "google.golang.org/grpc"
-
-import io "io"
+import (
+	bytes "bytes"
+	context "context"
+	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
+	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
+	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	io "io"
+	math "math"
+	reflect "reflect"
+	strings "strings"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -30,18 +26,18 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type StreamRequestType int32
 
 const (
-	StreamRequestTypeUnknown StreamRequestType = 0
-	ReceiveMessage           StreamRequestType = 1
-	AckMessage               StreamRequestType = 2
-	RejectMessage            StreamRequestType = 3
-	ModifyVisibility         StreamRequestType = 4
-	ResendMessage            StreamRequestType = 5
-	SendModifiedMessage      StreamRequestType = 6
+	StreamRequestType_StreamRequestTypeUnknown StreamRequestType = 0
+	StreamRequestType_ReceiveMessage           StreamRequestType = 1
+	StreamRequestType_AckMessage               StreamRequestType = 2
+	StreamRequestType_RejectMessage            StreamRequestType = 3
+	StreamRequestType_ModifyVisibility         StreamRequestType = 4
+	StreamRequestType_ResendMessage            StreamRequestType = 5
+	StreamRequestType_SendModifiedMessage      StreamRequestType = 6
 )
 
 var StreamRequestType_name = map[int32]string{
@@ -53,6 +49,7 @@ var StreamRequestType_name = map[int32]string{
 	5: "ResendMessage",
 	6: "SendModifiedMessage",
 }
+
 var StreamRequestType_value = map[string]int32{
 	"StreamRequestTypeUnknown": 0,
 	"ReceiveMessage":           1,
@@ -63,18 +60,275 @@ var StreamRequestType_value = map[string]int32{
 	"SendModifiedMessage":      6,
 }
 
+func (x StreamRequestType) String() string {
+	return proto.EnumName(StreamRequestType_name, int32(x))
+}
+
 func (StreamRequestType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{0}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{0}
+}
+
+type QueuesDownstreamRequestType int32
+
+const (
+	QueuesDownstreamRequestType_PollRequestTypeUnknown QueuesDownstreamRequestType = 0
+	QueuesDownstreamRequestType_Get                    QueuesDownstreamRequestType = 1
+	QueuesDownstreamRequestType_AckAll                 QueuesDownstreamRequestType = 2
+	QueuesDownstreamRequestType_AckRange               QueuesDownstreamRequestType = 3
+	QueuesDownstreamRequestType_NAckAll                QueuesDownstreamRequestType = 4
+	QueuesDownstreamRequestType_NAckRange              QueuesDownstreamRequestType = 5
+	QueuesDownstreamRequestType_ReQueueAll             QueuesDownstreamRequestType = 6
+	QueuesDownstreamRequestType_ReQueueRange           QueuesDownstreamRequestType = 7
+	QueuesDownstreamRequestType_ActiveOffsets          QueuesDownstreamRequestType = 8
+	QueuesDownstreamRequestType_TransactionStatus      QueuesDownstreamRequestType = 9
+	QueuesDownstreamRequestType_CloseByClient          QueuesDownstreamRequestType = 10
+	QueuesDownstreamRequestType_CloseByServer          QueuesDownstreamRequestType = 11
+)
+
+var QueuesDownstreamRequestType_name = map[int32]string{
+	0:  "PollRequestTypeUnknown",
+	1:  "Get",
+	2:  "AckAll",
+	3:  "AckRange",
+	4:  "NAckAll",
+	5:  "NAckRange",
+	6:  "ReQueueAll",
+	7:  "ReQueueRange",
+	8:  "ActiveOffsets",
+	9:  "TransactionStatus",
+	10: "CloseByClient",
+	11: "CloseByServer",
+}
+
+var QueuesDownstreamRequestType_value = map[string]int32{
+	"PollRequestTypeUnknown": 0,
+	"Get":                    1,
+	"AckAll":                 2,
+	"AckRange":               3,
+	"NAckAll":                4,
+	"NAckRange":              5,
+	"ReQueueAll":             6,
+	"ReQueueRange":           7,
+	"ActiveOffsets":          8,
+	"TransactionStatus":      9,
+	"CloseByClient":          10,
+	"CloseByServer":          11,
+}
+
+func (x QueuesDownstreamRequestType) String() string {
+	return proto.EnumName(QueuesDownstreamRequestType_name, int32(x))
+}
+
+func (QueuesDownstreamRequestType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{1}
+}
+
+type TopicsUpstreamRequestType int32
+
+const (
+	TopicsUpstreamRequestType_TopicsUpstreamRequestUnknown TopicsUpstreamRequestType = 0
+	TopicsUpstreamRequestType_FireAndForget                TopicsUpstreamRequestType = 1
+	TopicsUpstreamRequestType_SendAsync                    TopicsUpstreamRequestType = 2
+	TopicsUpstreamRequestType_SendSync                     TopicsUpstreamRequestType = 3
+)
+
+var TopicsUpstreamRequestType_name = map[int32]string{
+	0: "TopicsUpstreamRequestUnknown",
+	1: "FireAndForget",
+	2: "SendAsync",
+	3: "SendSync",
+}
+
+var TopicsUpstreamRequestType_value = map[string]int32{
+	"TopicsUpstreamRequestUnknown": 0,
+	"FireAndForget":                1,
+	"SendAsync":                    2,
+	"SendSync":                     3,
+}
+
+func (x TopicsUpstreamRequestType) String() string {
+	return proto.EnumName(TopicsUpstreamRequestType_name, int32(x))
+}
+
+func (TopicsUpstreamRequestType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{2}
+}
+
+type TopicsSubscriptionStrategyType int32
+
+const (
+	TopicsSubscriptionStrategyType_SubscriptionStrategyTypeUndefined TopicsSubscriptionStrategyType = 0
+	TopicsSubscriptionStrategyType_Range                             TopicsSubscriptionStrategyType = 1
+	TopicsSubscriptionStrategyType_RoundRobin                        TopicsSubscriptionStrategyType = 2
+	TopicsSubscriptionStrategyType_Sticky                            TopicsSubscriptionStrategyType = 3
+)
+
+var TopicsSubscriptionStrategyType_name = map[int32]string{
+	0: "SubscriptionStrategyTypeUndefined",
+	1: "Range",
+	2: "RoundRobin",
+	3: "Sticky",
+}
+
+var TopicsSubscriptionStrategyType_value = map[string]int32{
+	"SubscriptionStrategyTypeUndefined": 0,
+	"Range":                             1,
+	"RoundRobin":                        2,
+	"Sticky":                            3,
+}
+
+func (x TopicsSubscriptionStrategyType) String() string {
+	return proto.EnumName(TopicsSubscriptionStrategyType_name, int32(x))
+}
+
+func (TopicsSubscriptionStrategyType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{3}
+}
+
+type TopicsSubscriptionOffsetType int32
+
+const (
+	TopicsSubscriptionOffsetType_SubscriptionOffsetTypeUndefined TopicsSubscriptionOffsetType = 0
+	TopicsSubscriptionOffsetType_StartNewOnly                    TopicsSubscriptionOffsetType = 1
+	TopicsSubscriptionOffsetType_StartFromFirst                  TopicsSubscriptionOffsetType = 2
+	TopicsSubscriptionOffsetType_StartFromLast                   TopicsSubscriptionOffsetType = 3
+	TopicsSubscriptionOffsetType_StartAtSequence                 TopicsSubscriptionOffsetType = 4
+	TopicsSubscriptionOffsetType_StartAtTime                     TopicsSubscriptionOffsetType = 5
+	TopicsSubscriptionOffsetType_StartAtTimeDelta                TopicsSubscriptionOffsetType = 6
+)
+
+var TopicsSubscriptionOffsetType_name = map[int32]string{
+	0: "SubscriptionOffsetTypeUndefined",
+	1: "StartNewOnly",
+	2: "StartFromFirst",
+	3: "StartFromLast",
+	4: "StartAtSequence",
+	5: "StartAtTime",
+	6: "StartAtTimeDelta",
+}
+
+var TopicsSubscriptionOffsetType_value = map[string]int32{
+	"SubscriptionOffsetTypeUndefined": 0,
+	"StartNewOnly":                    1,
+	"StartFromFirst":                  2,
+	"StartFromLast":                   3,
+	"StartAtSequence":                 4,
+	"StartAtTime":                     5,
+	"StartAtTimeDelta":                6,
+}
+
+func (x TopicsSubscriptionOffsetType) String() string {
+	return proto.EnumName(TopicsSubscriptionOffsetType_name, int32(x))
+}
+
+func (TopicsSubscriptionOffsetType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{4}
+}
+
+type TopicsSubscriptionRequestType int32
+
+const (
+	TopicsSubscriptionRequestType_SubscriptionRequestTypeUndefined TopicsSubscriptionRequestType = 0
+	TopicsSubscriptionRequestType_SubscriptionRequestTypeJoin      TopicsSubscriptionRequestType = 1
+	TopicsSubscriptionRequestType_SubscriptionRequestTypeLeave     TopicsSubscriptionRequestType = 2
+)
+
+var TopicsSubscriptionRequestType_name = map[int32]string{
+	0: "SubscriptionRequestTypeUndefined",
+	1: "SubscriptionRequestTypeJoin",
+	2: "SubscriptionRequestTypeLeave",
+}
+
+var TopicsSubscriptionRequestType_value = map[string]int32{
+	"SubscriptionRequestTypeUndefined": 0,
+	"SubscriptionRequestTypeJoin":      1,
+	"SubscriptionRequestTypeLeave":     2,
+}
+
+func (x TopicsSubscriptionRequestType) String() string {
+	return proto.EnumName(TopicsSubscriptionRequestType_name, int32(x))
+}
+
+func (TopicsSubscriptionRequestType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{5}
+}
+
+type TopicsSubscriptionEventType int32
+
+const (
+	TopicsSubscriptionEventType_SubscriptionEventTypeUndefined      TopicsSubscriptionEventType = 0
+	TopicsSubscriptionEventType_SubscriptionEventTypeSubscribe      TopicsSubscriptionEventType = 1
+	TopicsSubscriptionEventType_SubscriptionEventTypeReSync         TopicsSubscriptionEventType = 2
+	TopicsSubscriptionEventType_SubscriptionEventTypeReSyncComplete TopicsSubscriptionEventType = 3
+	TopicsSubscriptionEventType_SubscriptionEventTypeHeartbeat      TopicsSubscriptionEventType = 4
+	TopicsSubscriptionEventType_SubscriptionEventTypeLeave          TopicsSubscriptionEventType = 5
+	TopicsSubscriptionEventType_SubscriptionEventTypeGroupState     TopicsSubscriptionEventType = 6
+)
+
+var TopicsSubscriptionEventType_name = map[int32]string{
+	0: "SubscriptionEventTypeUndefined",
+	1: "SubscriptionEventTypeSubscribe",
+	2: "SubscriptionEventTypeReSync",
+	3: "SubscriptionEventTypeReSyncComplete",
+	4: "SubscriptionEventTypeHeartbeat",
+	5: "SubscriptionEventTypeLeave",
+	6: "SubscriptionEventTypeGroupState",
+}
+
+var TopicsSubscriptionEventType_value = map[string]int32{
+	"SubscriptionEventTypeUndefined":      0,
+	"SubscriptionEventTypeSubscribe":      1,
+	"SubscriptionEventTypeReSync":         2,
+	"SubscriptionEventTypeReSyncComplete": 3,
+	"SubscriptionEventTypeHeartbeat":      4,
+	"SubscriptionEventTypeLeave":          5,
+	"SubscriptionEventTypeGroupState":     6,
+}
+
+func (x TopicsSubscriptionEventType) String() string {
+	return proto.EnumName(TopicsSubscriptionEventType_name, int32(x))
+}
+
+func (TopicsSubscriptionEventType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{6}
+}
+
+type TopicsDownstreamRequestType int32
+
+const (
+	TopicsDownstreamRequestType_DownstreamRequestTypeUndefined           TopicsDownstreamRequestType = 0
+	TopicsDownstreamRequestType_DownstreamRequestTypeSubscriptionRequest TopicsDownstreamRequestType = 1
+	TopicsDownstreamRequestType_DownstreamRequestTypeSubscriptionEvent   TopicsDownstreamRequestType = 2
+)
+
+var TopicsDownstreamRequestType_name = map[int32]string{
+	0: "DownstreamRequestTypeUndefined",
+	1: "DownstreamRequestTypeSubscriptionRequest",
+	2: "DownstreamRequestTypeSubscriptionEvent",
+}
+
+var TopicsDownstreamRequestType_value = map[string]int32{
+	"DownstreamRequestTypeUndefined":           0,
+	"DownstreamRequestTypeSubscriptionRequest": 1,
+	"DownstreamRequestTypeSubscriptionEvent":   2,
+}
+
+func (x TopicsDownstreamRequestType) String() string {
+	return proto.EnumName(TopicsDownstreamRequestType_name, int32(x))
+}
+
+func (TopicsDownstreamRequestType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{7}
 }
 
 type Subscribe_SubscribeType int32
 
 const (
-	SubscribeTypeUndefined Subscribe_SubscribeType = 0
-	Events                 Subscribe_SubscribeType = 1
-	EventsStore            Subscribe_SubscribeType = 2
-	Commands               Subscribe_SubscribeType = 3
-	Queries                Subscribe_SubscribeType = 4
+	Subscribe_SubscribeTypeUndefined Subscribe_SubscribeType = 0
+	Subscribe_Events                 Subscribe_SubscribeType = 1
+	Subscribe_EventsStore            Subscribe_SubscribeType = 2
+	Subscribe_Commands               Subscribe_SubscribeType = 3
+	Subscribe_Queries                Subscribe_SubscribeType = 4
 )
 
 var Subscribe_SubscribeType_name = map[int32]string{
@@ -84,6 +338,7 @@ var Subscribe_SubscribeType_name = map[int32]string{
 	3: "Commands",
 	4: "Queries",
 }
+
 var Subscribe_SubscribeType_value = map[string]int32{
 	"SubscribeTypeUndefined": 0,
 	"Events":                 1,
@@ -92,20 +347,24 @@ var Subscribe_SubscribeType_value = map[string]int32{
 	"Queries":                4,
 }
 
+func (x Subscribe_SubscribeType) String() string {
+	return proto.EnumName(Subscribe_SubscribeType_name, int32(x))
+}
+
 func (Subscribe_SubscribeType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{5, 0}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{5, 0}
 }
 
 type Subscribe_EventsStoreType int32
 
 const (
-	EventsStoreTypeUndefined Subscribe_EventsStoreType = 0
-	StartNewOnly             Subscribe_EventsStoreType = 1
-	StartFromFirst           Subscribe_EventsStoreType = 2
-	StartFromLast            Subscribe_EventsStoreType = 3
-	StartAtSequence          Subscribe_EventsStoreType = 4
-	StartAtTime              Subscribe_EventsStoreType = 5
-	StartAtTimeDelta         Subscribe_EventsStoreType = 6
+	Subscribe_EventsStoreTypeUndefined Subscribe_EventsStoreType = 0
+	Subscribe_StartNewOnly             Subscribe_EventsStoreType = 1
+	Subscribe_StartFromFirst           Subscribe_EventsStoreType = 2
+	Subscribe_StartFromLast            Subscribe_EventsStoreType = 3
+	Subscribe_StartAtSequence          Subscribe_EventsStoreType = 4
+	Subscribe_StartAtTime              Subscribe_EventsStoreType = 5
+	Subscribe_StartAtTimeDelta         Subscribe_EventsStoreType = 6
 )
 
 var Subscribe_EventsStoreType_name = map[int32]string{
@@ -117,6 +376,7 @@ var Subscribe_EventsStoreType_name = map[int32]string{
 	5: "StartAtTime",
 	6: "StartAtTimeDelta",
 }
+
 var Subscribe_EventsStoreType_value = map[string]int32{
 	"EventsStoreTypeUndefined": 0,
 	"StartNewOnly":             1,
@@ -127,16 +387,20 @@ var Subscribe_EventsStoreType_value = map[string]int32{
 	"StartAtTimeDelta":         6,
 }
 
+func (x Subscribe_EventsStoreType) String() string {
+	return proto.EnumName(Subscribe_EventsStoreType_name, int32(x))
+}
+
 func (Subscribe_EventsStoreType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{5, 1}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{5, 1}
 }
 
 type Request_RequestType int32
 
 const (
-	RequestTypeUnknown Request_RequestType = 0
-	Command            Request_RequestType = 1
-	Query              Request_RequestType = 2
+	Request_RequestTypeUnknown Request_RequestType = 0
+	Request_Command            Request_RequestType = 1
+	Request_Query              Request_RequestType = 2
 )
 
 var Request_RequestType_name = map[int32]string{
@@ -144,14 +408,19 @@ var Request_RequestType_name = map[int32]string{
 	1: "Command",
 	2: "Query",
 }
+
 var Request_RequestType_value = map[string]int32{
 	"RequestTypeUnknown": 0,
 	"Command":            1,
 	"Query":              2,
 }
 
+func (x Request_RequestType) String() string {
+	return proto.EnumName(Request_RequestType_name, int32(x))
+}
+
 func (Request_RequestType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{6, 0}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{6, 0}
 }
 
 type PingResult struct {
@@ -160,13 +429,14 @@ type PingResult struct {
 	ServerStartTime      int64    `protobuf:"varint,3,opt,name=ServerStartTime,proto3" json:"ServerStartTime,omitempty"`
 	ServerUpTimeSeconds  int64    `protobuf:"varint,4,opt,name=ServerUpTimeSeconds,proto3" json:"ServerUpTimeSeconds,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *PingResult) Reset()      { *m = PingResult{} }
 func (*PingResult) ProtoMessage() {}
 func (*PingResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{0}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{0}
 }
 func (m *PingResult) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -183,8 +453,8 @@ func (m *PingResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *PingResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PingResult.Merge(dst, src)
+func (m *PingResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PingResult.Merge(m, src)
 }
 func (m *PingResult) XXX_Size() int {
 	return m.Size()
@@ -225,13 +495,14 @@ func (m *PingResult) GetServerUpTimeSeconds() int64 {
 
 type Empty struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Empty) Reset()      { *m = Empty{} }
 func (*Empty) ProtoMessage() {}
 func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{1}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{1}
 }
 func (m *Empty) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -248,8 +519,8 @@ func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *Empty) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Empty.Merge(dst, src)
+func (m *Empty) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Empty.Merge(m, src)
 }
 func (m *Empty) XXX_Size() int {
 	return m.Size()
@@ -265,13 +536,14 @@ type Result struct {
 	Sent                 bool     `protobuf:"varint,2,opt,name=Sent,proto3" json:"Sent,omitempty"`
 	Error                string   `protobuf:"bytes,3,opt,name=Error,proto3" json:"Error,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Result) Reset()      { *m = Result{} }
 func (*Result) ProtoMessage() {}
 func (*Result) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{2}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{2}
 }
 func (m *Result) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -288,8 +560,8 @@ func (m *Result) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *Result) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Result.Merge(dst, src)
+func (m *Result) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Result.Merge(m, src)
 }
 func (m *Result) XXX_Size() int {
 	return m.Size()
@@ -328,15 +600,16 @@ type Event struct {
 	Metadata             string            `protobuf:"bytes,4,opt,name=Metadata,proto3" json:"Metadata,omitempty"`
 	Body                 []byte            `protobuf:"bytes,5,opt,name=Body,proto3" json:"Body,omitempty"`
 	Store                bool              `protobuf:"varint,6,opt,name=Store,proto3" json:"Store,omitempty"`
-	Tags                 map[string]string `protobuf:"bytes,7,rep,name=Tags" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Tags                 map[string]string `protobuf:"bytes,7,rep,name=Tags,proto3" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *Event) Reset()      { *m = Event{} }
 func (*Event) ProtoMessage() {}
 func (*Event) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{3}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{3}
 }
 func (m *Event) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -353,8 +626,8 @@ func (m *Event) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *Event) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Event.Merge(dst, src)
+func (m *Event) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Event.Merge(m, src)
 }
 func (m *Event) XXX_Size() int {
 	return m.Size()
@@ -421,15 +694,16 @@ type EventReceive struct {
 	Body                 []byte            `protobuf:"bytes,4,opt,name=Body,proto3" json:"Body,omitempty"`
 	Timestamp            int64             `protobuf:"varint,5,opt,name=Timestamp,proto3" json:"Timestamp,omitempty"`
 	Sequence             uint64            `protobuf:"varint,6,opt,name=Sequence,proto3" json:"Sequence,omitempty"`
-	Tags                 map[string]string `protobuf:"bytes,7,rep,name=Tags" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Tags                 map[string]string `protobuf:"bytes,7,rep,name=Tags,proto3" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *EventReceive) Reset()      { *m = EventReceive{} }
 func (*EventReceive) ProtoMessage() {}
 func (*EventReceive) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{4}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{4}
 }
 func (m *EventReceive) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -446,8 +720,8 @@ func (m *EventReceive) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (dst *EventReceive) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EventReceive.Merge(dst, src)
+func (m *EventReceive) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventReceive.Merge(m, src)
 }
 func (m *EventReceive) XXX_Size() int {
 	return m.Size()
@@ -515,13 +789,14 @@ type Subscribe struct {
 	EventsStoreTypeData  Subscribe_EventsStoreType `protobuf:"varint,5,opt,name=EventsStoreTypeData,proto3,enum=kubemq.Subscribe_EventsStoreType" json:"EventsStoreTypeData,omitempty"`
 	EventsStoreTypeValue int64                     `protobuf:"varint,6,opt,name=EventsStoreTypeValue,proto3" json:"EventsStoreTypeValue,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
 	XXX_sizecache        int32                     `json:"-"`
 }
 
 func (m *Subscribe) Reset()      { *m = Subscribe{} }
 func (*Subscribe) ProtoMessage() {}
 func (*Subscribe) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{5}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{5}
 }
 func (m *Subscribe) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -538,8 +813,8 @@ func (m *Subscribe) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *Subscribe) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Subscribe.Merge(dst, src)
+func (m *Subscribe) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Subscribe.Merge(m, src)
 }
 func (m *Subscribe) XXX_Size() int {
 	return m.Size()
@@ -554,7 +829,7 @@ func (m *Subscribe) GetSubscribeTypeData() Subscribe_SubscribeType {
 	if m != nil {
 		return m.SubscribeTypeData
 	}
-	return SubscribeTypeUndefined
+	return Subscribe_SubscribeTypeUndefined
 }
 
 func (m *Subscribe) GetClientID() string {
@@ -582,7 +857,7 @@ func (m *Subscribe) GetEventsStoreTypeData() Subscribe_EventsStoreType {
 	if m != nil {
 		return m.EventsStoreTypeData
 	}
-	return EventsStoreTypeUndefined
+	return Subscribe_EventsStoreTypeUndefined
 }
 
 func (m *Subscribe) GetEventsStoreTypeValue() int64 {
@@ -604,15 +879,16 @@ type Request struct {
 	CacheKey             string              `protobuf:"bytes,9,opt,name=CacheKey,proto3" json:"CacheKey,omitempty"`
 	CacheTTL             int32               `protobuf:"varint,10,opt,name=CacheTTL,proto3" json:"CacheTTL,omitempty"`
 	Span                 []byte              `protobuf:"bytes,11,opt,name=Span,proto3" json:"Span,omitempty"`
-	Tags                 map[string]string   `protobuf:"bytes,12,rep,name=Tags" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Tags                 map[string]string   `protobuf:"bytes,12,rep,name=Tags,proto3" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
 	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *Request) Reset()      { *m = Request{} }
 func (*Request) ProtoMessage() {}
 func (*Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{6}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{6}
 }
 func (m *Request) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -629,8 +905,8 @@ func (m *Request) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *Request) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Request.Merge(dst, src)
+func (m *Request) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Request.Merge(m, src)
 }
 func (m *Request) XXX_Size() int {
 	return m.Size()
@@ -652,7 +928,7 @@ func (m *Request) GetRequestTypeData() Request_RequestType {
 	if m != nil {
 		return m.RequestTypeData
 	}
-	return RequestTypeUnknown
+	return Request_RequestTypeUnknown
 }
 
 func (m *Request) GetClientID() string {
@@ -736,15 +1012,16 @@ type Response struct {
 	Executed             bool              `protobuf:"varint,8,opt,name=Executed,proto3" json:"Executed,omitempty"`
 	Error                string            `protobuf:"bytes,9,opt,name=Error,proto3" json:"Error,omitempty"`
 	Span                 []byte            `protobuf:"bytes,10,opt,name=Span,proto3" json:"Span,omitempty"`
-	Tags                 map[string]string `protobuf:"bytes,11,rep,name=Tags" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Tags                 map[string]string `protobuf:"bytes,11,rep,name=Tags,proto3" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *Response) Reset()      { *m = Response{} }
 func (*Response) ProtoMessage() {}
 func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{7}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{7}
 }
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -761,8 +1038,8 @@ func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *Response) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Response.Merge(dst, src)
+func (m *Response) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Response.Merge(m, src)
 }
 func (m *Response) XXX_Size() int {
 	return m.Size()
@@ -856,17 +1133,21 @@ type QueueMessage struct {
 	Channel              string                  `protobuf:"bytes,3,opt,name=Channel,proto3" json:"Channel,omitempty"`
 	Metadata             string                  `protobuf:"bytes,4,opt,name=Metadata,proto3" json:"Metadata,omitempty"`
 	Body                 []byte                  `protobuf:"bytes,5,opt,name=Body,proto3" json:"Body,omitempty"`
-	Tags                 map[string]string       `protobuf:"bytes,6,rep,name=Tags" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Attributes           *QueueMessageAttributes `protobuf:"bytes,7,opt,name=Attributes" json:"Attributes,omitempty"`
-	Policy               *QueueMessagePolicy     `protobuf:"bytes,8,opt,name=Policy" json:"Policy,omitempty"`
+	Tags                 map[string]string       `protobuf:"bytes,6,rep,name=Tags,proto3" json:"Tags,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Attributes           *QueueMessageAttributes `protobuf:"bytes,7,opt,name=Attributes,proto3" json:"Attributes,omitempty"`
+	Policy               *QueueMessagePolicy     `protobuf:"bytes,8,opt,name=Policy,proto3" json:"Policy,omitempty"`
+	Topic                string                  `protobuf:"bytes,9,opt,name=Topic,proto3" json:"Topic,omitempty"`
+	Partition            int32                   `protobuf:"varint,10,opt,name=Partition,proto3" json:"Partition,omitempty"`
+	PartitionKey         string                  `protobuf:"bytes,11,opt,name=PartitionKey,proto3" json:"PartitionKey,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
 }
 
 func (m *QueueMessage) Reset()      { *m = QueueMessage{} }
 func (*QueueMessage) ProtoMessage() {}
 func (*QueueMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{8}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{8}
 }
 func (m *QueueMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -883,8 +1164,8 @@ func (m *QueueMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (dst *QueueMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueueMessage.Merge(dst, src)
+func (m *QueueMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueueMessage.Merge(m, src)
 }
 func (m *QueueMessage) XXX_Size() int {
 	return m.Size()
@@ -951,17 +1232,39 @@ func (m *QueueMessage) GetPolicy() *QueueMessagePolicy {
 	return nil
 }
 
+func (m *QueueMessage) GetTopic() string {
+	if m != nil {
+		return m.Topic
+	}
+	return ""
+}
+
+func (m *QueueMessage) GetPartition() int32 {
+	if m != nil {
+		return m.Partition
+	}
+	return 0
+}
+
+func (m *QueueMessage) GetPartitionKey() string {
+	if m != nil {
+		return m.PartitionKey
+	}
+	return ""
+}
+
 type QueueMessagesBatchRequest struct {
 	BatchID              string          `protobuf:"bytes,1,opt,name=BatchID,proto3" json:"BatchID,omitempty"`
-	Messages             []*QueueMessage `protobuf:"bytes,2,rep,name=Messages" json:"Messages,omitempty"`
+	Messages             []*QueueMessage `protobuf:"bytes,2,rep,name=Messages,proto3" json:"Messages,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
 	XXX_sizecache        int32           `json:"-"`
 }
 
 func (m *QueueMessagesBatchRequest) Reset()      { *m = QueueMessagesBatchRequest{} }
 func (*QueueMessagesBatchRequest) ProtoMessage() {}
 func (*QueueMessagesBatchRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{9}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{9}
 }
 func (m *QueueMessagesBatchRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -978,8 +1281,8 @@ func (m *QueueMessagesBatchRequest) XXX_Marshal(b []byte, deterministic bool) ([
 		return b[:n], nil
 	}
 }
-func (dst *QueueMessagesBatchRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueueMessagesBatchRequest.Merge(dst, src)
+func (m *QueueMessagesBatchRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueueMessagesBatchRequest.Merge(m, src)
 }
 func (m *QueueMessagesBatchRequest) XXX_Size() int {
 	return m.Size()
@@ -1006,16 +1309,17 @@ func (m *QueueMessagesBatchRequest) GetMessages() []*QueueMessage {
 
 type QueueMessagesBatchResponse struct {
 	BatchID              string                    `protobuf:"bytes,1,opt,name=BatchID,proto3" json:"BatchID,omitempty"`
-	Results              []*SendQueueMessageResult `protobuf:"bytes,2,rep,name=Results" json:"Results,omitempty"`
+	Results              []*SendQueueMessageResult `protobuf:"bytes,2,rep,name=Results,proto3" json:"Results,omitempty"`
 	HaveErrors           bool                      `protobuf:"varint,3,opt,name=HaveErrors,proto3" json:"HaveErrors,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
 	XXX_sizecache        int32                     `json:"-"`
 }
 
 func (m *QueueMessagesBatchResponse) Reset()      { *m = QueueMessagesBatchResponse{} }
 func (*QueueMessagesBatchResponse) ProtoMessage() {}
 func (*QueueMessagesBatchResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{10}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{10}
 }
 func (m *QueueMessagesBatchResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1032,8 +1336,8 @@ func (m *QueueMessagesBatchResponse) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (dst *QueueMessagesBatchResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueueMessagesBatchResponse.Merge(dst, src)
+func (m *QueueMessagesBatchResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueueMessagesBatchResponse.Merge(m, src)
 }
 func (m *QueueMessagesBatchResponse) XXX_Size() int {
 	return m.Size()
@@ -1075,13 +1379,14 @@ type QueueMessageAttributes struct {
 	ExpirationAt         int64    `protobuf:"varint,7,opt,name=ExpirationAt,proto3" json:"ExpirationAt,omitempty"`
 	DelayedTo            int64    `protobuf:"varint,8,opt,name=DelayedTo,proto3" json:"DelayedTo,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *QueueMessageAttributes) Reset()      { *m = QueueMessageAttributes{} }
 func (*QueueMessageAttributes) ProtoMessage() {}
 func (*QueueMessageAttributes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{11}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{11}
 }
 func (m *QueueMessageAttributes) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1098,8 +1403,8 @@ func (m *QueueMessageAttributes) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (dst *QueueMessageAttributes) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueueMessageAttributes.Merge(dst, src)
+func (m *QueueMessageAttributes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueueMessageAttributes.Merge(m, src)
 }
 func (m *QueueMessageAttributes) XXX_Size() int {
 	return m.Size()
@@ -1172,13 +1477,14 @@ type QueueMessagePolicy struct {
 	MaxReceiveCount      int32    `protobuf:"varint,3,opt,name=MaxReceiveCount,proto3" json:"MaxReceiveCount,omitempty"`
 	MaxReceiveQueue      string   `protobuf:"bytes,4,opt,name=MaxReceiveQueue,proto3" json:"MaxReceiveQueue,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *QueueMessagePolicy) Reset()      { *m = QueueMessagePolicy{} }
 func (*QueueMessagePolicy) ProtoMessage() {}
 func (*QueueMessagePolicy) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{12}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{12}
 }
 func (m *QueueMessagePolicy) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1195,8 +1501,8 @@ func (m *QueueMessagePolicy) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (dst *QueueMessagePolicy) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueueMessagePolicy.Merge(dst, src)
+func (m *QueueMessagePolicy) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueueMessagePolicy.Merge(m, src)
 }
 func (m *QueueMessagePolicy) XXX_Size() int {
 	return m.Size()
@@ -1242,14 +1548,19 @@ type SendQueueMessageResult struct {
 	DelayedTo            int64    `protobuf:"varint,4,opt,name=DelayedTo,proto3" json:"DelayedTo,omitempty"`
 	IsError              bool     `protobuf:"varint,5,opt,name=IsError,proto3" json:"IsError,omitempty"`
 	Error                string   `protobuf:"bytes,6,opt,name=Error,proto3" json:"Error,omitempty"`
+	RefChannel           string   `protobuf:"bytes,7,opt,name=RefChannel,proto3" json:"RefChannel,omitempty"`
+	RefTopic             string   `protobuf:"bytes,8,opt,name=RefTopic,proto3" json:"RefTopic,omitempty"`
+	RefPartition         int32    `protobuf:"varint,9,opt,name=RefPartition,proto3" json:"RefPartition,omitempty"`
+	RefHash              string   `protobuf:"bytes,10,opt,name=RefHash,proto3" json:"RefHash,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *SendQueueMessageResult) Reset()      { *m = SendQueueMessageResult{} }
 func (*SendQueueMessageResult) ProtoMessage() {}
 func (*SendQueueMessageResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{13}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{13}
 }
 func (m *SendQueueMessageResult) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1266,8 +1577,8 @@ func (m *SendQueueMessageResult) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (dst *SendQueueMessageResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SendQueueMessageResult.Merge(dst, src)
+func (m *SendQueueMessageResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SendQueueMessageResult.Merge(m, src)
 }
 func (m *SendQueueMessageResult) XXX_Size() int {
 	return m.Size()
@@ -1320,6 +1631,34 @@ func (m *SendQueueMessageResult) GetError() string {
 	return ""
 }
 
+func (m *SendQueueMessageResult) GetRefChannel() string {
+	if m != nil {
+		return m.RefChannel
+	}
+	return ""
+}
+
+func (m *SendQueueMessageResult) GetRefTopic() string {
+	if m != nil {
+		return m.RefTopic
+	}
+	return ""
+}
+
+func (m *SendQueueMessageResult) GetRefPartition() int32 {
+	if m != nil {
+		return m.RefPartition
+	}
+	return 0
+}
+
+func (m *SendQueueMessageResult) GetRefHash() string {
+	if m != nil {
+		return m.RefHash
+	}
+	return ""
+}
+
 type ReceiveQueueMessagesRequest struct {
 	RequestID            string   `protobuf:"bytes,1,opt,name=RequestID,proto3" json:"RequestID,omitempty"`
 	ClientID             string   `protobuf:"bytes,2,opt,name=ClientID,proto3" json:"ClientID,omitempty"`
@@ -1328,13 +1667,14 @@ type ReceiveQueueMessagesRequest struct {
 	WaitTimeSeconds      int32    `protobuf:"varint,5,opt,name=WaitTimeSeconds,proto3" json:"WaitTimeSeconds,omitempty"`
 	IsPeak               bool     `protobuf:"varint,6,opt,name=IsPeak,proto3" json:"IsPeak,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ReceiveQueueMessagesRequest) Reset()      { *m = ReceiveQueueMessagesRequest{} }
 func (*ReceiveQueueMessagesRequest) ProtoMessage() {}
 func (*ReceiveQueueMessagesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{14}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{14}
 }
 func (m *ReceiveQueueMessagesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1351,8 +1691,8 @@ func (m *ReceiveQueueMessagesRequest) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (dst *ReceiveQueueMessagesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReceiveQueueMessagesRequest.Merge(dst, src)
+func (m *ReceiveQueueMessagesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReceiveQueueMessagesRequest.Merge(m, src)
 }
 func (m *ReceiveQueueMessagesRequest) XXX_Size() int {
 	return m.Size()
@@ -1407,20 +1747,21 @@ func (m *ReceiveQueueMessagesRequest) GetIsPeak() bool {
 
 type ReceiveQueueMessagesResponse struct {
 	RequestID            string          `protobuf:"bytes,1,opt,name=RequestID,proto3" json:"RequestID,omitempty"`
-	Messages             []*QueueMessage `protobuf:"bytes,2,rep,name=Messages" json:"Messages,omitempty"`
+	Messages             []*QueueMessage `protobuf:"bytes,2,rep,name=Messages,proto3" json:"Messages,omitempty"`
 	MessagesReceived     int32           `protobuf:"varint,3,opt,name=MessagesReceived,proto3" json:"MessagesReceived,omitempty"`
 	MessagesExpired      int32           `protobuf:"varint,4,opt,name=MessagesExpired,proto3" json:"MessagesExpired,omitempty"`
 	IsPeak               bool            `protobuf:"varint,5,opt,name=IsPeak,proto3" json:"IsPeak,omitempty"`
 	IsError              bool            `protobuf:"varint,6,opt,name=IsError,proto3" json:"IsError,omitempty"`
 	Error                string          `protobuf:"bytes,7,opt,name=Error,proto3" json:"Error,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
 	XXX_sizecache        int32           `json:"-"`
 }
 
 func (m *ReceiveQueueMessagesResponse) Reset()      { *m = ReceiveQueueMessagesResponse{} }
 func (*ReceiveQueueMessagesResponse) ProtoMessage() {}
 func (*ReceiveQueueMessagesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{15}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{15}
 }
 func (m *ReceiveQueueMessagesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1437,8 +1778,8 @@ func (m *ReceiveQueueMessagesResponse) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
-func (dst *ReceiveQueueMessagesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReceiveQueueMessagesResponse.Merge(dst, src)
+func (m *ReceiveQueueMessagesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReceiveQueueMessagesResponse.Merge(m, src)
 }
 func (m *ReceiveQueueMessagesResponse) XXX_Size() int {
 	return m.Size()
@@ -1504,13 +1845,14 @@ type AckAllQueueMessagesRequest struct {
 	Channel              string   `protobuf:"bytes,3,opt,name=Channel,proto3" json:"Channel,omitempty"`
 	WaitTimeSeconds      int32    `protobuf:"varint,4,opt,name=WaitTimeSeconds,proto3" json:"WaitTimeSeconds,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *AckAllQueueMessagesRequest) Reset()      { *m = AckAllQueueMessagesRequest{} }
 func (*AckAllQueueMessagesRequest) ProtoMessage() {}
 func (*AckAllQueueMessagesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{16}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{16}
 }
 func (m *AckAllQueueMessagesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1527,8 +1869,8 @@ func (m *AckAllQueueMessagesRequest) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (dst *AckAllQueueMessagesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AckAllQueueMessagesRequest.Merge(dst, src)
+func (m *AckAllQueueMessagesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AckAllQueueMessagesRequest.Merge(m, src)
 }
 func (m *AckAllQueueMessagesRequest) XXX_Size() int {
 	return m.Size()
@@ -1573,13 +1915,14 @@ type AckAllQueueMessagesResponse struct {
 	IsError              bool     `protobuf:"varint,3,opt,name=IsError,proto3" json:"IsError,omitempty"`
 	Error                string   `protobuf:"bytes,4,opt,name=Error,proto3" json:"Error,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *AckAllQueueMessagesResponse) Reset()      { *m = AckAllQueueMessagesResponse{} }
 func (*AckAllQueueMessagesResponse) ProtoMessage() {}
 func (*AckAllQueueMessagesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{17}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{17}
 }
 func (m *AckAllQueueMessagesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1596,8 +1939,8 @@ func (m *AckAllQueueMessagesResponse) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (dst *AckAllQueueMessagesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AckAllQueueMessagesResponse.Merge(dst, src)
+func (m *AckAllQueueMessagesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AckAllQueueMessagesResponse.Merge(m, src)
 }
 func (m *AckAllQueueMessagesResponse) XXX_Size() int {
 	return m.Size()
@@ -1644,15 +1987,16 @@ type StreamQueueMessagesRequest struct {
 	VisibilitySeconds     int32             `protobuf:"varint,5,opt,name=VisibilitySeconds,proto3" json:"VisibilitySeconds,omitempty"`
 	WaitTimeSeconds       int32             `protobuf:"varint,6,opt,name=WaitTimeSeconds,proto3" json:"WaitTimeSeconds,omitempty"`
 	RefSequence           uint64            `protobuf:"varint,7,opt,name=RefSequence,proto3" json:"RefSequence,omitempty"`
-	ModifiedMessage       *QueueMessage     `protobuf:"bytes,8,opt,name=ModifiedMessage" json:"ModifiedMessage,omitempty"`
+	ModifiedMessage       *QueueMessage     `protobuf:"bytes,8,opt,name=ModifiedMessage,proto3" json:"ModifiedMessage,omitempty"`
 	XXX_NoUnkeyedLiteral  struct{}          `json:"-"`
+	XXX_unrecognized      []byte            `json:"-"`
 	XXX_sizecache         int32             `json:"-"`
 }
 
 func (m *StreamQueueMessagesRequest) Reset()      { *m = StreamQueueMessagesRequest{} }
 func (*StreamQueueMessagesRequest) ProtoMessage() {}
 func (*StreamQueueMessagesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{18}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{18}
 }
 func (m *StreamQueueMessagesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1669,8 +2013,8 @@ func (m *StreamQueueMessagesRequest) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (dst *StreamQueueMessagesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamQueueMessagesRequest.Merge(dst, src)
+func (m *StreamQueueMessagesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamQueueMessagesRequest.Merge(m, src)
 }
 func (m *StreamQueueMessagesRequest) XXX_Size() int {
 	return m.Size()
@@ -1699,7 +2043,7 @@ func (m *StreamQueueMessagesRequest) GetStreamRequestTypeData() StreamRequestTyp
 	if m != nil {
 		return m.StreamRequestTypeData
 	}
-	return StreamRequestTypeUnknown
+	return StreamRequestType_StreamRequestTypeUnknown
 }
 
 func (m *StreamQueueMessagesRequest) GetChannel() string {
@@ -1740,17 +2084,18 @@ func (m *StreamQueueMessagesRequest) GetModifiedMessage() *QueueMessage {
 type StreamQueueMessagesResponse struct {
 	RequestID             string            `protobuf:"bytes,1,opt,name=RequestID,proto3" json:"RequestID,omitempty"`
 	StreamRequestTypeData StreamRequestType `protobuf:"varint,2,opt,name=StreamRequestTypeData,proto3,enum=kubemq.StreamRequestType" json:"StreamRequestTypeData,omitempty"`
-	Message               *QueueMessage     `protobuf:"bytes,3,opt,name=Message" json:"Message,omitempty"`
+	Message               *QueueMessage     `protobuf:"bytes,3,opt,name=Message,proto3" json:"Message,omitempty"`
 	IsError               bool              `protobuf:"varint,4,opt,name=IsError,proto3" json:"IsError,omitempty"`
 	Error                 string            `protobuf:"bytes,5,opt,name=Error,proto3" json:"Error,omitempty"`
 	XXX_NoUnkeyedLiteral  struct{}          `json:"-"`
+	XXX_unrecognized      []byte            `json:"-"`
 	XXX_sizecache         int32             `json:"-"`
 }
 
 func (m *StreamQueueMessagesResponse) Reset()      { *m = StreamQueueMessagesResponse{} }
 func (*StreamQueueMessagesResponse) ProtoMessage() {}
 func (*StreamQueueMessagesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_kubemq_go_0ff2ba662d4a1703, []int{19}
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{19}
 }
 func (m *StreamQueueMessagesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1767,8 +2112,8 @@ func (m *StreamQueueMessagesResponse) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (dst *StreamQueueMessagesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamQueueMessagesResponse.Merge(dst, src)
+func (m *StreamQueueMessagesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamQueueMessagesResponse.Merge(m, src)
 }
 func (m *StreamQueueMessagesResponse) XXX_Size() int {
 	return m.Size()
@@ -1790,7 +2135,7 @@ func (m *StreamQueueMessagesResponse) GetStreamRequestTypeData() StreamRequestTy
 	if m != nil {
 		return m.StreamRequestTypeData
 	}
-	return StreamRequestTypeUnknown
+	return StreamRequestType_StreamRequestTypeUnknown
 }
 
 func (m *StreamQueueMessagesResponse) GetMessage() *QueueMessage {
@@ -1814,7 +2159,1452 @@ func (m *StreamQueueMessagesResponse) GetError() string {
 	return ""
 }
 
+type QueuesUpstreamRequest struct {
+	RequestID            string          `protobuf:"bytes,1,opt,name=RequestID,proto3" json:"RequestID,omitempty"`
+	Messages             []*QueueMessage `protobuf:"bytes,2,rep,name=Messages,proto3" json:"Messages,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
+}
+
+func (m *QueuesUpstreamRequest) Reset()      { *m = QueuesUpstreamRequest{} }
+func (*QueuesUpstreamRequest) ProtoMessage() {}
+func (*QueuesUpstreamRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{20}
+}
+func (m *QueuesUpstreamRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueuesUpstreamRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueuesUpstreamRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueuesUpstreamRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueuesUpstreamRequest.Merge(m, src)
+}
+func (m *QueuesUpstreamRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueuesUpstreamRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueuesUpstreamRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueuesUpstreamRequest proto.InternalMessageInfo
+
+func (m *QueuesUpstreamRequest) GetRequestID() string {
+	if m != nil {
+		return m.RequestID
+	}
+	return ""
+}
+
+func (m *QueuesUpstreamRequest) GetMessages() []*QueueMessage {
+	if m != nil {
+		return m.Messages
+	}
+	return nil
+}
+
+type QueuesUpstreamResponse struct {
+	RefRequestID         string                    `protobuf:"bytes,1,opt,name=RefRequestID,proto3" json:"RefRequestID,omitempty"`
+	Results              []*SendQueueMessageResult `protobuf:"bytes,2,rep,name=Results,proto3" json:"Results,omitempty"`
+	IsError              bool                      `protobuf:"varint,3,opt,name=IsError,proto3" json:"IsError,omitempty"`
+	Error                string                    `protobuf:"bytes,4,opt,name=Error,proto3" json:"Error,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
+}
+
+func (m *QueuesUpstreamResponse) Reset()      { *m = QueuesUpstreamResponse{} }
+func (*QueuesUpstreamResponse) ProtoMessage() {}
+func (*QueuesUpstreamResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{21}
+}
+func (m *QueuesUpstreamResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueuesUpstreamResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueuesUpstreamResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueuesUpstreamResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueuesUpstreamResponse.Merge(m, src)
+}
+func (m *QueuesUpstreamResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueuesUpstreamResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueuesUpstreamResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueuesUpstreamResponse proto.InternalMessageInfo
+
+func (m *QueuesUpstreamResponse) GetRefRequestID() string {
+	if m != nil {
+		return m.RefRequestID
+	}
+	return ""
+}
+
+func (m *QueuesUpstreamResponse) GetResults() []*SendQueueMessageResult {
+	if m != nil {
+		return m.Results
+	}
+	return nil
+}
+
+func (m *QueuesUpstreamResponse) GetIsError() bool {
+	if m != nil {
+		return m.IsError
+	}
+	return false
+}
+
+func (m *QueuesUpstreamResponse) GetError() string {
+	if m != nil {
+		return m.Error
+	}
+	return ""
+}
+
+type QueuesDownstreamRequest struct {
+	RequestID            string                      `protobuf:"bytes,1,opt,name=RequestID,proto3" json:"RequestID,omitempty"`
+	ClientID             string                      `protobuf:"bytes,2,opt,name=ClientID,proto3" json:"ClientID,omitempty"`
+	RequestTypeData      QueuesDownstreamRequestType `protobuf:"varint,3,opt,name=RequestTypeData,proto3,enum=kubemq.QueuesDownstreamRequestType" json:"RequestTypeData,omitempty"`
+	Channel              string                      `protobuf:"bytes,4,opt,name=Channel,proto3" json:"Channel,omitempty"`
+	MaxItems             int32                       `protobuf:"varint,5,opt,name=MaxItems,proto3" json:"MaxItems,omitempty"`
+	WaitTimeout          int32                       `protobuf:"varint,6,opt,name=WaitTimeout,proto3" json:"WaitTimeout,omitempty"`
+	AutoAck              bool                        `protobuf:"varint,7,opt,name=AutoAck,proto3" json:"AutoAck,omitempty"`
+	ReQueueChannel       string                      `protobuf:"bytes,8,opt,name=ReQueueChannel,proto3" json:"ReQueueChannel,omitempty"`
+	SequenceRange        []int64                     `protobuf:"varint,9,rep,packed,name=SequenceRange,proto3" json:"SequenceRange,omitempty"`
+	RefTransactionId     string                      `protobuf:"bytes,10,opt,name=RefTransactionId,proto3" json:"RefTransactionId,omitempty"`
+	Metadata             map[string]string           `protobuf:"bytes,12,rep,name=Metadata,proto3" json:"Metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
+	XXX_unrecognized     []byte                      `json:"-"`
+	XXX_sizecache        int32                       `json:"-"`
+}
+
+func (m *QueuesDownstreamRequest) Reset()      { *m = QueuesDownstreamRequest{} }
+func (*QueuesDownstreamRequest) ProtoMessage() {}
+func (*QueuesDownstreamRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{22}
+}
+func (m *QueuesDownstreamRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueuesDownstreamRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueuesDownstreamRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueuesDownstreamRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueuesDownstreamRequest.Merge(m, src)
+}
+func (m *QueuesDownstreamRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueuesDownstreamRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueuesDownstreamRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueuesDownstreamRequest proto.InternalMessageInfo
+
+func (m *QueuesDownstreamRequest) GetRequestID() string {
+	if m != nil {
+		return m.RequestID
+	}
+	return ""
+}
+
+func (m *QueuesDownstreamRequest) GetClientID() string {
+	if m != nil {
+		return m.ClientID
+	}
+	return ""
+}
+
+func (m *QueuesDownstreamRequest) GetRequestTypeData() QueuesDownstreamRequestType {
+	if m != nil {
+		return m.RequestTypeData
+	}
+	return QueuesDownstreamRequestType_PollRequestTypeUnknown
+}
+
+func (m *QueuesDownstreamRequest) GetChannel() string {
+	if m != nil {
+		return m.Channel
+	}
+	return ""
+}
+
+func (m *QueuesDownstreamRequest) GetMaxItems() int32 {
+	if m != nil {
+		return m.MaxItems
+	}
+	return 0
+}
+
+func (m *QueuesDownstreamRequest) GetWaitTimeout() int32 {
+	if m != nil {
+		return m.WaitTimeout
+	}
+	return 0
+}
+
+func (m *QueuesDownstreamRequest) GetAutoAck() bool {
+	if m != nil {
+		return m.AutoAck
+	}
+	return false
+}
+
+func (m *QueuesDownstreamRequest) GetReQueueChannel() string {
+	if m != nil {
+		return m.ReQueueChannel
+	}
+	return ""
+}
+
+func (m *QueuesDownstreamRequest) GetSequenceRange() []int64 {
+	if m != nil {
+		return m.SequenceRange
+	}
+	return nil
+}
+
+func (m *QueuesDownstreamRequest) GetRefTransactionId() string {
+	if m != nil {
+		return m.RefTransactionId
+	}
+	return ""
+}
+
+func (m *QueuesDownstreamRequest) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+type QueuesDownstreamResponse struct {
+	TransactionId        string                      `protobuf:"bytes,1,opt,name=TransactionId,proto3" json:"TransactionId,omitempty"`
+	RefRequestId         string                      `protobuf:"bytes,2,opt,name=RefRequestId,proto3" json:"RefRequestId,omitempty"`
+	RequestTypeData      QueuesDownstreamRequestType `protobuf:"varint,3,opt,name=RequestTypeData,proto3,enum=kubemq.QueuesDownstreamRequestType" json:"RequestTypeData,omitempty"`
+	Messages             []*QueueMessage             `protobuf:"bytes,4,rep,name=Messages,proto3" json:"Messages,omitempty"`
+	ActiveOffsets        []int64                     `protobuf:"varint,5,rep,packed,name=ActiveOffsets,proto3" json:"ActiveOffsets,omitempty"`
+	IsError              bool                        `protobuf:"varint,6,opt,name=IsError,proto3" json:"IsError,omitempty"`
+	Error                string                      `protobuf:"bytes,7,opt,name=Error,proto3" json:"Error,omitempty"`
+	TransactionComplete  bool                        `protobuf:"varint,8,opt,name=TransactionComplete,proto3" json:"TransactionComplete,omitempty"`
+	Metadata             map[string]string           `protobuf:"bytes,9,rep,name=Metadata,proto3" json:"Metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
+	XXX_unrecognized     []byte                      `json:"-"`
+	XXX_sizecache        int32                       `json:"-"`
+}
+
+func (m *QueuesDownstreamResponse) Reset()      { *m = QueuesDownstreamResponse{} }
+func (*QueuesDownstreamResponse) ProtoMessage() {}
+func (*QueuesDownstreamResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{23}
+}
+func (m *QueuesDownstreamResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueuesDownstreamResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueuesDownstreamResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueuesDownstreamResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueuesDownstreamResponse.Merge(m, src)
+}
+func (m *QueuesDownstreamResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueuesDownstreamResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueuesDownstreamResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueuesDownstreamResponse proto.InternalMessageInfo
+
+func (m *QueuesDownstreamResponse) GetTransactionId() string {
+	if m != nil {
+		return m.TransactionId
+	}
+	return ""
+}
+
+func (m *QueuesDownstreamResponse) GetRefRequestId() string {
+	if m != nil {
+		return m.RefRequestId
+	}
+	return ""
+}
+
+func (m *QueuesDownstreamResponse) GetRequestTypeData() QueuesDownstreamRequestType {
+	if m != nil {
+		return m.RequestTypeData
+	}
+	return QueuesDownstreamRequestType_PollRequestTypeUnknown
+}
+
+func (m *QueuesDownstreamResponse) GetMessages() []*QueueMessage {
+	if m != nil {
+		return m.Messages
+	}
+	return nil
+}
+
+func (m *QueuesDownstreamResponse) GetActiveOffsets() []int64 {
+	if m != nil {
+		return m.ActiveOffsets
+	}
+	return nil
+}
+
+func (m *QueuesDownstreamResponse) GetIsError() bool {
+	if m != nil {
+		return m.IsError
+	}
+	return false
+}
+
+func (m *QueuesDownstreamResponse) GetError() string {
+	if m != nil {
+		return m.Error
+	}
+	return ""
+}
+
+func (m *QueuesDownstreamResponse) GetTransactionComplete() bool {
+	if m != nil {
+		return m.TransactionComplete
+	}
+	return false
+}
+
+func (m *QueuesDownstreamResponse) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+type QueueInfo struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Messages             int64    `protobuf:"varint,2,opt,name=Messages,proto3" json:"Messages,omitempty"`
+	Bytes                int64    `protobuf:"varint,3,opt,name=Bytes,proto3" json:"Bytes,omitempty"`
+	FirstSequence        int64    `protobuf:"varint,4,opt,name=FirstSequence,proto3" json:"FirstSequence,omitempty"`
+	LastSequence         int64    `protobuf:"varint,5,opt,name=LastSequence,proto3" json:"LastSequence,omitempty"`
+	Sent                 int64    `protobuf:"varint,6,opt,name=Sent,proto3" json:"Sent,omitempty"`
+	Delivered            int64    `protobuf:"varint,7,opt,name=Delivered,proto3" json:"Delivered,omitempty"`
+	Waiting              int64    `protobuf:"varint,8,opt,name=Waiting,proto3" json:"Waiting,omitempty"`
+	Subscribers          int64    `protobuf:"varint,9,opt,name=Subscribers,proto3" json:"Subscribers,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *QueueInfo) Reset()      { *m = QueueInfo{} }
+func (*QueueInfo) ProtoMessage() {}
+func (*QueueInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{24}
+}
+func (m *QueueInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueueInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueueInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueueInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueueInfo.Merge(m, src)
+}
+func (m *QueueInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueueInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueueInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueueInfo proto.InternalMessageInfo
+
+func (m *QueueInfo) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *QueueInfo) GetMessages() int64 {
+	if m != nil {
+		return m.Messages
+	}
+	return 0
+}
+
+func (m *QueueInfo) GetBytes() int64 {
+	if m != nil {
+		return m.Bytes
+	}
+	return 0
+}
+
+func (m *QueueInfo) GetFirstSequence() int64 {
+	if m != nil {
+		return m.FirstSequence
+	}
+	return 0
+}
+
+func (m *QueueInfo) GetLastSequence() int64 {
+	if m != nil {
+		return m.LastSequence
+	}
+	return 0
+}
+
+func (m *QueueInfo) GetSent() int64 {
+	if m != nil {
+		return m.Sent
+	}
+	return 0
+}
+
+func (m *QueueInfo) GetDelivered() int64 {
+	if m != nil {
+		return m.Delivered
+	}
+	return 0
+}
+
+func (m *QueueInfo) GetWaiting() int64 {
+	if m != nil {
+		return m.Waiting
+	}
+	return 0
+}
+
+func (m *QueueInfo) GetSubscribers() int64 {
+	if m != nil {
+		return m.Subscribers
+	}
+	return 0
+}
+
+type QueuesInfo struct {
+	TotalQueue           int32        `protobuf:"varint,1,opt,name=TotalQueue,proto3" json:"TotalQueue,omitempty"`
+	Sent                 int64        `protobuf:"varint,2,opt,name=Sent,proto3" json:"Sent,omitempty"`
+	Delivered            int64        `protobuf:"varint,3,opt,name=Delivered,proto3" json:"Delivered,omitempty"`
+	Waiting              int64        `protobuf:"varint,4,opt,name=Waiting,proto3" json:"Waiting,omitempty"`
+	Queues               []*QueueInfo `protobuf:"bytes,5,rep,name=Queues,proto3" json:"Queues,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *QueuesInfo) Reset()      { *m = QueuesInfo{} }
+func (*QueuesInfo) ProtoMessage() {}
+func (*QueuesInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{25}
+}
+func (m *QueuesInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueuesInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueuesInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueuesInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueuesInfo.Merge(m, src)
+}
+func (m *QueuesInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueuesInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueuesInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueuesInfo proto.InternalMessageInfo
+
+func (m *QueuesInfo) GetTotalQueue() int32 {
+	if m != nil {
+		return m.TotalQueue
+	}
+	return 0
+}
+
+func (m *QueuesInfo) GetSent() int64 {
+	if m != nil {
+		return m.Sent
+	}
+	return 0
+}
+
+func (m *QueuesInfo) GetDelivered() int64 {
+	if m != nil {
+		return m.Delivered
+	}
+	return 0
+}
+
+func (m *QueuesInfo) GetWaiting() int64 {
+	if m != nil {
+		return m.Waiting
+	}
+	return 0
+}
+
+func (m *QueuesInfo) GetQueues() []*QueueInfo {
+	if m != nil {
+		return m.Queues
+	}
+	return nil
+}
+
+type QueuesInfoRequest struct {
+	RequestID            string   `protobuf:"bytes,1,opt,name=RequestID,proto3" json:"RequestID,omitempty"`
+	QueueName            string   `protobuf:"bytes,2,opt,name=QueueName,proto3" json:"QueueName,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *QueuesInfoRequest) Reset()      { *m = QueuesInfoRequest{} }
+func (*QueuesInfoRequest) ProtoMessage() {}
+func (*QueuesInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{26}
+}
+func (m *QueuesInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueuesInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueuesInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueuesInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueuesInfoRequest.Merge(m, src)
+}
+func (m *QueuesInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueuesInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueuesInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueuesInfoRequest proto.InternalMessageInfo
+
+func (m *QueuesInfoRequest) GetRequestID() string {
+	if m != nil {
+		return m.RequestID
+	}
+	return ""
+}
+
+func (m *QueuesInfoRequest) GetQueueName() string {
+	if m != nil {
+		return m.QueueName
+	}
+	return ""
+}
+
+type QueuesInfoResponse struct {
+	RefRequestID         string      `protobuf:"bytes,1,opt,name=RefRequestID,proto3" json:"RefRequestID,omitempty"`
+	Info                 *QueuesInfo `protobuf:"bytes,2,opt,name=Info,proto3" json:"Info,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *QueuesInfoResponse) Reset()      { *m = QueuesInfoResponse{} }
+func (*QueuesInfoResponse) ProtoMessage() {}
+func (*QueuesInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{27}
+}
+func (m *QueuesInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueuesInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueuesInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueuesInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueuesInfoResponse.Merge(m, src)
+}
+func (m *QueuesInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueuesInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueuesInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueuesInfoResponse proto.InternalMessageInfo
+
+func (m *QueuesInfoResponse) GetRefRequestID() string {
+	if m != nil {
+		return m.RefRequestID
+	}
+	return ""
+}
+
+func (m *QueuesInfoResponse) GetInfo() *QueuesInfo {
+	if m != nil {
+		return m.Info
+	}
+	return nil
+}
+
+type TopicsUpstreamRequest struct {
+	RequestID            string                    `protobuf:"bytes,1,opt,name=RequestID,proto3" json:"RequestID,omitempty"`
+	RequestTypeData      TopicsUpstreamRequestType `protobuf:"varint,2,opt,name=RequestTypeData,proto3,enum=kubemq.TopicsUpstreamRequestType" json:"RequestTypeData,omitempty"`
+	ClientID             string                    `protobuf:"bytes,3,opt,name=ClientID,proto3" json:"ClientID,omitempty"`
+	Messages             []*QueueMessage           `protobuf:"bytes,4,rep,name=Messages,proto3" json:"Messages,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
+}
+
+func (m *TopicsUpstreamRequest) Reset()      { *m = TopicsUpstreamRequest{} }
+func (*TopicsUpstreamRequest) ProtoMessage() {}
+func (*TopicsUpstreamRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{28}
+}
+func (m *TopicsUpstreamRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicsUpstreamRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicsUpstreamRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicsUpstreamRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicsUpstreamRequest.Merge(m, src)
+}
+func (m *TopicsUpstreamRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicsUpstreamRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicsUpstreamRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicsUpstreamRequest proto.InternalMessageInfo
+
+func (m *TopicsUpstreamRequest) GetRequestID() string {
+	if m != nil {
+		return m.RequestID
+	}
+	return ""
+}
+
+func (m *TopicsUpstreamRequest) GetRequestTypeData() TopicsUpstreamRequestType {
+	if m != nil {
+		return m.RequestTypeData
+	}
+	return TopicsUpstreamRequestType_TopicsUpstreamRequestUnknown
+}
+
+func (m *TopicsUpstreamRequest) GetClientID() string {
+	if m != nil {
+		return m.ClientID
+	}
+	return ""
+}
+
+func (m *TopicsUpstreamRequest) GetMessages() []*QueueMessage {
+	if m != nil {
+		return m.Messages
+	}
+	return nil
+}
+
+type TopicsUpstreamResponse struct {
+	RefRequestID         string                       `protobuf:"bytes,1,opt,name=RefRequestID,proto3" json:"RefRequestID,omitempty"`
+	RequestTypeData      TopicsUpstreamRequestType    `protobuf:"varint,2,opt,name=RequestTypeData,proto3,enum=kubemq.TopicsUpstreamRequestType" json:"RequestTypeData,omitempty"`
+	TopicResults         map[string]*SendTopicResults `protobuf:"bytes,3,rep,name=TopicResults,proto3" json:"TopicResults,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	IsError              bool                         `protobuf:"varint,4,opt,name=IsError,proto3" json:"IsError,omitempty"`
+	Error                string                       `protobuf:"bytes,5,opt,name=Error,proto3" json:"Error,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                     `json:"-"`
+	XXX_unrecognized     []byte                       `json:"-"`
+	XXX_sizecache        int32                        `json:"-"`
+}
+
+func (m *TopicsUpstreamResponse) Reset()      { *m = TopicsUpstreamResponse{} }
+func (*TopicsUpstreamResponse) ProtoMessage() {}
+func (*TopicsUpstreamResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{29}
+}
+func (m *TopicsUpstreamResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicsUpstreamResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicsUpstreamResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicsUpstreamResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicsUpstreamResponse.Merge(m, src)
+}
+func (m *TopicsUpstreamResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicsUpstreamResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicsUpstreamResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicsUpstreamResponse proto.InternalMessageInfo
+
+func (m *TopicsUpstreamResponse) GetRefRequestID() string {
+	if m != nil {
+		return m.RefRequestID
+	}
+	return ""
+}
+
+func (m *TopicsUpstreamResponse) GetRequestTypeData() TopicsUpstreamRequestType {
+	if m != nil {
+		return m.RequestTypeData
+	}
+	return TopicsUpstreamRequestType_TopicsUpstreamRequestUnknown
+}
+
+func (m *TopicsUpstreamResponse) GetTopicResults() map[string]*SendTopicResults {
+	if m != nil {
+		return m.TopicResults
+	}
+	return nil
+}
+
+func (m *TopicsUpstreamResponse) GetIsError() bool {
+	if m != nil {
+		return m.IsError
+	}
+	return false
+}
+
+func (m *TopicsUpstreamResponse) GetError() string {
+	if m != nil {
+		return m.Error
+	}
+	return ""
+}
+
+type SendPartitionResults struct {
+	PartitionResults     []*SendQueueMessageResult `protobuf:"bytes,1,rep,name=PartitionResults,proto3" json:"PartitionResults,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
+}
+
+func (m *SendPartitionResults) Reset()      { *m = SendPartitionResults{} }
+func (*SendPartitionResults) ProtoMessage() {}
+func (*SendPartitionResults) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{30}
+}
+func (m *SendPartitionResults) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SendPartitionResults) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SendPartitionResults.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SendPartitionResults) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SendPartitionResults.Merge(m, src)
+}
+func (m *SendPartitionResults) XXX_Size() int {
+	return m.Size()
+}
+func (m *SendPartitionResults) XXX_DiscardUnknown() {
+	xxx_messageInfo_SendPartitionResults.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SendPartitionResults proto.InternalMessageInfo
+
+func (m *SendPartitionResults) GetPartitionResults() []*SendQueueMessageResult {
+	if m != nil {
+		return m.PartitionResults
+	}
+	return nil
+}
+
+type SendTopicResults struct {
+	TopicResults         map[int32]*SendPartitionResults `protobuf:"bytes,1,rep,name=TopicResults,proto3" json:"TopicResults,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
+	XXX_unrecognized     []byte                          `json:"-"`
+	XXX_sizecache        int32                           `json:"-"`
+}
+
+func (m *SendTopicResults) Reset()      { *m = SendTopicResults{} }
+func (*SendTopicResults) ProtoMessage() {}
+func (*SendTopicResults) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{31}
+}
+func (m *SendTopicResults) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SendTopicResults) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SendTopicResults.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SendTopicResults) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SendTopicResults.Merge(m, src)
+}
+func (m *SendTopicResults) XXX_Size() int {
+	return m.Size()
+}
+func (m *SendTopicResults) XXX_DiscardUnknown() {
+	xxx_messageInfo_SendTopicResults.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SendTopicResults proto.InternalMessageInfo
+
+func (m *SendTopicResults) GetTopicResults() map[int32]*SendPartitionResults {
+	if m != nil {
+		return m.TopicResults
+	}
+	return nil
+}
+
+type TopicRecordHeader struct {
+	Key                  string   `protobuf:"bytes,1,opt,name=Key,proto3" json:"Key,omitempty"`
+	Value                []byte   `protobuf:"bytes,2,opt,name=Value,proto3" json:"Value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TopicRecordHeader) Reset()      { *m = TopicRecordHeader{} }
+func (*TopicRecordHeader) ProtoMessage() {}
+func (*TopicRecordHeader) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{32}
+}
+func (m *TopicRecordHeader) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicRecordHeader) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicRecordHeader.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicRecordHeader) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicRecordHeader.Merge(m, src)
+}
+func (m *TopicRecordHeader) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicRecordHeader) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicRecordHeader.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicRecordHeader proto.InternalMessageInfo
+
+func (m *TopicRecordHeader) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *TopicRecordHeader) GetValue() []byte {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+type TopicRecord struct {
+	Headers              []*TopicRecordHeader `protobuf:"bytes,1,rep,name=Headers,proto3" json:"Headers,omitempty"`
+	Topic                string               `protobuf:"bytes,2,opt,name=Topic,proto3" json:"Topic,omitempty"`
+	Partition            uint32               `protobuf:"varint,3,opt,name=Partition,proto3" json:"Partition,omitempty"`
+	Timestamp            uint64               `protobuf:"varint,4,opt,name=Timestamp,proto3" json:"Timestamp,omitempty"`
+	Key                  []byte               `protobuf:"bytes,5,opt,name=Key,proto3" json:"Key,omitempty"`
+	Value                []byte               `protobuf:"bytes,6,opt,name=Value,proto3" json:"Value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *TopicRecord) Reset()      { *m = TopicRecord{} }
+func (*TopicRecord) ProtoMessage() {}
+func (*TopicRecord) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{33}
+}
+func (m *TopicRecord) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicRecord) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicRecord.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicRecord) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicRecord.Merge(m, src)
+}
+func (m *TopicRecord) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicRecord) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicRecord.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicRecord proto.InternalMessageInfo
+
+func (m *TopicRecord) GetHeaders() []*TopicRecordHeader {
+	if m != nil {
+		return m.Headers
+	}
+	return nil
+}
+
+func (m *TopicRecord) GetTopic() string {
+	if m != nil {
+		return m.Topic
+	}
+	return ""
+}
+
+func (m *TopicRecord) GetPartition() uint32 {
+	if m != nil {
+		return m.Partition
+	}
+	return 0
+}
+
+func (m *TopicRecord) GetTimestamp() uint64 {
+	if m != nil {
+		return m.Timestamp
+	}
+	return 0
+}
+
+func (m *TopicRecord) GetKey() []byte {
+	if m != nil {
+		return m.Key
+	}
+	return nil
+}
+
+func (m *TopicRecord) GetValue() []byte {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+type TopicPartition struct {
+	Topic                string   `protobuf:"bytes,1,opt,name=Topic,proto3" json:"Topic,omitempty"`
+	Partition            uint32   `protobuf:"varint,2,opt,name=Partition,proto3" json:"Partition,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TopicPartition) Reset()      { *m = TopicPartition{} }
+func (*TopicPartition) ProtoMessage() {}
+func (*TopicPartition) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{34}
+}
+func (m *TopicPartition) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicPartition) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicPartition.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicPartition) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicPartition.Merge(m, src)
+}
+func (m *TopicPartition) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicPartition) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicPartition.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicPartition proto.InternalMessageInfo
+
+func (m *TopicPartition) GetTopic() string {
+	if m != nil {
+		return m.Topic
+	}
+	return ""
+}
+
+func (m *TopicPartition) GetPartition() uint32 {
+	if m != nil {
+		return m.Partition
+	}
+	return 0
+}
+
+type TopicsSubscriptionRequest struct {
+	SubscriptionRequestType  TopicsSubscriptionRequestType  `protobuf:"varint,1,opt,name=SubscriptionRequestType,proto3,enum=kubemq.TopicsSubscriptionRequestType" json:"SubscriptionRequestType,omitempty"`
+	Topics                   []string                       `protobuf:"bytes,2,rep,name=Topics,proto3" json:"Topics,omitempty"`
+	TopicPartitions          []*TopicPartition              `protobuf:"bytes,3,rep,name=TopicPartitions,proto3" json:"TopicPartitions,omitempty"`
+	GroupID                  string                         `protobuf:"bytes,4,opt,name=GroupID,proto3" json:"GroupID,omitempty"`
+	MemberID                 string                         `protobuf:"bytes,5,opt,name=MemberID,proto3" json:"MemberID,omitempty"`
+	IsStatic                 bool                           `protobuf:"varint,6,opt,name=IsStatic,proto3" json:"IsStatic,omitempty"`
+	SubscriptionStrategyType TopicsSubscriptionStrategyType `protobuf:"varint,7,opt,name=SubscriptionStrategyType,proto3,enum=kubemq.TopicsSubscriptionStrategyType" json:"SubscriptionStrategyType,omitempty"`
+	SubscriptionOffsetType   TopicsSubscriptionOffsetType   `protobuf:"varint,8,opt,name=SubscriptionOffsetType,proto3,enum=kubemq.TopicsSubscriptionOffsetType" json:"SubscriptionOffsetType,omitempty"`
+	XXX_NoUnkeyedLiteral     struct{}                       `json:"-"`
+	XXX_unrecognized         []byte                         `json:"-"`
+	XXX_sizecache            int32                          `json:"-"`
+}
+
+func (m *TopicsSubscriptionRequest) Reset()      { *m = TopicsSubscriptionRequest{} }
+func (*TopicsSubscriptionRequest) ProtoMessage() {}
+func (*TopicsSubscriptionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{35}
+}
+func (m *TopicsSubscriptionRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicsSubscriptionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicsSubscriptionRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicsSubscriptionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicsSubscriptionRequest.Merge(m, src)
+}
+func (m *TopicsSubscriptionRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicsSubscriptionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicsSubscriptionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicsSubscriptionRequest proto.InternalMessageInfo
+
+func (m *TopicsSubscriptionRequest) GetSubscriptionRequestType() TopicsSubscriptionRequestType {
+	if m != nil {
+		return m.SubscriptionRequestType
+	}
+	return TopicsSubscriptionRequestType_SubscriptionRequestTypeUndefined
+}
+
+func (m *TopicsSubscriptionRequest) GetTopics() []string {
+	if m != nil {
+		return m.Topics
+	}
+	return nil
+}
+
+func (m *TopicsSubscriptionRequest) GetTopicPartitions() []*TopicPartition {
+	if m != nil {
+		return m.TopicPartitions
+	}
+	return nil
+}
+
+func (m *TopicsSubscriptionRequest) GetGroupID() string {
+	if m != nil {
+		return m.GroupID
+	}
+	return ""
+}
+
+func (m *TopicsSubscriptionRequest) GetMemberID() string {
+	if m != nil {
+		return m.MemberID
+	}
+	return ""
+}
+
+func (m *TopicsSubscriptionRequest) GetIsStatic() bool {
+	if m != nil {
+		return m.IsStatic
+	}
+	return false
+}
+
+func (m *TopicsSubscriptionRequest) GetSubscriptionStrategyType() TopicsSubscriptionStrategyType {
+	if m != nil {
+		return m.SubscriptionStrategyType
+	}
+	return TopicsSubscriptionStrategyType_SubscriptionStrategyTypeUndefined
+}
+
+func (m *TopicsSubscriptionRequest) GetSubscriptionOffsetType() TopicsSubscriptionOffsetType {
+	if m != nil {
+		return m.SubscriptionOffsetType
+	}
+	return TopicsSubscriptionOffsetType_SubscriptionOffsetTypeUndefined
+}
+
+type TopicsSubscriptionEvent struct {
+	SubscriptionID        string                      `protobuf:"bytes,1,opt,name=SubscriptionID,proto3" json:"SubscriptionID,omitempty"`
+	SubscriptionEventType TopicsSubscriptionEventType `protobuf:"varint,2,opt,name=SubscriptionEventType,proto3,enum=kubemq.TopicsSubscriptionEventType" json:"SubscriptionEventType,omitempty"`
+	GroupID               string                      `protobuf:"bytes,3,opt,name=GroupID,proto3" json:"GroupID,omitempty"`
+	MemberID              string                      `protobuf:"bytes,4,opt,name=MemberID,proto3" json:"MemberID,omitempty"`
+	Assigned              []*TopicPartition           `protobuf:"bytes,5,rep,name=Assigned,proto3" json:"Assigned,omitempty"`
+	ReSyncAt              int64                       `protobuf:"varint,6,opt,name=ReSyncAt,proto3" json:"ReSyncAt,omitempty"`
+	IsError               bool                        `protobuf:"varint,15,opt,name=IsError,proto3" json:"IsError,omitempty"`
+	Error                 string                      `protobuf:"bytes,16,opt,name=Error,proto3" json:"Error,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{}                    `json:"-"`
+	XXX_unrecognized      []byte                      `json:"-"`
+	XXX_sizecache         int32                       `json:"-"`
+}
+
+func (m *TopicsSubscriptionEvent) Reset()      { *m = TopicsSubscriptionEvent{} }
+func (*TopicsSubscriptionEvent) ProtoMessage() {}
+func (*TopicsSubscriptionEvent) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{36}
+}
+func (m *TopicsSubscriptionEvent) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicsSubscriptionEvent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicsSubscriptionEvent.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicsSubscriptionEvent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicsSubscriptionEvent.Merge(m, src)
+}
+func (m *TopicsSubscriptionEvent) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicsSubscriptionEvent) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicsSubscriptionEvent.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicsSubscriptionEvent proto.InternalMessageInfo
+
+func (m *TopicsSubscriptionEvent) GetSubscriptionID() string {
+	if m != nil {
+		return m.SubscriptionID
+	}
+	return ""
+}
+
+func (m *TopicsSubscriptionEvent) GetSubscriptionEventType() TopicsSubscriptionEventType {
+	if m != nil {
+		return m.SubscriptionEventType
+	}
+	return TopicsSubscriptionEventType_SubscriptionEventTypeUndefined
+}
+
+func (m *TopicsSubscriptionEvent) GetGroupID() string {
+	if m != nil {
+		return m.GroupID
+	}
+	return ""
+}
+
+func (m *TopicsSubscriptionEvent) GetMemberID() string {
+	if m != nil {
+		return m.MemberID
+	}
+	return ""
+}
+
+func (m *TopicsSubscriptionEvent) GetAssigned() []*TopicPartition {
+	if m != nil {
+		return m.Assigned
+	}
+	return nil
+}
+
+func (m *TopicsSubscriptionEvent) GetReSyncAt() int64 {
+	if m != nil {
+		return m.ReSyncAt
+	}
+	return 0
+}
+
+func (m *TopicsSubscriptionEvent) GetIsError() bool {
+	if m != nil {
+		return m.IsError
+	}
+	return false
+}
+
+func (m *TopicsSubscriptionEvent) GetError() string {
+	if m != nil {
+		return m.Error
+	}
+	return ""
+}
+
+type TopicsDownstreamRequest struct {
+	RequestID             string                      `protobuf:"bytes,1,opt,name=RequestID,proto3" json:"RequestID,omitempty"`
+	DownstreamRequestType TopicsDownstreamRequestType `protobuf:"varint,2,opt,name=DownstreamRequestType,proto3,enum=kubemq.TopicsDownstreamRequestType" json:"DownstreamRequestType,omitempty"`
+	Data                  []byte                      `protobuf:"bytes,3,opt,name=Data,proto3" json:"Data,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{}                    `json:"-"`
+	XXX_unrecognized      []byte                      `json:"-"`
+	XXX_sizecache         int32                       `json:"-"`
+}
+
+func (m *TopicsDownstreamRequest) Reset()      { *m = TopicsDownstreamRequest{} }
+func (*TopicsDownstreamRequest) ProtoMessage() {}
+func (*TopicsDownstreamRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{37}
+}
+func (m *TopicsDownstreamRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicsDownstreamRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicsDownstreamRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicsDownstreamRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicsDownstreamRequest.Merge(m, src)
+}
+func (m *TopicsDownstreamRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicsDownstreamRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicsDownstreamRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicsDownstreamRequest proto.InternalMessageInfo
+
+func (m *TopicsDownstreamRequest) GetRequestID() string {
+	if m != nil {
+		return m.RequestID
+	}
+	return ""
+}
+
+func (m *TopicsDownstreamRequest) GetDownstreamRequestType() TopicsDownstreamRequestType {
+	if m != nil {
+		return m.DownstreamRequestType
+	}
+	return TopicsDownstreamRequestType_DownstreamRequestTypeUndefined
+}
+
+func (m *TopicsDownstreamRequest) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+type TopicsDownstreamResponse struct {
+	TransactionID        string   `protobuf:"bytes,1,opt,name=TransactionID,proto3" json:"TransactionID,omitempty"`
+	RefRequestID         string   `protobuf:"bytes,2,opt,name=RefRequestID,proto3" json:"RefRequestID,omitempty"`
+	Data                 []byte   `protobuf:"bytes,3,opt,name=Data,proto3" json:"Data,omitempty"`
+	IsError              bool     `protobuf:"varint,15,opt,name=IsError,proto3" json:"IsError,omitempty"`
+	Error                string   `protobuf:"bytes,16,opt,name=Error,proto3" json:"Error,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TopicsDownstreamResponse) Reset()      { *m = TopicsDownstreamResponse{} }
+func (*TopicsDownstreamResponse) ProtoMessage() {}
+func (*TopicsDownstreamResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3c4052a8d0b3cbdc, []int{38}
+}
+func (m *TopicsDownstreamResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TopicsDownstreamResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TopicsDownstreamResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TopicsDownstreamResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopicsDownstreamResponse.Merge(m, src)
+}
+func (m *TopicsDownstreamResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *TopicsDownstreamResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_TopicsDownstreamResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TopicsDownstreamResponse proto.InternalMessageInfo
+
+func (m *TopicsDownstreamResponse) GetTransactionID() string {
+	if m != nil {
+		return m.TransactionID
+	}
+	return ""
+}
+
+func (m *TopicsDownstreamResponse) GetRefRequestID() string {
+	if m != nil {
+		return m.RefRequestID
+	}
+	return ""
+}
+
+func (m *TopicsDownstreamResponse) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+func (m *TopicsDownstreamResponse) GetIsError() bool {
+	if m != nil {
+		return m.IsError
+	}
+	return false
+}
+
+func (m *TopicsDownstreamResponse) GetError() string {
+	if m != nil {
+		return m.Error
+	}
+	return ""
+}
+
 func init() {
+	proto.RegisterEnum("kubemq.StreamRequestType", StreamRequestType_name, StreamRequestType_value)
+	proto.RegisterEnum("kubemq.QueuesDownstreamRequestType", QueuesDownstreamRequestType_name, QueuesDownstreamRequestType_value)
+	proto.RegisterEnum("kubemq.TopicsUpstreamRequestType", TopicsUpstreamRequestType_name, TopicsUpstreamRequestType_value)
+	proto.RegisterEnum("kubemq.TopicsSubscriptionStrategyType", TopicsSubscriptionStrategyType_name, TopicsSubscriptionStrategyType_value)
+	proto.RegisterEnum("kubemq.TopicsSubscriptionOffsetType", TopicsSubscriptionOffsetType_name, TopicsSubscriptionOffsetType_value)
+	proto.RegisterEnum("kubemq.TopicsSubscriptionRequestType", TopicsSubscriptionRequestType_name, TopicsSubscriptionRequestType_value)
+	proto.RegisterEnum("kubemq.TopicsSubscriptionEventType", TopicsSubscriptionEventType_name, TopicsSubscriptionEventType_value)
+	proto.RegisterEnum("kubemq.TopicsDownstreamRequestType", TopicsDownstreamRequestType_name, TopicsDownstreamRequestType_value)
+	proto.RegisterEnum("kubemq.Subscribe_SubscribeType", Subscribe_SubscribeType_name, Subscribe_SubscribeType_value)
+	proto.RegisterEnum("kubemq.Subscribe_EventsStoreType", Subscribe_EventsStoreType_name, Subscribe_EventsStoreType_value)
+	proto.RegisterEnum("kubemq.Request_RequestType", Request_RequestType_name, Request_RequestType_value)
 	proto.RegisterType((*PingResult)(nil), "kubemq.PingResult")
 	proto.RegisterType((*Empty)(nil), "kubemq.Empty")
 	proto.RegisterType((*Result)(nil), "kubemq.Result")
@@ -1840,39 +3630,242 @@ func init() {
 	proto.RegisterType((*AckAllQueueMessagesResponse)(nil), "kubemq.AckAllQueueMessagesResponse")
 	proto.RegisterType((*StreamQueueMessagesRequest)(nil), "kubemq.StreamQueueMessagesRequest")
 	proto.RegisterType((*StreamQueueMessagesResponse)(nil), "kubemq.StreamQueueMessagesResponse")
-	proto.RegisterEnum("kubemq.StreamRequestType", StreamRequestType_name, StreamRequestType_value)
-	proto.RegisterEnum("kubemq.Subscribe_SubscribeType", Subscribe_SubscribeType_name, Subscribe_SubscribeType_value)
-	proto.RegisterEnum("kubemq.Subscribe_EventsStoreType", Subscribe_EventsStoreType_name, Subscribe_EventsStoreType_value)
-	proto.RegisterEnum("kubemq.Request_RequestType", Request_RequestType_name, Request_RequestType_value)
+	proto.RegisterType((*QueuesUpstreamRequest)(nil), "kubemq.QueuesUpstreamRequest")
+	proto.RegisterType((*QueuesUpstreamResponse)(nil), "kubemq.QueuesUpstreamResponse")
+	proto.RegisterType((*QueuesDownstreamRequest)(nil), "kubemq.QueuesDownstreamRequest")
+	proto.RegisterMapType((map[string]string)(nil), "kubemq.QueuesDownstreamRequest.MetadataEntry")
+	proto.RegisterType((*QueuesDownstreamResponse)(nil), "kubemq.QueuesDownstreamResponse")
+	proto.RegisterMapType((map[string]string)(nil), "kubemq.QueuesDownstreamResponse.MetadataEntry")
+	proto.RegisterType((*QueueInfo)(nil), "kubemq.QueueInfo")
+	proto.RegisterType((*QueuesInfo)(nil), "kubemq.QueuesInfo")
+	proto.RegisterType((*QueuesInfoRequest)(nil), "kubemq.QueuesInfoRequest")
+	proto.RegisterType((*QueuesInfoResponse)(nil), "kubemq.QueuesInfoResponse")
+	proto.RegisterType((*TopicsUpstreamRequest)(nil), "kubemq.TopicsUpstreamRequest")
+	proto.RegisterType((*TopicsUpstreamResponse)(nil), "kubemq.TopicsUpstreamResponse")
+	proto.RegisterMapType((map[string]*SendTopicResults)(nil), "kubemq.TopicsUpstreamResponse.TopicResultsEntry")
+	proto.RegisterType((*SendPartitionResults)(nil), "kubemq.SendPartitionResults")
+	proto.RegisterType((*SendTopicResults)(nil), "kubemq.SendTopicResults")
+	proto.RegisterMapType((map[int32]*SendPartitionResults)(nil), "kubemq.SendTopicResults.TopicResultsEntry")
+	proto.RegisterType((*TopicRecordHeader)(nil), "kubemq.TopicRecordHeader")
+	proto.RegisterType((*TopicRecord)(nil), "kubemq.TopicRecord")
+	proto.RegisterType((*TopicPartition)(nil), "kubemq.TopicPartition")
+	proto.RegisterType((*TopicsSubscriptionRequest)(nil), "kubemq.TopicsSubscriptionRequest")
+	proto.RegisterType((*TopicsSubscriptionEvent)(nil), "kubemq.TopicsSubscriptionEvent")
+	proto.RegisterType((*TopicsDownstreamRequest)(nil), "kubemq.TopicsDownstreamRequest")
+	proto.RegisterType((*TopicsDownstreamResponse)(nil), "kubemq.TopicsDownstreamResponse")
 }
-func (x StreamRequestType) String() string {
-	s, ok := StreamRequestType_name[int32(x)]
-	if ok {
-		return s
-	}
-	return strconv.Itoa(int(x))
+
+func init() { proto.RegisterFile("kubemq_go.proto", fileDescriptor_3c4052a8d0b3cbdc) }
+
+var fileDescriptor_3c4052a8d0b3cbdc = []byte{
+	// 3265 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x1a, 0x4d, 0x8f, 0x1c, 0x47,
+	0x75, 0xbb, 0x7b, 0x3e, 0x76, 0xde, 0x7e, 0xf5, 0x96, 0xd7, 0xeb, 0xf1, 0xec, 0x66, 0xbc, 0x69,
+	0x3b, 0x66, 0xd9, 0x38, 0x2b, 0xb3, 0x11, 0x4a, 0x44, 0x94, 0x28, 0x63, 0xef, 0x26, 0xde, 0xd8,
+	0x6b, 0x3b, 0x3d, 0x6b, 0xa3, 0x08, 0x50, 0xd2, 0x3b, 0x53, 0xb3, 0x6e, 0x76, 0xa6, 0x7b, 0xd2,
+	0xdd, 0xb3, 0xf1, 0xdc, 0x40, 0x08, 0x09, 0x24, 0x0e, 0x9c, 0x42, 0x80, 0x0b, 0x12, 0x28, 0x8a,
+	0xf8, 0x05, 0x51, 0xe0, 0xc2, 0x0d, 0x89, 0x4b, 0xc4, 0x09, 0x71, 0x22, 0x46, 0x5c, 0x22, 0x0e,
+	0x9c, 0x10, 0x12, 0x17, 0x54, 0x5f, 0xdd, 0xd5, 0x3d, 0xd5, 0xb3, 0x1e, 0xb3, 0x84, 0x5b, 0xbf,
+	0x57, 0xaf, 0x5e, 0xbd, 0xaf, 0x7a, 0xf5, 0x5e, 0x75, 0xc1, 0xc2, 0xd1, 0xe0, 0x00, 0xf7, 0xde,
+	0x7d, 0xfb, 0xd0, 0xdf, 0xec, 0x07, 0x7e, 0xe4, 0xa3, 0x12, 0x43, 0xd4, 0xe0, 0xd0, 0x17, 0x38,
+	0xeb, 0x7d, 0x0d, 0xe0, 0xae, 0xeb, 0x1d, 0xda, 0x38, 0x1c, 0x74, 0x23, 0x84, 0xa0, 0x70, 0xc3,
+	0x0f, 0xa3, 0xaa, 0xb6, 0xa6, 0xad, 0x57, 0x6c, 0xfa, 0x8d, 0xaa, 0x50, 0xbe, 0x8f, 0x83, 0xd0,
+	0xf5, 0xbd, 0xaa, 0x4e, 0xd1, 0x02, 0x44, 0xeb, 0xb0, 0xd0, 0xc4, 0xc1, 0x31, 0x0e, 0x9a, 0x91,
+	0x13, 0x44, 0xfb, 0x6e, 0x0f, 0x57, 0x8d, 0x35, 0x6d, 0xdd, 0xb0, 0xb3, 0x68, 0x74, 0x15, 0xce,
+	0x30, 0xd4, 0xbd, 0x3e, 0x81, 0x9b, 0xb8, 0xe5, 0x7b, 0xed, 0xb0, 0x5a, 0xa0, 0xd4, 0xaa, 0x21,
+	0xab, 0x0c, 0xc5, 0x9d, 0x5e, 0x3f, 0x1a, 0x5a, 0xb7, 0xa0, 0xc4, 0x85, 0xab, 0x42, 0x79, 0xe7,
+	0x18, 0x7b, 0xd1, 0xee, 0x36, 0x97, 0x4f, 0x80, 0x44, 0xec, 0x26, 0xf6, 0x22, 0x2a, 0xdf, 0xb4,
+	0x4d, 0xbf, 0xd1, 0x12, 0x14, 0x77, 0x82, 0xc0, 0x0f, 0xa8, 0x48, 0x15, 0x9b, 0x01, 0xd6, 0xf7,
+	0x74, 0x28, 0xd2, 0x59, 0x63, 0xb8, 0xd5, 0x60, 0xfa, 0x7a, 0xd7, 0x65, 0x43, 0x4c, 0xe3, 0x18,
+	0x26, 0xb3, 0xae, 0x3f, 0x70, 0x3c, 0x0f, 0x77, 0x39, 0x5f, 0x01, 0x92, 0x59, 0x7b, 0x38, 0x72,
+	0xda, 0x4e, 0xe4, 0x50, 0xbd, 0x2a, 0x76, 0x0c, 0x13, 0xf9, 0xae, 0xf9, 0xed, 0x61, 0xb5, 0xb8,
+	0xa6, 0xad, 0xcf, 0xda, 0xf4, 0x9b, 0xc8, 0xd7, 0x8c, 0xfc, 0x00, 0x57, 0x4b, 0x54, 0x68, 0x06,
+	0xa0, 0x67, 0xa1, 0xb0, 0xef, 0x1c, 0x86, 0xd5, 0xf2, 0x9a, 0xb1, 0x3e, 0xb3, 0x75, 0x6e, 0x93,
+	0xb9, 0x6c, 0x93, 0x8a, 0xb6, 0x49, 0x46, 0x76, 0xbc, 0x28, 0x18, 0xda, 0x94, 0xa8, 0xf6, 0x02,
+	0x54, 0x62, 0x14, 0x32, 0xc1, 0x38, 0xc2, 0x43, 0xae, 0x0b, 0xf9, 0x24, 0x2b, 0x1c, 0x3b, 0xdd,
+	0x01, 0xe6, 0x4a, 0x30, 0xe0, 0x6b, 0xfa, 0x8b, 0x9a, 0xf5, 0x53, 0x1d, 0x66, 0x29, 0x4b, 0x1b,
+	0xb7, 0xb0, 0x7b, 0x8c, 0xc7, 0x18, 0x43, 0x52, 0x58, 0xcf, 0x57, 0xd8, 0xc8, 0x51, 0xb8, 0x20,
+	0x29, 0xbc, 0x0a, 0x15, 0xe2, 0xe0, 0x30, 0x72, 0x7a, 0x7d, 0x6a, 0x09, 0xc3, 0x4e, 0x10, 0x84,
+	0x5b, 0x13, 0xbf, 0x3b, 0xc0, 0x5e, 0x8b, 0x59, 0xa4, 0x60, 0xc7, 0x30, 0xda, 0x4a, 0x19, 0xa5,
+	0x9e, 0x32, 0x0a, 0xd7, 0xe0, 0xf4, 0x6c, 0xf3, 0x9b, 0x02, 0x54, 0x9a, 0x83, 0x83, 0xb0, 0x15,
+	0xb8, 0x07, 0x18, 0xed, 0xc1, 0x62, 0x0c, 0xec, 0x0f, 0xfb, 0x78, 0x9b, 0x68, 0x4b, 0xf8, 0xcc,
+	0x6f, 0x5d, 0x10, 0x72, 0xc4, 0x04, 0x9b, 0x29, 0x52, 0x7b, 0x74, 0xe6, 0x13, 0x86, 0xd6, 0x12,
+	0x14, 0x5f, 0x0f, 0xfc, 0x41, 0x9f, 0xc7, 0x15, 0x03, 0x50, 0x13, 0xce, 0x50, 0x0b, 0x84, 0x34,
+	0x72, 0x62, 0xe1, 0x8a, 0x54, 0xb8, 0xa7, 0x47, 0x85, 0xcb, 0x10, 0xdb, 0xaa, 0xd9, 0x68, 0x0b,
+	0x96, 0x32, 0xe8, 0xfb, 0xd4, 0x4c, 0x25, 0xea, 0x2f, 0xe5, 0x98, 0xd5, 0x82, 0xb9, 0x94, 0xa6,
+	0xa8, 0x06, 0xcb, 0x29, 0xc4, 0x3d, 0xaf, 0x8d, 0x3b, 0xae, 0x87, 0xdb, 0xe6, 0x14, 0x02, 0x28,
+	0x31, 0x26, 0xa6, 0x86, 0x16, 0x60, 0x46, 0x62, 0x68, 0xea, 0x68, 0x16, 0xa6, 0xaf, 0xfb, 0xbd,
+	0x9e, 0xe3, 0xb5, 0x43, 0xd3, 0x40, 0x33, 0x50, 0x7e, 0x73, 0x80, 0x03, 0x17, 0x87, 0x66, 0xc1,
+	0xfa, 0x95, 0x06, 0x0b, 0x99, 0xd5, 0xd1, 0x2a, 0x54, 0x33, 0x28, 0x79, 0x25, 0x13, 0x66, 0x69,
+	0x02, 0xba, 0x8d, 0xdf, 0xbb, 0xe3, 0x75, 0x87, 0xa6, 0x86, 0x10, 0xcc, 0x53, 0xcc, 0x6b, 0x81,
+	0xdf, 0x7b, 0xcd, 0x0d, 0xc2, 0xc8, 0xd4, 0xd1, 0x22, 0xcc, 0xc5, 0xb8, 0x5b, 0x4e, 0x18, 0x99,
+	0x06, 0x3a, 0x03, 0x0b, 0x14, 0xd5, 0x88, 0x44, 0x04, 0x9a, 0x05, 0x22, 0x2b, 0x47, 0x92, 0x98,
+	0x35, 0x8b, 0x68, 0x09, 0x4c, 0x09, 0xb1, 0x8d, 0xbb, 0x91, 0x63, 0x96, 0xac, 0xef, 0x17, 0xa0,
+	0x6c, 0x93, 0x59, 0x61, 0x44, 0x02, 0x9e, 0x7f, 0xc6, 0xdb, 0x2a, 0x41, 0xa0, 0x1d, 0x58, 0xe0,
+	0x40, 0xec, 0x3a, 0x9d, 0xba, 0x6e, 0x45, 0xb8, 0x8e, 0x0f, 0x6f, 0x4a, 0x64, 0x76, 0x76, 0x4e,
+	0x2a, 0xa2, 0x8c, 0xfc, 0x88, 0x2a, 0xe4, 0xef, 0xdd, 0x62, 0xce, 0xde, 0x2d, 0x49, 0x7b, 0xd7,
+	0x82, 0x59, 0x1b, 0xf7, 0xbb, 0x43, 0xc1, 0xae, 0x4c, 0xe7, 0xa4, 0x70, 0x64, 0x35, 0x62, 0x09,
+	0x7f, 0x10, 0x55, 0xa7, 0xd7, 0xb4, 0xf5, 0xa2, 0x2d, 0x40, 0x2a, 0xa3, 0xd3, 0x7a, 0x80, 0x6f,
+	0xe2, 0x61, 0xb5, 0xc2, 0x65, 0xe4, 0x70, 0x3c, 0xb6, 0xbf, 0x7f, 0xab, 0x0a, 0x74, 0x5a, 0x0c,
+	0xd3, 0xb4, 0xde, 0x77, 0xbc, 0xea, 0x0c, 0x93, 0x84, 0x7c, 0xa3, 0xe7, 0x78, 0x2e, 0x98, 0xa5,
+	0xb9, 0xe0, 0x7c, 0xd6, 0x56, 0xa7, 0x96, 0x06, 0x5e, 0x86, 0x19, 0xc9, 0xd4, 0x68, 0x19, 0x90,
+	0x04, 0xde, 0xf3, 0x8e, 0x3c, 0xff, 0x3d, 0xcf, 0x9c, 0x22, 0x31, 0xca, 0x23, 0xd6, 0xd4, 0x50,
+	0x05, 0x8a, 0x24, 0x60, 0x87, 0xa6, 0x6e, 0x7d, 0xd7, 0x80, 0x69, 0x1b, 0x87, 0x7d, 0xdf, 0x0b,
+	0x71, 0xca, 0x47, 0x5a, 0xc6, 0x47, 0xa9, 0x20, 0xd1, 0xb3, 0x41, 0x92, 0xb5, 0xbb, 0xa1, 0xb0,
+	0xfb, 0xa4, 0x07, 0x8f, 0xb0, 0xf8, 0x0d, 0x37, 0xe2, 0x67, 0x4f, 0x0c, 0xa7, 0x73, 0x74, 0x59,
+	0x91, 0xa3, 0x77, 0x1e, 0xe2, 0xd6, 0x20, 0xc2, 0x6d, 0xea, 0xe2, 0x69, 0x3b, 0x86, 0x93, 0xe3,
+	0xb6, 0x22, 0x1d, 0xb7, 0xb1, 0x07, 0x41, 0xf2, 0xe0, 0x26, 0xf7, 0xe0, 0x0c, 0xf5, 0x60, 0x2d,
+	0xf1, 0x20, 0xb3, 0xd6, 0xe9, 0xb9, 0xf0, 0x0f, 0x06, 0xcc, 0xbe, 0x39, 0xc0, 0x03, 0xbc, 0x87,
+	0xc3, 0xd0, 0x39, 0x24, 0xf9, 0xa2, 0xc2, 0x3f, 0x93, 0x0d, 0x19, 0x23, 0xbe, 0xa0, 0x63, 0x5f,
+	0x9c, 0x65, 0xa5, 0xf4, 0x59, 0x26, 0xcb, 0x99, 0xb5, 0x00, 0x7a, 0x05, 0xa0, 0x11, 0x45, 0x81,
+	0x7b, 0x30, 0x88, 0x70, 0x48, 0xdd, 0x92, 0x33, 0x33, 0xa1, 0xb2, 0xa5, 0x19, 0x68, 0x0b, 0x4a,
+	0x77, 0xfd, 0xae, 0xdb, 0x1a, 0x52, 0xaf, 0x49, 0x36, 0x97, 0xe7, 0x32, 0x0a, 0x9b, 0x53, 0x12,
+	0xb3, 0xee, 0xfb, 0x7d, 0xb7, 0x25, 0xfc, 0x49, 0x01, 0x62, 0xc1, 0xbb, 0x4e, 0x10, 0xb9, 0x11,
+	0xa9, 0x06, 0xd9, 0x76, 0x4d, 0x10, 0x24, 0x5a, 0x63, 0x80, 0xec, 0xf5, 0x19, 0x16, 0xad, 0x32,
+	0xee, 0xc9, 0xbd, 0x79, 0x08, 0xe7, 0x65, 0x71, 0xc3, 0x6b, 0x4e, 0xd4, 0x7a, 0x20, 0x52, 0x6d,
+	0x15, 0xca, 0x14, 0x4e, 0xea, 0x17, 0x0e, 0xa2, 0xab, 0xc4, 0x3f, 0x6c, 0x46, 0x55, 0xa7, 0x36,
+	0x5f, 0x52, 0x69, 0x6f, 0xc7, 0x54, 0xd6, 0x8f, 0x35, 0xa8, 0xa9, 0x56, 0xe2, 0x9b, 0x39, 0x7f,
+	0xa9, 0x17, 0x49, 0xea, 0x27, 0x95, 0xaa, 0x58, 0x29, 0xf6, 0x51, 0x13, 0x7b, 0xed, 0xd4, 0x6a,
+	0x94, 0xcc, 0x16, 0xe4, 0xa8, 0x0e, 0x70, 0xc3, 0x39, 0xc6, 0x74, 0xcf, 0x84, 0x34, 0xc2, 0xa6,
+	0x6d, 0x09, 0x63, 0xfd, 0x42, 0x87, 0x65, 0xb5, 0x9f, 0xd3, 0x3b, 0x56, 0x1b, 0x57, 0x55, 0xe9,
+	0x99, 0xaa, 0x8a, 0xec, 0x86, 0xed, 0xaf, 0xde, 0xe9, 0xd0, 0x10, 0x35, 0xf8, 0x6e, 0x10, 0x08,
+	0x96, 0x79, 0x68, 0x69, 0x75, 0xdd, 0x1f, 0x78, 0x11, 0x8d, 0xed, 0xa2, 0x9d, 0xc2, 0x11, 0xee,
+	0x36, 0xb6, 0x7d, 0x9a, 0x0f, 0x8a, 0x2c, 0x1f, 0x08, 0x18, 0x5d, 0x81, 0x45, 0xf1, 0x4d, 0x8e,
+	0x56, 0x2a, 0x3d, 0x4d, 0x37, 0x15, 0x7b, 0x74, 0x80, 0xac, 0xb6, 0xf3, 0xb0, 0xef, 0x06, 0x0e,
+	0x09, 0x93, 0x46, 0xc4, 0x53, 0x4f, 0x0a, 0x47, 0xe4, 0xdd, 0xc6, 0x5d, 0x67, 0x88, 0xdb, 0xfb,
+	0x3e, 0x0d, 0x64, 0xc3, 0x4e, 0x10, 0xd6, 0x27, 0x1a, 0xa0, 0xd1, 0x70, 0x26, 0x62, 0x24, 0x4c,
+	0x44, 0xdb, 0xa1, 0x51, 0x5d, 0x46, 0x07, 0x88, 0x18, 0x94, 0xa3, 0x20, 0xd4, 0x99, 0xd2, 0x32,
+	0x8e, 0x34, 0x3d, 0x7b, 0xce, 0xc3, 0x94, 0x6d, 0x0c, 0x4a, 0x96, 0x45, 0xa7, 0x29, 0x99, 0x01,
+	0x58, 0x86, 0xc8, 0xa2, 0xad, 0x4f, 0x74, 0x58, 0x56, 0xc7, 0xc8, 0x09, 0x39, 0x6b, 0x19, 0x4a,
+	0xa4, 0xd9, 0x69, 0xb0, 0xd6, 0xc7, 0xb0, 0x39, 0x34, 0x62, 0x4f, 0xe3, 0x24, 0x7b, 0x16, 0x32,
+	0xf6, 0x24, 0x61, 0xbe, 0x1b, 0xb2, 0x8c, 0xce, 0x5c, 0x2b, 0xc0, 0x24, 0xd3, 0x97, 0xe4, 0x4c,
+	0x5f, 0x07, 0xb0, 0x71, 0x27, 0x5d, 0x1f, 0x48, 0x18, 0x16, 0x2b, 0x1d, 0x96, 0x52, 0xa6, 0x59,
+	0x9e, 0x14, 0x30, 0x8b, 0xb5, 0x4e, 0x92, 0x58, 0x2a, 0x22, 0xd6, 0x12, 0x1c, 0x91, 0xc7, 0xc6,
+	0x9d, 0x1b, 0x4e, 0xf8, 0x80, 0xe6, 0x9d, 0x8a, 0x2d, 0x40, 0xeb, 0x6f, 0x1a, 0xac, 0xc8, 0xd6,
+	0x14, 0xdb, 0xf6, 0xf1, 0xca, 0xb0, 0x27, 0xcb, 0xfa, 0x57, 0xe1, 0xcc, 0x9e, 0xf3, 0xf0, 0xf6,
+	0xa0, 0x77, 0x80, 0x83, 0x3b, 0x9d, 0x38, 0xc1, 0xb0, 0x4d, 0xa2, 0x1a, 0x22, 0xc1, 0xf0, 0x75,
+	0xc7, 0x8d, 0xe4, 0xee, 0xb7, 0xc8, 0xc2, 0x26, 0x83, 0x26, 0x3e, 0xdd, 0x0d, 0xef, 0x62, 0xe7,
+	0x88, 0x9f, 0xce, 0x1c, 0xb2, 0x7e, 0xa4, 0xc3, 0xaa, 0x5a, 0x4f, 0x9e, 0x99, 0xc6, 0x2b, 0x3a,
+	0x71, 0x22, 0x44, 0x1b, 0x60, 0x26, 0x6b, 0xd0, 0x75, 0xdb, 0x3c, 0xd4, 0x47, 0xf0, 0x34, 0xd6,
+	0x39, 0x8e, 0x06, 0x19, 0x6e, 0x73, 0x63, 0x64, 0xd1, 0x92, 0x7a, 0x45, 0x59, 0x3d, 0x39, 0xe0,
+	0x4a, 0x39, 0x01, 0x57, 0x96, 0x3b, 0xf9, 0x9f, 0x69, 0x50, 0x6b, 0xb4, 0x8e, 0x1a, 0xdd, 0xee,
+	0x17, 0xe6, 0x75, 0x85, 0x0f, 0x0b, 0x4a, 0x1f, 0x5a, 0x3f, 0xd1, 0x60, 0x45, 0x29, 0xdc, 0x63,
+	0xb9, 0x6a, 0x03, 0xcc, 0x46, 0xa7, 0x83, 0x5b, 0x11, 0x6e, 0x4b, 0x2e, 0x23, 0xd9, 0x7b, 0x04,
+	0x2f, 0x9b, 0xcd, 0xc8, 0x31, 0x5b, 0x41, 0x36, 0xdb, 0xbf, 0x75, 0xa8, 0x35, 0xa3, 0x00, 0x3b,
+	0xbd, 0x53, 0x36, 0xdb, 0x1d, 0x38, 0xcb, 0xf8, 0x66, 0xbb, 0x1a, 0x83, 0x76, 0x35, 0x71, 0xa5,
+	0x3e, 0x42, 0x64, 0xab, 0xe7, 0x8d, 0xe9, 0x5e, 0xae, 0xc0, 0xe2, 0x7d, 0x37, 0x74, 0x0f, 0xdc,
+	0xae, 0x1b, 0x0d, 0xd3, 0xbb, 0x69, 0x74, 0x40, 0xe5, 0xb5, 0x92, 0x7a, 0xe7, 0xad, 0x91, 0x9a,
+	0xbf, 0x13, 0x1f, 0x98, 0x65, 0x6a, 0x72, 0x19, 0x85, 0x5e, 0x81, 0x85, 0x3d, 0xbf, 0xed, 0x76,
+	0xdc, 0xd8, 0x03, 0xbc, 0xa4, 0x52, 0xef, 0xa5, 0x2c, 0xb1, 0xf5, 0x77, 0x0d, 0x56, 0x94, 0xd6,
+	0x7f, 0xac, 0xb8, 0xc8, 0x35, 0xb1, 0xfe, 0x84, 0x26, 0xde, 0x84, 0xb2, 0x50, 0xc3, 0x18, 0xa3,
+	0x86, 0x20, 0x92, 0x83, 0xad, 0x90, 0x13, 0x6c, 0x45, 0x39, 0xd8, 0x0e, 0xe1, 0x2c, 0x65, 0x14,
+	0xde, 0xeb, 0x87, 0xb2, 0x00, 0xa7, 0x9d, 0xaa, 0xac, 0x0f, 0x35, 0x5e, 0x20, 0x49, 0x2b, 0x71,
+	0x93, 0xb2, 0xc3, 0x25, 0xbb, 0x5a, 0x0a, 0xf7, 0x5f, 0x54, 0x6e, 0x93, 0x6e, 0xbf, 0xf7, 0x0b,
+	0x70, 0x8e, 0x09, 0xba, 0xed, 0xbf, 0xe7, 0x4d, 0x62, 0x94, 0x71, 0x7b, 0x6f, 0x6f, 0xf4, 0x2e,
+	0x81, 0xed, 0xba, 0x8b, 0x29, 0xbb, 0x8d, 0xae, 0xa9, 0xbe, 0x53, 0x18, 0x7f, 0x6f, 0xe0, 0x3c,
+	0xdc, 0x8d, 0x70, 0x4f, 0x6c, 0xb8, 0x18, 0x26, 0xbb, 0x47, 0x6c, 0x28, 0x7f, 0x10, 0xf1, 0x3d,
+	0x26, 0xa3, 0x08, 0xdf, 0xc6, 0x20, 0xf2, 0x1b, 0xad, 0x23, 0xba, 0xb7, 0xa6, 0x6d, 0x01, 0xa2,
+	0xcb, 0x30, 0x6f, 0xb3, 0x53, 0x4d, 0x2c, 0xcc, 0x6a, 0x84, 0x0c, 0x16, 0x5d, 0x82, 0x39, 0xb1,
+	0x17, 0x6d, 0xc7, 0x3b, 0xc4, 0xd5, 0xca, 0x9a, 0xb1, 0x6e, 0xd8, 0x69, 0x24, 0xc9, 0x9f, 0xa4,
+	0xb6, 0x08, 0x1c, 0x2f, 0x74, 0x5a, 0xa4, 0x7a, 0xd8, 0x6d, 0xf3, 0xa2, 0x61, 0x04, 0x8f, 0x76,
+	0xa5, 0xfe, 0x8d, 0xdd, 0x29, 0x3c, 0x77, 0x82, 0xcd, 0x36, 0x05, 0x3d, 0x6b, 0xd1, 0xe2, 0xe9,
+	0xb5, 0x97, 0x60, 0x2e, 0x35, 0x34, 0x51, 0x7b, 0xf3, 0x4f, 0x03, 0xaa, 0xa3, 0x0b, 0xf2, 0x18,
+	0xbe, 0x04, 0x73, 0x69, 0x6d, 0x18, 0xcb, 0x34, 0x32, 0x13, 0xe9, 0x6d, 0xbe, 0x46, 0x0a, 0x77,
+	0xda, 0x91, 0x22, 0xef, 0xd4, 0xc2, 0x63, 0x15, 0x15, 0x97, 0x60, 0xae, 0xd1, 0x8a, 0xdc, 0x63,
+	0x7c, 0xa7, 0xd3, 0x09, 0x71, 0x44, 0xc2, 0x88, 0x7a, 0x30, 0x85, 0x9c, 0xb4, 0x18, 0x20, 0xf5,
+	0x98, 0x64, 0x8b, 0xeb, 0x7e, 0xaf, 0xdf, 0xc5, 0x11, 0xe6, 0x97, 0x14, 0xaa, 0x21, 0xf4, 0x86,
+	0xe4, 0xf7, 0x0a, 0x95, 0x7c, 0x33, 0xdf, 0x02, 0xfc, 0x66, 0xe2, 0x7f, 0xe2, 0xf8, 0x1f, 0xea,
+	0x50, 0xa1, 0x2b, 0xee, 0x7a, 0x1d, 0x1f, 0x21, 0x28, 0xdc, 0x76, 0x7a, 0x58, 0xfc, 0x80, 0x21,
+	0xdf, 0xec, 0x8a, 0x41, 0x2a, 0x03, 0x0c, 0xc9, 0x9c, 0x4b, 0x50, 0xbc, 0x36, 0x8c, 0x70, 0xc8,
+	0x2b, 0x7c, 0x06, 0x10, 0x23, 0xd3, 0xfb, 0xcd, 0xf8, 0x28, 0x63, 0xe5, 0x7d, 0x1a, 0x49, 0xe2,
+	0xe5, 0x96, 0x23, 0x11, 0xb1, 0x3b, 0xf9, 0x14, 0x2e, 0xfe, 0xb3, 0xc2, 0xee, 0x7f, 0xd9, 0x9f,
+	0x15, 0xd6, 0x38, 0xb8, 0xc7, 0x98, 0x54, 0x79, 0xe5, 0xb8, 0x71, 0x60, 0x08, 0xe2, 0x3a, 0xb2,
+	0xe7, 0x5d, 0xef, 0x90, 0x37, 0x69, 0x02, 0x24, 0x09, 0x22, 0xbe, 0x16, 0x0e, 0x42, 0x5a, 0xe5,
+	0x1b, 0xb6, 0x8c, 0xb2, 0x7e, 0xa9, 0x01, 0x30, 0xeb, 0x53, 0x63, 0xd4, 0x01, 0xf6, 0xfd, 0xc8,
+	0x61, 0x35, 0x14, 0xef, 0xda, 0x24, 0x4c, 0xea, 0xb7, 0x8f, 0x52, 0x38, 0x63, 0x8c, 0x70, 0x85,
+	0xb4, 0x70, 0x5f, 0x86, 0x12, 0x5b, 0x99, 0x06, 0xe4, 0xcc, 0xd6, 0x62, 0x2a, 0x1a, 0x88, 0x38,
+	0x36, 0x27, 0xb0, 0xee, 0xc0, 0x62, 0x22, 0xe4, 0xe3, 0x25, 0xef, 0x55, 0xee, 0x63, 0xea, 0x5b,
+	0x7e, 0xcb, 0x17, 0x23, 0xac, 0x77, 0x78, 0xeb, 0xca, 0x19, 0x4e, 0x70, 0x70, 0x5d, 0x86, 0x02,
+	0x99, 0x43, 0x59, 0xce, 0x6c, 0xa1, 0x74, 0x04, 0x53, 0x6e, 0x74, 0xdc, 0xfa, 0x54, 0x83, 0xb3,
+	0xb4, 0xd7, 0x9a, 0xf0, 0x24, 0xbe, 0x99, 0x77, 0x49, 0x1d, 0xff, 0x5f, 0x50, 0x72, 0x9d, 0xfc,
+	0xaa, 0x7a, 0xe2, 0x44, 0x62, 0x7d, 0xae, 0xc3, 0x72, 0x76, 0xf1, 0x09, 0x2c, 0x77, 0xaa, 0x9a,
+	0xed, 0xc3, 0x2c, 0xa5, 0x16, 0x45, 0x84, 0x41, 0x35, 0xb8, 0x9a, 0xc7, 0x49, 0x5c, 0x74, 0x4a,
+	0x53, 0x58, 0x4a, 0x49, 0x71, 0x99, 0xb4, 0xda, 0xaa, 0xbd, 0x05, 0x8b, 0x23, 0x2c, 0x15, 0xa9,
+	0x68, 0x53, 0x4e, 0x45, 0x33, 0x5b, 0x55, 0xb9, 0xd4, 0x91, 0xe7, 0xcb, 0x49, 0xea, 0x00, 0x96,
+	0xc8, 0x70, 0xdc, 0x8e, 0x0b, 0x11, 0xdf, 0x00, 0x33, 0x8b, 0xab, 0x6a, 0x8f, 0x55, 0x41, 0x8d,
+	0xcc, 0xb3, 0x7e, 0xa7, 0x81, 0x99, 0x95, 0x01, 0xdd, 0xce, 0x58, 0x96, 0x31, 0xdf, 0xc8, 0x93,
+	0xf9, 0x24, 0x9b, 0xd6, 0xbe, 0x75, 0x82, 0x8d, 0x8a, 0xcc, 0x46, 0x5b, 0x69, 0x1b, 0xad, 0xca,
+	0xeb, 0x65, 0x05, 0x97, 0xed, 0xf4, 0x52, 0xcc, 0xbe, 0xe5, 0x07, 0xed, 0x1b, 0xd8, 0x69, 0xe3,
+	0x80, 0xb0, 0xbf, 0x99, 0xb8, 0xe0, 0x26, 0x3b, 0x0d, 0xee, 0xc7, 0xec, 0x67, 0x6d, 0x06, 0x58,
+	0xbf, 0xd5, 0x60, 0x46, 0x9a, 0x8d, 0x9e, 0x87, 0x32, 0xe3, 0x20, 0xd4, 0x3e, 0x9f, 0x0a, 0x28,
+	0x79, 0x0d, 0x5b, 0x50, 0x26, 0xf7, 0xb6, 0x7a, 0xee, 0xbd, 0x2d, 0xd9, 0x7b, 0x73, 0xf2, 0xbd,
+	0x6d, 0xea, 0x0e, 0xb1, 0x40, 0xbb, 0x1e, 0xe9, 0x0e, 0x91, 0x8b, 0xcf, 0x2e, 0xb1, 0xd3, 0xe2,
+	0x97, 0x64, 0xf1, 0xb7, 0x61, 0x9e, 0x2e, 0x96, 0xf0, 0x8d, 0x65, 0xd1, 0x72, 0x65, 0xd1, 0x33,
+	0xb2, 0x58, 0x9f, 0x1b, 0x70, 0x9e, 0xed, 0x17, 0x7e, 0x30, 0xf4, 0x99, 0xa9, 0x59, 0xb6, 0x7a,
+	0x1b, 0xce, 0x29, 0xd0, 0x64, 0x1f, 0xf2, 0x9f, 0xb2, 0xcf, 0xa4, 0xf7, 0x5c, 0x0e, 0xb1, 0x9d,
+	0xc7, 0x05, 0x2d, 0x43, 0x89, 0xcd, 0xa4, 0x8d, 0x40, 0xc5, 0xe6, 0x10, 0x7a, 0x15, 0x16, 0xd2,
+	0xca, 0x89, 0x4d, 0xbe, 0x9c, 0x5a, 0x30, 0x89, 0x8d, 0x2c, 0x39, 0xd9, 0xcd, 0xf4, 0xbf, 0xed,
+	0xee, 0xb6, 0x28, 0xaa, 0x39, 0xc8, 0xce, 0xf7, 0xde, 0x01, 0x0e, 0x76, 0xb7, 0x93, 0x9f, 0x71,
+	0x0c, 0x26, 0x63, 0xbb, 0x61, 0x33, 0x72, 0x22, 0xb7, 0x25, 0x7e, 0xd6, 0x08, 0x18, 0x1d, 0x40,
+	0x55, 0x56, 0xa3, 0x19, 0x05, 0x4e, 0x84, 0x0f, 0x87, 0xd4, 0x1a, 0x65, 0x6a, 0x8d, 0xcb, 0xf9,
+	0xd6, 0x90, 0xa9, 0xed, 0x5c, 0x3e, 0xe8, 0x9b, 0xf1, 0xaf, 0x5c, 0x3a, 0xc6, 0xea, 0x33, 0xba,
+	0xc2, 0x34, 0x5d, 0xe1, 0x52, 0xfe, 0x0a, 0x09, 0xad, 0x9d, 0xc3, 0xc3, 0xfa, 0xa3, 0x0e, 0xe7,
+	0x46, 0x27, 0xb2, 0xf7, 0x19, 0x97, 0x61, 0x5e, 0x46, 0xc6, 0x69, 0x3c, 0x83, 0x45, 0x6f, 0xc1,
+	0xd9, 0x91, 0xc9, 0x54, 0x40, 0x3d, 0x5d, 0xd7, 0xe6, 0xac, 0xc3, 0xdb, 0x63, 0x15, 0x5a, 0x76,
+	0x99, 0x91, 0xef, 0xb2, 0x42, 0xc6, 0x65, 0x5b, 0x30, 0xdd, 0x08, 0x43, 0xf7, 0xd0, 0xa3, 0xb7,
+	0xe2, 0xe3, 0x62, 0x24, 0xa6, 0x63, 0xb7, 0xa3, 0xcd, 0xa1, 0xd7, 0x6a, 0x88, 0x52, 0x2b, 0x86,
+	0xe5, 0x63, 0x60, 0x21, 0xe7, 0x18, 0x30, 0xe5, 0x16, 0xf3, 0x43, 0x4d, 0x18, 0x75, 0xd2, 0x16,
+	0xf3, 0x2d, 0x38, 0xab, 0xac, 0xfb, 0xd5, 0xa6, 0x54, 0xb7, 0x08, 0x6a, 0x0e, 0xa4, 0x54, 0x8b,
+	0x9b, 0x8d, 0x59, 0x9b, 0x7e, 0x5b, 0x1f, 0x69, 0x50, 0x1d, 0x65, 0xa5, 0x6e, 0x79, 0xb6, 0x55,
+	0x2d, 0xcf, 0xf6, 0xc8, 0x49, 0xaf, 0x2b, 0x4e, 0x7a, 0xc5, 0xd2, 0x93, 0xda, 0x74, 0xe3, 0xd7,
+	0x1a, 0x2c, 0x8e, 0x5c, 0xa1, 0xa0, 0x55, 0xa8, 0x8e, 0x20, 0x93, 0x5f, 0xc3, 0x88, 0xf4, 0xb4,
+	0xf4, 0x7a, 0x94, 0x9f, 0x7c, 0xa6, 0x86, 0xe6, 0x01, 0x1a, 0xad, 0x23, 0x01, 0xd3, 0xd7, 0x07,
+	0x36, 0xfe, 0x36, 0x6e, 0x45, 0x02, 0x65, 0xa0, 0x25, 0x30, 0xe9, 0xad, 0xd1, 0x30, 0xb9, 0xc9,
+	0x32, 0x0b, 0x8c, 0x30, 0xc4, 0x9e, 0xb8, 0x49, 0x32, 0x8b, 0xe8, 0x1c, 0x9c, 0x21, 0xc7, 0x51,
+	0xe6, 0x8a, 0xc9, 0x2c, 0x6d, 0x7c, 0xae, 0xc1, 0xca, 0x98, 0x2e, 0x0e, 0xd5, 0x60, 0xf9, 0xae,
+	0xdf, 0xed, 0x2a, 0x85, 0x2e, 0x83, 0xf1, 0x3a, 0x8e, 0x4c, 0x0d, 0x01, 0x94, 0xd8, 0x05, 0x26,
+	0x7b, 0x96, 0xd1, 0x68, 0x1d, 0xd1, 0xde, 0x9a, 0x3d, 0xcb, 0xb8, 0xcd, 0x87, 0x0a, 0x68, 0x0e,
+	0x2a, 0xb7, 0xe3, 0xb1, 0x22, 0xd1, 0x8f, 0x77, 0xec, 0x64, 0xb8, 0x84, 0x4c, 0xe2, 0x1f, 0x0a,
+	0x33, 0x8a, 0x32, 0x51, 0x24, 0xd5, 0xea, 0x99, 0xd3, 0xe8, 0x2c, 0x2c, 0x4a, 0x5e, 0x25, 0xc9,
+	0x6d, 0x10, 0x9a, 0x15, 0x42, 0x79, 0xbd, 0xeb, 0x87, 0xf8, 0xda, 0x90, 0x55, 0x89, 0x26, 0x48,
+	0x28, 0xf6, 0x64, 0xcc, 0x9c, 0xd9, 0xe8, 0x89, 0xe3, 0x42, 0x51, 0xa8, 0xa1, 0x35, 0x58, 0x55,
+	0x0e, 0x26, 0xfa, 0x2e, 0xd2, 0x4e, 0x09, 0x37, 0xbc, 0xf6, 0x6b, 0x7e, 0x70, 0x48, 0x35, 0x9f,
+	0x83, 0x0a, 0xb1, 0x6b, 0x23, 0x1c, 0x7a, 0x2d, 0xa6, 0x3c, 0x01, 0xc9, 0x66, 0x34, 0x8d, 0x0d,
+	0x0f, 0xea, 0xe3, 0x73, 0x29, 0x7a, 0x06, 0x9e, 0xce, 0x1b, 0x93, 0x5f, 0xa7, 0x54, 0xa0, 0xc8,
+	0x4c, 0x42, 0x83, 0xc2, 0xf6, 0x07, 0x5e, 0xdb, 0xf6, 0x0f, 0x5c, 0xcf, 0xd4, 0x89, 0xe9, 0x9b,
+	0x91, 0xdb, 0x3a, 0x1a, 0x9a, 0xc6, 0xc6, 0xc7, 0x9a, 0x50, 0x41, 0x9d, 0x42, 0xd1, 0x45, 0xb8,
+	0xa0, 0x1e, 0xf9, 0x7f, 0x3f, 0x85, 0xd9, 0xf8, 0x81, 0x06, 0x4f, 0x8d, 0x3d, 0x85, 0xd1, 0x25,
+	0x58, 0xcb, 0x19, 0x92, 0x85, 0xbf, 0x00, 0x2b, 0x39, 0x54, 0x6f, 0xf8, 0xae, 0x67, 0x6a, 0xc4,
+	0xcb, 0x39, 0x04, 0xb7, 0xb0, 0x73, 0x8c, 0x4d, 0x7d, 0xe3, 0x03, 0x1d, 0x56, 0xc6, 0xe4, 0x7f,
+	0x64, 0x41, 0x5d, 0x39, 0x20, 0x8b, 0x91, 0x47, 0x13, 0xf7, 0xaf, 0xa6, 0x96, 0x15, 0x35, 0x39,
+	0x60, 0x68, 0x2e, 0x37, 0x75, 0xf4, 0x25, 0xb8, 0x38, 0x86, 0x40, 0x5c, 0x4e, 0x98, 0x46, 0xee,
+	0x6a, 0x37, 0xb0, 0x13, 0x44, 0x07, 0xd8, 0x89, 0xcc, 0x02, 0xaa, 0x43, 0x4d, 0x49, 0xc3, 0xb4,
+	0x2e, 0x66, 0x43, 0x23, 0x1e, 0xa7, 0x87, 0x18, 0xd9, 0x66, 0x24, 0x59, 0xfc, 0x5c, 0x13, 0xa6,
+	0x51, 0x27, 0x0b, 0x0b, 0xea, 0xca, 0x01, 0xd9, 0x34, 0x57, 0x60, 0x5d, 0x49, 0xa3, 0xf0, 0x8a,
+	0xa9, 0xa1, 0x0d, 0xb8, 0x7c, 0x22, 0x35, 0x95, 0xd5, 0xd4, 0xb7, 0xfe, 0x3c, 0x0d, 0xfc, 0xd5,
+	0x2a, 0xba, 0xc2, 0xb6, 0x25, 0x2b, 0x0e, 0xe6, 0x52, 0x6f, 0x00, 0x6b, 0xf3, 0xd2, 0x23, 0x92,
+	0x41, 0x37, 0xb2, 0xa6, 0xd0, 0x0b, 0xac, 0x97, 0x10, 0xcf, 0xc3, 0xc8, 0x52, 0x27, 0x4e, 0x5a,
+	0xd7, 0xae, 0x6a, 0xe8, 0x55, 0xf9, 0xc1, 0x9f, 0xcf, 0xe6, 0xa3, 0xc5, 0x91, 0xd7, 0x74, 0xb5,
+	0x25, 0xd5, 0x2b, 0x44, 0x6b, 0xea, 0xaa, 0x86, 0x5e, 0x86, 0x33, 0x12, 0x07, 0xae, 0xa0, 0x92,
+	0xc7, 0x42, 0xe6, 0xf5, 0x12, 0x9d, 0xbe, 0x05, 0x33, 0x44, 0x72, 0x71, 0x62, 0x67, 0x69, 0x6a,
+	0x66, 0xf6, 0xc1, 0x8c, 0x35, 0x85, 0xbe, 0x02, 0xb3, 0x6c, 0x0e, 0x3f, 0x3c, 0x47, 0x68, 0x6a,
+	0x89, 0xee, 0xf4, 0x51, 0xed, 0x14, 0xe9, 0xdc, 0xb2, 0x9d, 0x19, 0x52, 0xb6, 0xdc, 0xb5, 0x13,
+	0x3a, 0x39, 0x6b, 0x0a, 0x39, 0xa3, 0x7f, 0xaf, 0xd9, 0xa3, 0x09, 0xf4, 0xb4, 0x8a, 0x63, 0xea,
+	0xe9, 0x46, 0xcd, 0x1a, 0x47, 0x12, 0x6b, 0xd8, 0x82, 0x25, 0xd5, 0xbf, 0x4f, 0x74, 0x31, 0xd1,
+	0x34, 0xf7, 0x0f, 0x70, 0xed, 0xd2, 0x78, 0x22, 0x69, 0x11, 0x34, 0xfa, 0x73, 0x06, 0x59, 0xe9,
+	0xdf, 0x2a, 0xca, 0x15, 0x2e, 0x8e, 0xa5, 0x11, 0x0b, 0xd0, 0x00, 0x7b, 0x07, 0xce, 0x28, 0xfe,
+	0x0c, 0x26, 0xab, 0xe4, 0xff, 0xd3, 0x4c, 0x56, 0x19, 0xf3, 0x6b, 0xd1, 0x9a, 0x42, 0xcf, 0x42,
+	0xe1, 0xae, 0xeb, 0x1d, 0xa2, 0xb4, 0xcf, 0x6b, 0xf1, 0xed, 0x50, 0xf2, 0xde, 0xdb, 0x9a, 0x42,
+	0xdf, 0x00, 0x33, 0x5b, 0x2b, 0xa0, 0x0b, 0x27, 0xdc, 0x05, 0xd7, 0xd6, 0x4e, 0xba, 0x2a, 0xe5,
+	0xba, 0xde, 0x83, 0xf9, 0xf4, 0x5f, 0x19, 0xf4, 0x54, 0x7a, 0x66, 0xe6, 0x5c, 0xae, 0xd5, 0xf3,
+	0x86, 0x53, 0x6c, 0x77, 0x52, 0xb7, 0x84, 0xe7, 0x15, 0xb7, 0x5e, 0x9c, 0x5d, 0x4d, 0x35, 0x24,
+	0x58, 0x5d, 0x5b, 0xff, 0xd3, 0x67, 0xf5, 0xa9, 0x7f, 0x7c, 0x56, 0xd7, 0xfe, 0xf5, 0x59, 0x5d,
+	0xfb, 0xce, 0xa3, 0xba, 0xf6, 0xd1, 0xa3, 0xba, 0xf6, 0xf1, 0xa3, 0xba, 0xf6, 0xfb, 0x47, 0x75,
+	0xed, 0xd3, 0x47, 0x75, 0xed, 0x2f, 0x8f, 0xea, 0xda, 0x07, 0x7f, 0xad, 0x4f, 0x1d, 0x94, 0xe8,
+	0x63, 0xf9, 0xe7, 0xff, 0x13, 0x00, 0x00, 0xff, 0xff, 0x10, 0xca, 0xa5, 0xfb, 0x53, 0x2f, 0x00,
+	0x00,
 }
-func (x Subscribe_SubscribeType) String() string {
-	s, ok := Subscribe_SubscribeType_name[int32(x)]
-	if ok {
-		return s
-	}
-	return strconv.Itoa(int(x))
-}
-func (x Subscribe_EventsStoreType) String() string {
-	s, ok := Subscribe_EventsStoreType_name[int32(x)]
-	if ok {
-		return s
-	}
-	return strconv.Itoa(int(x))
-}
-func (x Request_RequestType) String() string {
-	s, ok := Request_RequestType_name[int32(x)]
-	if ok {
-		return s
-	}
-	return strconv.Itoa(int(x))
-}
+
 func (this *PingResult) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -1904,6 +3897,9 @@ func (this *PingResult) Equal(that interface{}) bool {
 	if this.ServerUpTimeSeconds != that1.ServerUpTimeSeconds {
 		return false
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *Empty) Equal(that interface{}) bool {
@@ -1923,6 +3919,9 @@ func (this *Empty) Equal(that interface{}) bool {
 	if that1 == nil {
 		return this == nil
 	} else if this == nil {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
 		return false
 	}
 	return true
@@ -1953,6 +3952,9 @@ func (this *Result) Equal(that interface{}) bool {
 		return false
 	}
 	if this.Error != that1.Error {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
 		return false
 	}
 	return true
@@ -2002,6 +4004,9 @@ func (this *Event) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *EventReceive) Equal(that interface{}) bool {
@@ -2049,6 +4054,9 @@ func (this *EventReceive) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *Subscribe) Equal(that interface{}) bool {
@@ -2086,6 +4094,9 @@ func (this *Subscribe) Equal(that interface{}) bool {
 		return false
 	}
 	if this.EventsStoreTypeValue != that1.EventsStoreTypeValue {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
 		return false
 	}
 	return true
@@ -2150,6 +4161,9 @@ func (this *Request) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *Response) Equal(that interface{}) bool {
@@ -2209,6 +4223,9 @@ func (this *Response) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *QueueMessage) Equal(that interface{}) bool {
@@ -2259,6 +4276,18 @@ func (this *QueueMessage) Equal(that interface{}) bool {
 	if !this.Policy.Equal(that1.Policy) {
 		return false
 	}
+	if this.Topic != that1.Topic {
+		return false
+	}
+	if this.Partition != that1.Partition {
+		return false
+	}
+	if this.PartitionKey != that1.PartitionKey {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *QueueMessagesBatchRequest) Equal(that interface{}) bool {
@@ -2290,6 +4319,9 @@ func (this *QueueMessagesBatchRequest) Equal(that interface{}) bool {
 		if !this.Messages[i].Equal(that1.Messages[i]) {
 			return false
 		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
 	}
 	return true
 }
@@ -2324,6 +4356,9 @@ func (this *QueueMessagesBatchResponse) Equal(that interface{}) bool {
 		}
 	}
 	if this.HaveErrors != that1.HaveErrors {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
 		return false
 	}
 	return true
@@ -2371,6 +4406,9 @@ func (this *QueueMessageAttributes) Equal(that interface{}) bool {
 	if this.DelayedTo != that1.DelayedTo {
 		return false
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *QueueMessagePolicy) Equal(that interface{}) bool {
@@ -2402,6 +4440,9 @@ func (this *QueueMessagePolicy) Equal(that interface{}) bool {
 		return false
 	}
 	if this.MaxReceiveQueue != that1.MaxReceiveQueue {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
 		return false
 	}
 	return true
@@ -2443,6 +4484,21 @@ func (this *SendQueueMessageResult) Equal(that interface{}) bool {
 	if this.Error != that1.Error {
 		return false
 	}
+	if this.RefChannel != that1.RefChannel {
+		return false
+	}
+	if this.RefTopic != that1.RefTopic {
+		return false
+	}
+	if this.RefPartition != that1.RefPartition {
+		return false
+	}
+	if this.RefHash != that1.RefHash {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *ReceiveQueueMessagesRequest) Equal(that interface{}) bool {
@@ -2480,6 +4536,9 @@ func (this *ReceiveQueueMessagesRequest) Equal(that interface{}) bool {
 		return false
 	}
 	if this.IsPeak != that1.IsPeak {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
 		return false
 	}
 	return true
@@ -2529,6 +4588,9 @@ func (this *ReceiveQueueMessagesResponse) Equal(that interface{}) bool {
 	if this.Error != that1.Error {
 		return false
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *AckAllQueueMessagesRequest) Equal(that interface{}) bool {
@@ -2562,6 +4624,9 @@ func (this *AckAllQueueMessagesRequest) Equal(that interface{}) bool {
 	if this.WaitTimeSeconds != that1.WaitTimeSeconds {
 		return false
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *AckAllQueueMessagesResponse) Equal(that interface{}) bool {
@@ -2593,6 +4658,9 @@ func (this *AckAllQueueMessagesResponse) Equal(that interface{}) bool {
 		return false
 	}
 	if this.Error != that1.Error {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
 		return false
 	}
 	return true
@@ -2640,6 +4708,9 @@ func (this *StreamQueueMessagesRequest) Equal(that interface{}) bool {
 	if !this.ModifiedMessage.Equal(that1.ModifiedMessage) {
 		return false
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *StreamQueueMessagesResponse) Equal(that interface{}) bool {
@@ -2676,6 +4747,812 @@ func (this *StreamQueueMessagesResponse) Equal(that interface{}) bool {
 	if this.Error != that1.Error {
 		return false
 	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *QueuesUpstreamRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*QueuesUpstreamRequest)
+	if !ok {
+		that2, ok := that.(QueuesUpstreamRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.RequestID != that1.RequestID {
+		return false
+	}
+	if len(this.Messages) != len(that1.Messages) {
+		return false
+	}
+	for i := range this.Messages {
+		if !this.Messages[i].Equal(that1.Messages[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *QueuesUpstreamResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*QueuesUpstreamResponse)
+	if !ok {
+		that2, ok := that.(QueuesUpstreamResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.RefRequestID != that1.RefRequestID {
+		return false
+	}
+	if len(this.Results) != len(that1.Results) {
+		return false
+	}
+	for i := range this.Results {
+		if !this.Results[i].Equal(that1.Results[i]) {
+			return false
+		}
+	}
+	if this.IsError != that1.IsError {
+		return false
+	}
+	if this.Error != that1.Error {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *QueuesDownstreamRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*QueuesDownstreamRequest)
+	if !ok {
+		that2, ok := that.(QueuesDownstreamRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.RequestID != that1.RequestID {
+		return false
+	}
+	if this.ClientID != that1.ClientID {
+		return false
+	}
+	if this.RequestTypeData != that1.RequestTypeData {
+		return false
+	}
+	if this.Channel != that1.Channel {
+		return false
+	}
+	if this.MaxItems != that1.MaxItems {
+		return false
+	}
+	if this.WaitTimeout != that1.WaitTimeout {
+		return false
+	}
+	if this.AutoAck != that1.AutoAck {
+		return false
+	}
+	if this.ReQueueChannel != that1.ReQueueChannel {
+		return false
+	}
+	if len(this.SequenceRange) != len(that1.SequenceRange) {
+		return false
+	}
+	for i := range this.SequenceRange {
+		if this.SequenceRange[i] != that1.SequenceRange[i] {
+			return false
+		}
+	}
+	if this.RefTransactionId != that1.RefTransactionId {
+		return false
+	}
+	if len(this.Metadata) != len(that1.Metadata) {
+		return false
+	}
+	for i := range this.Metadata {
+		if this.Metadata[i] != that1.Metadata[i] {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *QueuesDownstreamResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*QueuesDownstreamResponse)
+	if !ok {
+		that2, ok := that.(QueuesDownstreamResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.TransactionId != that1.TransactionId {
+		return false
+	}
+	if this.RefRequestId != that1.RefRequestId {
+		return false
+	}
+	if this.RequestTypeData != that1.RequestTypeData {
+		return false
+	}
+	if len(this.Messages) != len(that1.Messages) {
+		return false
+	}
+	for i := range this.Messages {
+		if !this.Messages[i].Equal(that1.Messages[i]) {
+			return false
+		}
+	}
+	if len(this.ActiveOffsets) != len(that1.ActiveOffsets) {
+		return false
+	}
+	for i := range this.ActiveOffsets {
+		if this.ActiveOffsets[i] != that1.ActiveOffsets[i] {
+			return false
+		}
+	}
+	if this.IsError != that1.IsError {
+		return false
+	}
+	if this.Error != that1.Error {
+		return false
+	}
+	if this.TransactionComplete != that1.TransactionComplete {
+		return false
+	}
+	if len(this.Metadata) != len(that1.Metadata) {
+		return false
+	}
+	for i := range this.Metadata {
+		if this.Metadata[i] != that1.Metadata[i] {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *QueueInfo) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*QueueInfo)
+	if !ok {
+		that2, ok := that.(QueueInfo)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Name != that1.Name {
+		return false
+	}
+	if this.Messages != that1.Messages {
+		return false
+	}
+	if this.Bytes != that1.Bytes {
+		return false
+	}
+	if this.FirstSequence != that1.FirstSequence {
+		return false
+	}
+	if this.LastSequence != that1.LastSequence {
+		return false
+	}
+	if this.Sent != that1.Sent {
+		return false
+	}
+	if this.Delivered != that1.Delivered {
+		return false
+	}
+	if this.Waiting != that1.Waiting {
+		return false
+	}
+	if this.Subscribers != that1.Subscribers {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *QueuesInfo) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*QueuesInfo)
+	if !ok {
+		that2, ok := that.(QueuesInfo)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.TotalQueue != that1.TotalQueue {
+		return false
+	}
+	if this.Sent != that1.Sent {
+		return false
+	}
+	if this.Delivered != that1.Delivered {
+		return false
+	}
+	if this.Waiting != that1.Waiting {
+		return false
+	}
+	if len(this.Queues) != len(that1.Queues) {
+		return false
+	}
+	for i := range this.Queues {
+		if !this.Queues[i].Equal(that1.Queues[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *QueuesInfoRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*QueuesInfoRequest)
+	if !ok {
+		that2, ok := that.(QueuesInfoRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.RequestID != that1.RequestID {
+		return false
+	}
+	if this.QueueName != that1.QueueName {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *QueuesInfoResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*QueuesInfoResponse)
+	if !ok {
+		that2, ok := that.(QueuesInfoResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.RefRequestID != that1.RefRequestID {
+		return false
+	}
+	if !this.Info.Equal(that1.Info) {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicsUpstreamRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicsUpstreamRequest)
+	if !ok {
+		that2, ok := that.(TopicsUpstreamRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.RequestID != that1.RequestID {
+		return false
+	}
+	if this.RequestTypeData != that1.RequestTypeData {
+		return false
+	}
+	if this.ClientID != that1.ClientID {
+		return false
+	}
+	if len(this.Messages) != len(that1.Messages) {
+		return false
+	}
+	for i := range this.Messages {
+		if !this.Messages[i].Equal(that1.Messages[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicsUpstreamResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicsUpstreamResponse)
+	if !ok {
+		that2, ok := that.(TopicsUpstreamResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.RefRequestID != that1.RefRequestID {
+		return false
+	}
+	if this.RequestTypeData != that1.RequestTypeData {
+		return false
+	}
+	if len(this.TopicResults) != len(that1.TopicResults) {
+		return false
+	}
+	for i := range this.TopicResults {
+		if !this.TopicResults[i].Equal(that1.TopicResults[i]) {
+			return false
+		}
+	}
+	if this.IsError != that1.IsError {
+		return false
+	}
+	if this.Error != that1.Error {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *SendPartitionResults) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*SendPartitionResults)
+	if !ok {
+		that2, ok := that.(SendPartitionResults)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.PartitionResults) != len(that1.PartitionResults) {
+		return false
+	}
+	for i := range this.PartitionResults {
+		if !this.PartitionResults[i].Equal(that1.PartitionResults[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *SendTopicResults) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*SendTopicResults)
+	if !ok {
+		that2, ok := that.(SendTopicResults)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.TopicResults) != len(that1.TopicResults) {
+		return false
+	}
+	for i := range this.TopicResults {
+		if !this.TopicResults[i].Equal(that1.TopicResults[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicRecordHeader) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicRecordHeader)
+	if !ok {
+		that2, ok := that.(TopicRecordHeader)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Key != that1.Key {
+		return false
+	}
+	if !bytes.Equal(this.Value, that1.Value) {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicRecord) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicRecord)
+	if !ok {
+		that2, ok := that.(TopicRecord)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Headers) != len(that1.Headers) {
+		return false
+	}
+	for i := range this.Headers {
+		if !this.Headers[i].Equal(that1.Headers[i]) {
+			return false
+		}
+	}
+	if this.Topic != that1.Topic {
+		return false
+	}
+	if this.Partition != that1.Partition {
+		return false
+	}
+	if this.Timestamp != that1.Timestamp {
+		return false
+	}
+	if !bytes.Equal(this.Key, that1.Key) {
+		return false
+	}
+	if !bytes.Equal(this.Value, that1.Value) {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicPartition) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicPartition)
+	if !ok {
+		that2, ok := that.(TopicPartition)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Topic != that1.Topic {
+		return false
+	}
+	if this.Partition != that1.Partition {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicsSubscriptionRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicsSubscriptionRequest)
+	if !ok {
+		that2, ok := that.(TopicsSubscriptionRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.SubscriptionRequestType != that1.SubscriptionRequestType {
+		return false
+	}
+	if len(this.Topics) != len(that1.Topics) {
+		return false
+	}
+	for i := range this.Topics {
+		if this.Topics[i] != that1.Topics[i] {
+			return false
+		}
+	}
+	if len(this.TopicPartitions) != len(that1.TopicPartitions) {
+		return false
+	}
+	for i := range this.TopicPartitions {
+		if !this.TopicPartitions[i].Equal(that1.TopicPartitions[i]) {
+			return false
+		}
+	}
+	if this.GroupID != that1.GroupID {
+		return false
+	}
+	if this.MemberID != that1.MemberID {
+		return false
+	}
+	if this.IsStatic != that1.IsStatic {
+		return false
+	}
+	if this.SubscriptionStrategyType != that1.SubscriptionStrategyType {
+		return false
+	}
+	if this.SubscriptionOffsetType != that1.SubscriptionOffsetType {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicsSubscriptionEvent) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicsSubscriptionEvent)
+	if !ok {
+		that2, ok := that.(TopicsSubscriptionEvent)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.SubscriptionID != that1.SubscriptionID {
+		return false
+	}
+	if this.SubscriptionEventType != that1.SubscriptionEventType {
+		return false
+	}
+	if this.GroupID != that1.GroupID {
+		return false
+	}
+	if this.MemberID != that1.MemberID {
+		return false
+	}
+	if len(this.Assigned) != len(that1.Assigned) {
+		return false
+	}
+	for i := range this.Assigned {
+		if !this.Assigned[i].Equal(that1.Assigned[i]) {
+			return false
+		}
+	}
+	if this.ReSyncAt != that1.ReSyncAt {
+		return false
+	}
+	if this.IsError != that1.IsError {
+		return false
+	}
+	if this.Error != that1.Error {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicsDownstreamRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicsDownstreamRequest)
+	if !ok {
+		that2, ok := that.(TopicsDownstreamRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.RequestID != that1.RequestID {
+		return false
+	}
+	if this.DownstreamRequestType != that1.DownstreamRequestType {
+		return false
+	}
+	if !bytes.Equal(this.Data, that1.Data) {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *TopicsDownstreamResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TopicsDownstreamResponse)
+	if !ok {
+		that2, ok := that.(TopicsDownstreamResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.TransactionID != that1.TransactionID {
+		return false
+	}
+	if this.RefRequestID != that1.RefRequestID {
+		return false
+	}
+	if !bytes.Equal(this.Data, that1.Data) {
+		return false
+	}
+	if this.IsError != that1.IsError {
+		return false
+	}
+	if this.Error != that1.Error {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
 	return true
 }
 func (this *PingResult) GoString() string {
@@ -2688,6 +5565,9 @@ func (this *PingResult) GoString() string {
 	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
 	s = append(s, "ServerStartTime: "+fmt.Sprintf("%#v", this.ServerStartTime)+",\n")
 	s = append(s, "ServerUpTimeSeconds: "+fmt.Sprintf("%#v", this.ServerUpTimeSeconds)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2697,6 +5577,9 @@ func (this *Empty) GoString() string {
 	}
 	s := make([]string, 0, 4)
 	s = append(s, "&kubemq.Empty{")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2709,6 +5592,9 @@ func (this *Result) GoString() string {
 	s = append(s, "EventID: "+fmt.Sprintf("%#v", this.EventID)+",\n")
 	s = append(s, "Sent: "+fmt.Sprintf("%#v", this.Sent)+",\n")
 	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2736,6 +5622,9 @@ func (this *Event) GoString() string {
 	mapStringForTags += "}"
 	if this.Tags != nil {
 		s = append(s, "Tags: "+mapStringForTags+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -2765,6 +5654,9 @@ func (this *EventReceive) GoString() string {
 	if this.Tags != nil {
 		s = append(s, "Tags: "+mapStringForTags+",\n")
 	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2780,6 +5672,9 @@ func (this *Subscribe) GoString() string {
 	s = append(s, "Group: "+fmt.Sprintf("%#v", this.Group)+",\n")
 	s = append(s, "EventsStoreTypeData: "+fmt.Sprintf("%#v", this.EventsStoreTypeData)+",\n")
 	s = append(s, "EventsStoreTypeValue: "+fmt.Sprintf("%#v", this.EventsStoreTypeValue)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2813,6 +5708,9 @@ func (this *Request) GoString() string {
 	if this.Tags != nil {
 		s = append(s, "Tags: "+mapStringForTags+",\n")
 	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2845,6 +5743,9 @@ func (this *Response) GoString() string {
 	if this.Tags != nil {
 		s = append(s, "Tags: "+mapStringForTags+",\n")
 	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2852,7 +5753,7 @@ func (this *QueueMessage) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 12)
+	s := make([]string, 0, 15)
 	s = append(s, "&kubemq.QueueMessage{")
 	s = append(s, "MessageID: "+fmt.Sprintf("%#v", this.MessageID)+",\n")
 	s = append(s, "ClientID: "+fmt.Sprintf("%#v", this.ClientID)+",\n")
@@ -2878,6 +5779,12 @@ func (this *QueueMessage) GoString() string {
 	if this.Policy != nil {
 		s = append(s, "Policy: "+fmt.Sprintf("%#v", this.Policy)+",\n")
 	}
+	s = append(s, "Topic: "+fmt.Sprintf("%#v", this.Topic)+",\n")
+	s = append(s, "Partition: "+fmt.Sprintf("%#v", this.Partition)+",\n")
+	s = append(s, "PartitionKey: "+fmt.Sprintf("%#v", this.PartitionKey)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2890,6 +5797,9 @@ func (this *QueueMessagesBatchRequest) GoString() string {
 	s = append(s, "BatchID: "+fmt.Sprintf("%#v", this.BatchID)+",\n")
 	if this.Messages != nil {
 		s = append(s, "Messages: "+fmt.Sprintf("%#v", this.Messages)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -2905,6 +5815,9 @@ func (this *QueueMessagesBatchResponse) GoString() string {
 		s = append(s, "Results: "+fmt.Sprintf("%#v", this.Results)+",\n")
 	}
 	s = append(s, "HaveErrors: "+fmt.Sprintf("%#v", this.HaveErrors)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2922,6 +5835,9 @@ func (this *QueueMessageAttributes) GoString() string {
 	s = append(s, "ReRoutedFromQueue: "+fmt.Sprintf("%#v", this.ReRoutedFromQueue)+",\n")
 	s = append(s, "ExpirationAt: "+fmt.Sprintf("%#v", this.ExpirationAt)+",\n")
 	s = append(s, "DelayedTo: "+fmt.Sprintf("%#v", this.DelayedTo)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2935,6 +5851,9 @@ func (this *QueueMessagePolicy) GoString() string {
 	s = append(s, "DelaySeconds: "+fmt.Sprintf("%#v", this.DelaySeconds)+",\n")
 	s = append(s, "MaxReceiveCount: "+fmt.Sprintf("%#v", this.MaxReceiveCount)+",\n")
 	s = append(s, "MaxReceiveQueue: "+fmt.Sprintf("%#v", this.MaxReceiveQueue)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2942,7 +5861,7 @@ func (this *SendQueueMessageResult) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 10)
+	s := make([]string, 0, 14)
 	s = append(s, "&kubemq.SendQueueMessageResult{")
 	s = append(s, "MessageID: "+fmt.Sprintf("%#v", this.MessageID)+",\n")
 	s = append(s, "SentAt: "+fmt.Sprintf("%#v", this.SentAt)+",\n")
@@ -2950,6 +5869,13 @@ func (this *SendQueueMessageResult) GoString() string {
 	s = append(s, "DelayedTo: "+fmt.Sprintf("%#v", this.DelayedTo)+",\n")
 	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
 	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	s = append(s, "RefChannel: "+fmt.Sprintf("%#v", this.RefChannel)+",\n")
+	s = append(s, "RefTopic: "+fmt.Sprintf("%#v", this.RefTopic)+",\n")
+	s = append(s, "RefPartition: "+fmt.Sprintf("%#v", this.RefPartition)+",\n")
+	s = append(s, "RefHash: "+fmt.Sprintf("%#v", this.RefHash)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2965,6 +5891,9 @@ func (this *ReceiveQueueMessagesRequest) GoString() string {
 	s = append(s, "MaxNumberOfMessages: "+fmt.Sprintf("%#v", this.MaxNumberOfMessages)+",\n")
 	s = append(s, "WaitTimeSeconds: "+fmt.Sprintf("%#v", this.WaitTimeSeconds)+",\n")
 	s = append(s, "IsPeak: "+fmt.Sprintf("%#v", this.IsPeak)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2983,6 +5912,9 @@ func (this *ReceiveQueueMessagesResponse) GoString() string {
 	s = append(s, "IsPeak: "+fmt.Sprintf("%#v", this.IsPeak)+",\n")
 	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
 	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2996,6 +5928,9 @@ func (this *AckAllQueueMessagesRequest) GoString() string {
 	s = append(s, "ClientID: "+fmt.Sprintf("%#v", this.ClientID)+",\n")
 	s = append(s, "Channel: "+fmt.Sprintf("%#v", this.Channel)+",\n")
 	s = append(s, "WaitTimeSeconds: "+fmt.Sprintf("%#v", this.WaitTimeSeconds)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -3009,6 +5944,9 @@ func (this *AckAllQueueMessagesResponse) GoString() string {
 	s = append(s, "AffectedMessages: "+fmt.Sprintf("%#v", this.AffectedMessages)+",\n")
 	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
 	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -3028,6 +5966,9 @@ func (this *StreamQueueMessagesRequest) GoString() string {
 	if this.ModifiedMessage != nil {
 		s = append(s, "ModifiedMessage: "+fmt.Sprintf("%#v", this.ModifiedMessage)+",\n")
 	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -3044,6 +5985,394 @@ func (this *StreamQueueMessagesResponse) GoString() string {
 	}
 	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
 	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *QueuesUpstreamRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&kubemq.QueuesUpstreamRequest{")
+	s = append(s, "RequestID: "+fmt.Sprintf("%#v", this.RequestID)+",\n")
+	if this.Messages != nil {
+		s = append(s, "Messages: "+fmt.Sprintf("%#v", this.Messages)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *QueuesUpstreamResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&kubemq.QueuesUpstreamResponse{")
+	s = append(s, "RefRequestID: "+fmt.Sprintf("%#v", this.RefRequestID)+",\n")
+	if this.Results != nil {
+		s = append(s, "Results: "+fmt.Sprintf("%#v", this.Results)+",\n")
+	}
+	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
+	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *QueuesDownstreamRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 15)
+	s = append(s, "&kubemq.QueuesDownstreamRequest{")
+	s = append(s, "RequestID: "+fmt.Sprintf("%#v", this.RequestID)+",\n")
+	s = append(s, "ClientID: "+fmt.Sprintf("%#v", this.ClientID)+",\n")
+	s = append(s, "RequestTypeData: "+fmt.Sprintf("%#v", this.RequestTypeData)+",\n")
+	s = append(s, "Channel: "+fmt.Sprintf("%#v", this.Channel)+",\n")
+	s = append(s, "MaxItems: "+fmt.Sprintf("%#v", this.MaxItems)+",\n")
+	s = append(s, "WaitTimeout: "+fmt.Sprintf("%#v", this.WaitTimeout)+",\n")
+	s = append(s, "AutoAck: "+fmt.Sprintf("%#v", this.AutoAck)+",\n")
+	s = append(s, "ReQueueChannel: "+fmt.Sprintf("%#v", this.ReQueueChannel)+",\n")
+	s = append(s, "SequenceRange: "+fmt.Sprintf("%#v", this.SequenceRange)+",\n")
+	s = append(s, "RefTransactionId: "+fmt.Sprintf("%#v", this.RefTransactionId)+",\n")
+	keysForMetadata := make([]string, 0, len(this.Metadata))
+	for k, _ := range this.Metadata {
+		keysForMetadata = append(keysForMetadata, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForMetadata)
+	mapStringForMetadata := "map[string]string{"
+	for _, k := range keysForMetadata {
+		mapStringForMetadata += fmt.Sprintf("%#v: %#v,", k, this.Metadata[k])
+	}
+	mapStringForMetadata += "}"
+	if this.Metadata != nil {
+		s = append(s, "Metadata: "+mapStringForMetadata+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *QueuesDownstreamResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 13)
+	s = append(s, "&kubemq.QueuesDownstreamResponse{")
+	s = append(s, "TransactionId: "+fmt.Sprintf("%#v", this.TransactionId)+",\n")
+	s = append(s, "RefRequestId: "+fmt.Sprintf("%#v", this.RefRequestId)+",\n")
+	s = append(s, "RequestTypeData: "+fmt.Sprintf("%#v", this.RequestTypeData)+",\n")
+	if this.Messages != nil {
+		s = append(s, "Messages: "+fmt.Sprintf("%#v", this.Messages)+",\n")
+	}
+	s = append(s, "ActiveOffsets: "+fmt.Sprintf("%#v", this.ActiveOffsets)+",\n")
+	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
+	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	s = append(s, "TransactionComplete: "+fmt.Sprintf("%#v", this.TransactionComplete)+",\n")
+	keysForMetadata := make([]string, 0, len(this.Metadata))
+	for k, _ := range this.Metadata {
+		keysForMetadata = append(keysForMetadata, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForMetadata)
+	mapStringForMetadata := "map[string]string{"
+	for _, k := range keysForMetadata {
+		mapStringForMetadata += fmt.Sprintf("%#v: %#v,", k, this.Metadata[k])
+	}
+	mapStringForMetadata += "}"
+	if this.Metadata != nil {
+		s = append(s, "Metadata: "+mapStringForMetadata+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *QueueInfo) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 13)
+	s = append(s, "&kubemq.QueueInfo{")
+	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
+	s = append(s, "Messages: "+fmt.Sprintf("%#v", this.Messages)+",\n")
+	s = append(s, "Bytes: "+fmt.Sprintf("%#v", this.Bytes)+",\n")
+	s = append(s, "FirstSequence: "+fmt.Sprintf("%#v", this.FirstSequence)+",\n")
+	s = append(s, "LastSequence: "+fmt.Sprintf("%#v", this.LastSequence)+",\n")
+	s = append(s, "Sent: "+fmt.Sprintf("%#v", this.Sent)+",\n")
+	s = append(s, "Delivered: "+fmt.Sprintf("%#v", this.Delivered)+",\n")
+	s = append(s, "Waiting: "+fmt.Sprintf("%#v", this.Waiting)+",\n")
+	s = append(s, "Subscribers: "+fmt.Sprintf("%#v", this.Subscribers)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *QueuesInfo) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&kubemq.QueuesInfo{")
+	s = append(s, "TotalQueue: "+fmt.Sprintf("%#v", this.TotalQueue)+",\n")
+	s = append(s, "Sent: "+fmt.Sprintf("%#v", this.Sent)+",\n")
+	s = append(s, "Delivered: "+fmt.Sprintf("%#v", this.Delivered)+",\n")
+	s = append(s, "Waiting: "+fmt.Sprintf("%#v", this.Waiting)+",\n")
+	if this.Queues != nil {
+		s = append(s, "Queues: "+fmt.Sprintf("%#v", this.Queues)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *QueuesInfoRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&kubemq.QueuesInfoRequest{")
+	s = append(s, "RequestID: "+fmt.Sprintf("%#v", this.RequestID)+",\n")
+	s = append(s, "QueueName: "+fmt.Sprintf("%#v", this.QueueName)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *QueuesInfoResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&kubemq.QueuesInfoResponse{")
+	s = append(s, "RefRequestID: "+fmt.Sprintf("%#v", this.RefRequestID)+",\n")
+	if this.Info != nil {
+		s = append(s, "Info: "+fmt.Sprintf("%#v", this.Info)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicsUpstreamRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&kubemq.TopicsUpstreamRequest{")
+	s = append(s, "RequestID: "+fmt.Sprintf("%#v", this.RequestID)+",\n")
+	s = append(s, "RequestTypeData: "+fmt.Sprintf("%#v", this.RequestTypeData)+",\n")
+	s = append(s, "ClientID: "+fmt.Sprintf("%#v", this.ClientID)+",\n")
+	if this.Messages != nil {
+		s = append(s, "Messages: "+fmt.Sprintf("%#v", this.Messages)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicsUpstreamResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&kubemq.TopicsUpstreamResponse{")
+	s = append(s, "RefRequestID: "+fmt.Sprintf("%#v", this.RefRequestID)+",\n")
+	s = append(s, "RequestTypeData: "+fmt.Sprintf("%#v", this.RequestTypeData)+",\n")
+	keysForTopicResults := make([]string, 0, len(this.TopicResults))
+	for k, _ := range this.TopicResults {
+		keysForTopicResults = append(keysForTopicResults, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForTopicResults)
+	mapStringForTopicResults := "map[string]*SendTopicResults{"
+	for _, k := range keysForTopicResults {
+		mapStringForTopicResults += fmt.Sprintf("%#v: %#v,", k, this.TopicResults[k])
+	}
+	mapStringForTopicResults += "}"
+	if this.TopicResults != nil {
+		s = append(s, "TopicResults: "+mapStringForTopicResults+",\n")
+	}
+	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
+	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *SendPartitionResults) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&kubemq.SendPartitionResults{")
+	if this.PartitionResults != nil {
+		s = append(s, "PartitionResults: "+fmt.Sprintf("%#v", this.PartitionResults)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *SendTopicResults) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&kubemq.SendTopicResults{")
+	keysForTopicResults := make([]int32, 0, len(this.TopicResults))
+	for k, _ := range this.TopicResults {
+		keysForTopicResults = append(keysForTopicResults, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Int32s(keysForTopicResults)
+	mapStringForTopicResults := "map[int32]*SendPartitionResults{"
+	for _, k := range keysForTopicResults {
+		mapStringForTopicResults += fmt.Sprintf("%#v: %#v,", k, this.TopicResults[k])
+	}
+	mapStringForTopicResults += "}"
+	if this.TopicResults != nil {
+		s = append(s, "TopicResults: "+mapStringForTopicResults+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicRecordHeader) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&kubemq.TopicRecordHeader{")
+	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
+	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicRecord) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 10)
+	s = append(s, "&kubemq.TopicRecord{")
+	if this.Headers != nil {
+		s = append(s, "Headers: "+fmt.Sprintf("%#v", this.Headers)+",\n")
+	}
+	s = append(s, "Topic: "+fmt.Sprintf("%#v", this.Topic)+",\n")
+	s = append(s, "Partition: "+fmt.Sprintf("%#v", this.Partition)+",\n")
+	s = append(s, "Timestamp: "+fmt.Sprintf("%#v", this.Timestamp)+",\n")
+	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
+	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicPartition) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&kubemq.TopicPartition{")
+	s = append(s, "Topic: "+fmt.Sprintf("%#v", this.Topic)+",\n")
+	s = append(s, "Partition: "+fmt.Sprintf("%#v", this.Partition)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicsSubscriptionRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 12)
+	s = append(s, "&kubemq.TopicsSubscriptionRequest{")
+	s = append(s, "SubscriptionRequestType: "+fmt.Sprintf("%#v", this.SubscriptionRequestType)+",\n")
+	s = append(s, "Topics: "+fmt.Sprintf("%#v", this.Topics)+",\n")
+	if this.TopicPartitions != nil {
+		s = append(s, "TopicPartitions: "+fmt.Sprintf("%#v", this.TopicPartitions)+",\n")
+	}
+	s = append(s, "GroupID: "+fmt.Sprintf("%#v", this.GroupID)+",\n")
+	s = append(s, "MemberID: "+fmt.Sprintf("%#v", this.MemberID)+",\n")
+	s = append(s, "IsStatic: "+fmt.Sprintf("%#v", this.IsStatic)+",\n")
+	s = append(s, "SubscriptionStrategyType: "+fmt.Sprintf("%#v", this.SubscriptionStrategyType)+",\n")
+	s = append(s, "SubscriptionOffsetType: "+fmt.Sprintf("%#v", this.SubscriptionOffsetType)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicsSubscriptionEvent) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 12)
+	s = append(s, "&kubemq.TopicsSubscriptionEvent{")
+	s = append(s, "SubscriptionID: "+fmt.Sprintf("%#v", this.SubscriptionID)+",\n")
+	s = append(s, "SubscriptionEventType: "+fmt.Sprintf("%#v", this.SubscriptionEventType)+",\n")
+	s = append(s, "GroupID: "+fmt.Sprintf("%#v", this.GroupID)+",\n")
+	s = append(s, "MemberID: "+fmt.Sprintf("%#v", this.MemberID)+",\n")
+	if this.Assigned != nil {
+		s = append(s, "Assigned: "+fmt.Sprintf("%#v", this.Assigned)+",\n")
+	}
+	s = append(s, "ReSyncAt: "+fmt.Sprintf("%#v", this.ReSyncAt)+",\n")
+	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
+	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicsDownstreamRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 7)
+	s = append(s, "&kubemq.TopicsDownstreamRequest{")
+	s = append(s, "RequestID: "+fmt.Sprintf("%#v", this.RequestID)+",\n")
+	s = append(s, "DownstreamRequestType: "+fmt.Sprintf("%#v", this.DownstreamRequestType)+",\n")
+	s = append(s, "Data: "+fmt.Sprintf("%#v", this.Data)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TopicsDownstreamResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&kubemq.TopicsDownstreamResponse{")
+	s = append(s, "TransactionID: "+fmt.Sprintf("%#v", this.TransactionID)+",\n")
+	s = append(s, "RefRequestID: "+fmt.Sprintf("%#v", this.RefRequestID)+",\n")
+	s = append(s, "Data: "+fmt.Sprintf("%#v", this.Data)+",\n")
+	s = append(s, "IsError: "+fmt.Sprintf("%#v", this.IsError)+",\n")
+	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -3064,8 +6393,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for Kubemq service
-
+// KubemqClient is the client API for Kubemq service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type KubemqClient interface {
 	SendEvent(ctx context.Context, in *Event, opts ...grpc.CallOption) (*Result, error)
 	SendEventsStream(ctx context.Context, opts ...grpc.CallOption) (Kubemq_SendEventsStreamClient, error)
@@ -3079,6 +6409,9 @@ type KubemqClient interface {
 	StreamQueueMessage(ctx context.Context, opts ...grpc.CallOption) (Kubemq_StreamQueueMessageClient, error)
 	AckAllQueueMessages(ctx context.Context, in *AckAllQueueMessagesRequest, opts ...grpc.CallOption) (*AckAllQueueMessagesResponse, error)
 	Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PingResult, error)
+	QueuesDownstream(ctx context.Context, opts ...grpc.CallOption) (Kubemq_QueuesDownstreamClient, error)
+	QueuesUpstream(ctx context.Context, opts ...grpc.CallOption) (Kubemq_QueuesUpstreamClient, error)
+	QueuesInfo(ctx context.Context, in *QueuesInfoRequest, opts ...grpc.CallOption) (*QueuesInfoResponse, error)
 }
 
 type kubemqClient struct {
@@ -3287,8 +6620,78 @@ func (c *kubemqClient) Ping(ctx context.Context, in *Empty, opts ...grpc.CallOpt
 	return out, nil
 }
 
-// Server API for Kubemq service
+func (c *kubemqClient) QueuesDownstream(ctx context.Context, opts ...grpc.CallOption) (Kubemq_QueuesDownstreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Kubemq_serviceDesc.Streams[4], "/kubemq.kubemq/QueuesDownstream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &kubemqQueuesDownstreamClient{stream}
+	return x, nil
+}
 
+type Kubemq_QueuesDownstreamClient interface {
+	Send(*QueuesDownstreamRequest) error
+	Recv() (*QueuesDownstreamResponse, error)
+	grpc.ClientStream
+}
+
+type kubemqQueuesDownstreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *kubemqQueuesDownstreamClient) Send(m *QueuesDownstreamRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *kubemqQueuesDownstreamClient) Recv() (*QueuesDownstreamResponse, error) {
+	m := new(QueuesDownstreamResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *kubemqClient) QueuesUpstream(ctx context.Context, opts ...grpc.CallOption) (Kubemq_QueuesUpstreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Kubemq_serviceDesc.Streams[5], "/kubemq.kubemq/QueuesUpstream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &kubemqQueuesUpstreamClient{stream}
+	return x, nil
+}
+
+type Kubemq_QueuesUpstreamClient interface {
+	Send(*QueuesUpstreamRequest) error
+	Recv() (*QueuesUpstreamResponse, error)
+	grpc.ClientStream
+}
+
+type kubemqQueuesUpstreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *kubemqQueuesUpstreamClient) Send(m *QueuesUpstreamRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *kubemqQueuesUpstreamClient) Recv() (*QueuesUpstreamResponse, error) {
+	m := new(QueuesUpstreamResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *kubemqClient) QueuesInfo(ctx context.Context, in *QueuesInfoRequest, opts ...grpc.CallOption) (*QueuesInfoResponse, error) {
+	out := new(QueuesInfoResponse)
+	err := c.cc.Invoke(ctx, "/kubemq.kubemq/QueuesInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// KubemqServer is the server API for Kubemq service.
 type KubemqServer interface {
 	SendEvent(context.Context, *Event) (*Result, error)
 	SendEventsStream(Kubemq_SendEventsStreamServer) error
@@ -3302,6 +6705,9 @@ type KubemqServer interface {
 	StreamQueueMessage(Kubemq_StreamQueueMessageServer) error
 	AckAllQueueMessages(context.Context, *AckAllQueueMessagesRequest) (*AckAllQueueMessagesResponse, error)
 	Ping(context.Context, *Empty) (*PingResult, error)
+	QueuesDownstream(Kubemq_QueuesDownstreamServer) error
+	QueuesUpstream(Kubemq_QueuesUpstreamServer) error
+	QueuesInfo(context.Context, *QueuesInfoRequest) (*QueuesInfoResponse, error)
 }
 
 func RegisterKubemqServer(s *grpc.Server, srv KubemqServer) {
@@ -3546,6 +6952,76 @@ func _Kubemq_Ping_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Kubemq_QueuesDownstream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(KubemqServer).QueuesDownstream(&kubemqQueuesDownstreamServer{stream})
+}
+
+type Kubemq_QueuesDownstreamServer interface {
+	Send(*QueuesDownstreamResponse) error
+	Recv() (*QueuesDownstreamRequest, error)
+	grpc.ServerStream
+}
+
+type kubemqQueuesDownstreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *kubemqQueuesDownstreamServer) Send(m *QueuesDownstreamResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *kubemqQueuesDownstreamServer) Recv() (*QueuesDownstreamRequest, error) {
+	m := new(QueuesDownstreamRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _Kubemq_QueuesUpstream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(KubemqServer).QueuesUpstream(&kubemqQueuesUpstreamServer{stream})
+}
+
+type Kubemq_QueuesUpstreamServer interface {
+	Send(*QueuesUpstreamResponse) error
+	Recv() (*QueuesUpstreamRequest, error)
+	grpc.ServerStream
+}
+
+type kubemqQueuesUpstreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *kubemqQueuesUpstreamServer) Send(m *QueuesUpstreamResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *kubemqQueuesUpstreamServer) Recv() (*QueuesUpstreamRequest, error) {
+	m := new(QueuesUpstreamRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _Kubemq_QueuesInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueuesInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KubemqServer).QueuesInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kubemq.kubemq/QueuesInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KubemqServer).QueuesInfo(ctx, req.(*QueuesInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Kubemq_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "kubemq.kubemq",
 	HandlerType: (*KubemqServer)(nil),
@@ -3582,6 +7058,10 @@ var _Kubemq_serviceDesc = grpc.ServiceDesc{
 			MethodName: "Ping",
 			Handler:    _Kubemq_Ping_Handler,
 		},
+		{
+			MethodName: "QueuesInfo",
+			Handler:    _Kubemq_QueuesInfo_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -3603,6 +7083,18 @@ var _Kubemq_serviceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "StreamQueueMessage",
 			Handler:       _Kubemq_StreamQueueMessage_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "QueuesDownstream",
+			Handler:       _Kubemq_QueuesDownstream_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "QueuesUpstream",
+			Handler:       _Kubemq_QueuesUpstream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
@@ -3647,6 +7139,9 @@ func (m *PingResult) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintKubemqGo(dAtA, i, uint64(m.ServerUpTimeSeconds))
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -3665,6 +7160,9 @@ func (m *Empty) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -3704,6 +7202,9 @@ func (m *Result) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
 		i += copy(dAtA[i:], m.Error)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -3780,6 +7281,9 @@ func (m *Event) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], v)
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -3849,6 +7353,9 @@ func (m *EventReceive) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], v)
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -3899,6 +7406,9 @@ func (m *Subscribe) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x30
 		i++
 		i = encodeVarintKubemqGo(dAtA, i, uint64(m.EventsStoreTypeValue))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -3997,6 +7507,9 @@ func (m *Request) MarshalTo(dAtA []byte) (int, error) {
 			i = encodeVarintKubemqGo(dAtA, i, uint64(len(v)))
 			i += copy(dAtA[i:], v)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -4100,6 +7613,9 @@ func (m *Response) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], v)
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -4185,6 +7701,26 @@ func (m *QueueMessage) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n2
 	}
+	if len(m.Topic) > 0 {
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Topic)))
+		i += copy(dAtA[i:], m.Topic)
+	}
+	if m.Partition != 0 {
+		dAtA[i] = 0x50
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Partition))
+	}
+	if len(m.PartitionKey) > 0 {
+		dAtA[i] = 0x5a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.PartitionKey)))
+		i += copy(dAtA[i:], m.PartitionKey)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -4220,6 +7756,9 @@ func (m *QueueMessagesBatchRequest) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -4266,6 +7805,9 @@ func (m *QueueMessagesBatchResponse) MarshalTo(dAtA []byte) (int, error) {
 			dAtA[i] = 0
 		}
 		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -4332,6 +7874,9 @@ func (m *QueueMessageAttributes) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintKubemqGo(dAtA, i, uint64(m.DelayedTo))
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -4370,6 +7915,9 @@ func (m *QueueMessagePolicy) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.MaxReceiveQueue)))
 		i += copy(dAtA[i:], m.MaxReceiveQueue)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -4426,6 +7974,32 @@ func (m *SendQueueMessageResult) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
 		i += copy(dAtA[i:], m.Error)
 	}
+	if len(m.RefChannel) > 0 {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefChannel)))
+		i += copy(dAtA[i:], m.RefChannel)
+	}
+	if len(m.RefTopic) > 0 {
+		dAtA[i] = 0x42
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefTopic)))
+		i += copy(dAtA[i:], m.RefTopic)
+	}
+	if m.RefPartition != 0 {
+		dAtA[i] = 0x48
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.RefPartition))
+	}
+	if len(m.RefHash) > 0 {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefHash)))
+		i += copy(dAtA[i:], m.RefHash)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -4481,6 +8055,9 @@ func (m *ReceiveQueueMessagesRequest) MarshalTo(dAtA []byte) (int, error) {
 			dAtA[i] = 0
 		}
 		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -4554,6 +8131,9 @@ func (m *ReceiveQueueMessagesResponse) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
 		i += copy(dAtA[i:], m.Error)
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -4594,6 +8174,9 @@ func (m *AckAllQueueMessagesRequest) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x20
 		i++
 		i = encodeVarintKubemqGo(dAtA, i, uint64(m.WaitTimeSeconds))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -4639,6 +8222,9 @@ func (m *AckAllQueueMessagesResponse) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
 		i += copy(dAtA[i:], m.Error)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -4706,6 +8292,9 @@ func (m *StreamQueueMessagesRequest) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -4761,6 +8350,1107 @@ func (m *StreamQueueMessagesResponse) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
 		i += copy(dAtA[i:], m.Error)
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *QueuesUpstreamRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueuesUpstreamRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RequestID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RequestID)))
+		i += copy(dAtA[i:], m.RequestID)
+	}
+	if len(m.Messages) > 0 {
+		for _, msg := range m.Messages {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *QueuesUpstreamResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueuesUpstreamResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RefRequestID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefRequestID)))
+		i += copy(dAtA[i:], m.RefRequestID)
+	}
+	if len(m.Results) > 0 {
+		for _, msg := range m.Results {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.IsError {
+		dAtA[i] = 0x18
+		i++
+		if m.IsError {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.Error) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
+		i += copy(dAtA[i:], m.Error)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *QueuesDownstreamRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueuesDownstreamRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RequestID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RequestID)))
+		i += copy(dAtA[i:], m.RequestID)
+	}
+	if len(m.ClientID) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.ClientID)))
+		i += copy(dAtA[i:], m.ClientID)
+	}
+	if m.RequestTypeData != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.RequestTypeData))
+	}
+	if len(m.Channel) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Channel)))
+		i += copy(dAtA[i:], m.Channel)
+	}
+	if m.MaxItems != 0 {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.MaxItems))
+	}
+	if m.WaitTimeout != 0 {
+		dAtA[i] = 0x30
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.WaitTimeout))
+	}
+	if m.AutoAck {
+		dAtA[i] = 0x38
+		i++
+		if m.AutoAck {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.ReQueueChannel) > 0 {
+		dAtA[i] = 0x42
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.ReQueueChannel)))
+		i += copy(dAtA[i:], m.ReQueueChannel)
+	}
+	if len(m.SequenceRange) > 0 {
+		dAtA6 := make([]byte, len(m.SequenceRange)*10)
+		var j5 int
+		for _, num1 := range m.SequenceRange {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j5++
+			}
+			dAtA6[j5] = uint8(num)
+			j5++
+		}
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(j5))
+		i += copy(dAtA[i:], dAtA6[:j5])
+	}
+	if len(m.RefTransactionId) > 0 {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefTransactionId)))
+		i += copy(dAtA[i:], m.RefTransactionId)
+	}
+	if len(m.Metadata) > 0 {
+		for k, _ := range m.Metadata {
+			dAtA[i] = 0x62
+			i++
+			v := m.Metadata[k]
+			mapSize := 1 + len(k) + sovKubemqGo(uint64(len(k))) + 1 + len(v) + sovKubemqGo(uint64(len(v)))
+			i = encodeVarintKubemqGo(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(len(k)))
+			i += copy(dAtA[i:], k)
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(len(v)))
+			i += copy(dAtA[i:], v)
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *QueuesDownstreamResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueuesDownstreamResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.TransactionId) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.TransactionId)))
+		i += copy(dAtA[i:], m.TransactionId)
+	}
+	if len(m.RefRequestId) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefRequestId)))
+		i += copy(dAtA[i:], m.RefRequestId)
+	}
+	if m.RequestTypeData != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.RequestTypeData))
+	}
+	if len(m.Messages) > 0 {
+		for _, msg := range m.Messages {
+			dAtA[i] = 0x22
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if len(m.ActiveOffsets) > 0 {
+		dAtA8 := make([]byte, len(m.ActiveOffsets)*10)
+		var j7 int
+		for _, num1 := range m.ActiveOffsets {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j7++
+			}
+			dAtA8[j7] = uint8(num)
+			j7++
+		}
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(j7))
+		i += copy(dAtA[i:], dAtA8[:j7])
+	}
+	if m.IsError {
+		dAtA[i] = 0x30
+		i++
+		if m.IsError {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.Error) > 0 {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
+		i += copy(dAtA[i:], m.Error)
+	}
+	if m.TransactionComplete {
+		dAtA[i] = 0x40
+		i++
+		if m.TransactionComplete {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.Metadata) > 0 {
+		for k, _ := range m.Metadata {
+			dAtA[i] = 0x4a
+			i++
+			v := m.Metadata[k]
+			mapSize := 1 + len(k) + sovKubemqGo(uint64(len(k))) + 1 + len(v) + sovKubemqGo(uint64(len(v)))
+			i = encodeVarintKubemqGo(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(len(k)))
+			i += copy(dAtA[i:], k)
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(len(v)))
+			i += copy(dAtA[i:], v)
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *QueueInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueueInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Name) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Name)))
+		i += copy(dAtA[i:], m.Name)
+	}
+	if m.Messages != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Messages))
+	}
+	if m.Bytes != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Bytes))
+	}
+	if m.FirstSequence != 0 {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.FirstSequence))
+	}
+	if m.LastSequence != 0 {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.LastSequence))
+	}
+	if m.Sent != 0 {
+		dAtA[i] = 0x30
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Sent))
+	}
+	if m.Delivered != 0 {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Delivered))
+	}
+	if m.Waiting != 0 {
+		dAtA[i] = 0x40
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Waiting))
+	}
+	if m.Subscribers != 0 {
+		dAtA[i] = 0x48
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Subscribers))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *QueuesInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueuesInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.TotalQueue != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.TotalQueue))
+	}
+	if m.Sent != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Sent))
+	}
+	if m.Delivered != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Delivered))
+	}
+	if m.Waiting != 0 {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Waiting))
+	}
+	if len(m.Queues) > 0 {
+		for _, msg := range m.Queues {
+			dAtA[i] = 0x2a
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *QueuesInfoRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueuesInfoRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RequestID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RequestID)))
+		i += copy(dAtA[i:], m.RequestID)
+	}
+	if len(m.QueueName) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.QueueName)))
+		i += copy(dAtA[i:], m.QueueName)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *QueuesInfoResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueuesInfoResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RefRequestID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefRequestID)))
+		i += copy(dAtA[i:], m.RefRequestID)
+	}
+	if m.Info != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Info.Size()))
+		n9, err := m.Info.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n9
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicsUpstreamRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicsUpstreamRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RequestID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RequestID)))
+		i += copy(dAtA[i:], m.RequestID)
+	}
+	if m.RequestTypeData != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.RequestTypeData))
+	}
+	if len(m.ClientID) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.ClientID)))
+		i += copy(dAtA[i:], m.ClientID)
+	}
+	if len(m.Messages) > 0 {
+		for _, msg := range m.Messages {
+			dAtA[i] = 0x22
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicsUpstreamResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicsUpstreamResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RefRequestID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefRequestID)))
+		i += copy(dAtA[i:], m.RefRequestID)
+	}
+	if m.RequestTypeData != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.RequestTypeData))
+	}
+	if len(m.TopicResults) > 0 {
+		for k, _ := range m.TopicResults {
+			dAtA[i] = 0x1a
+			i++
+			v := m.TopicResults[k]
+			msgSize := 0
+			if v != nil {
+				msgSize = v.Size()
+				msgSize += 1 + sovKubemqGo(uint64(msgSize))
+			}
+			mapSize := 1 + len(k) + sovKubemqGo(uint64(len(k))) + msgSize
+			i = encodeVarintKubemqGo(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(len(k)))
+			i += copy(dAtA[i:], k)
+			if v != nil {
+				dAtA[i] = 0x12
+				i++
+				i = encodeVarintKubemqGo(dAtA, i, uint64(v.Size()))
+				n10, err := v.MarshalTo(dAtA[i:])
+				if err != nil {
+					return 0, err
+				}
+				i += n10
+			}
+		}
+	}
+	if m.IsError {
+		dAtA[i] = 0x20
+		i++
+		if m.IsError {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.Error) > 0 {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
+		i += copy(dAtA[i:], m.Error)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *SendPartitionResults) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SendPartitionResults) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.PartitionResults) > 0 {
+		for _, msg := range m.PartitionResults {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *SendTopicResults) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SendTopicResults) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.TopicResults) > 0 {
+		for k, _ := range m.TopicResults {
+			dAtA[i] = 0xa
+			i++
+			v := m.TopicResults[k]
+			msgSize := 0
+			if v != nil {
+				msgSize = v.Size()
+				msgSize += 1 + sovKubemqGo(uint64(msgSize))
+			}
+			mapSize := 1 + sovKubemqGo(uint64(k)) + msgSize
+			i = encodeVarintKubemqGo(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0x8
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(k))
+			if v != nil {
+				dAtA[i] = 0x12
+				i++
+				i = encodeVarintKubemqGo(dAtA, i, uint64(v.Size()))
+				n11, err := v.MarshalTo(dAtA[i:])
+				if err != nil {
+					return 0, err
+				}
+				i += n11
+			}
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicRecordHeader) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicRecordHeader) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Key) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Key)))
+		i += copy(dAtA[i:], m.Key)
+	}
+	if len(m.Value) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Value)))
+		i += copy(dAtA[i:], m.Value)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicRecord) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicRecord) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Headers) > 0 {
+		for _, msg := range m.Headers {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if len(m.Topic) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Topic)))
+		i += copy(dAtA[i:], m.Topic)
+	}
+	if m.Partition != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Partition))
+	}
+	if m.Timestamp != 0 {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Timestamp))
+	}
+	if len(m.Key) > 0 {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Key)))
+		i += copy(dAtA[i:], m.Key)
+	}
+	if len(m.Value) > 0 {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Value)))
+		i += copy(dAtA[i:], m.Value)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicPartition) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicPartition) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Topic) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Topic)))
+		i += copy(dAtA[i:], m.Topic)
+	}
+	if m.Partition != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.Partition))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicsSubscriptionRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicsSubscriptionRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.SubscriptionRequestType != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.SubscriptionRequestType))
+	}
+	if len(m.Topics) > 0 {
+		for _, s := range m.Topics {
+			dAtA[i] = 0x12
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if len(m.TopicPartitions) > 0 {
+		for _, msg := range m.TopicPartitions {
+			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if len(m.GroupID) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.GroupID)))
+		i += copy(dAtA[i:], m.GroupID)
+	}
+	if len(m.MemberID) > 0 {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.MemberID)))
+		i += copy(dAtA[i:], m.MemberID)
+	}
+	if m.IsStatic {
+		dAtA[i] = 0x30
+		i++
+		if m.IsStatic {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.SubscriptionStrategyType != 0 {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.SubscriptionStrategyType))
+	}
+	if m.SubscriptionOffsetType != 0 {
+		dAtA[i] = 0x40
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.SubscriptionOffsetType))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicsSubscriptionEvent) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicsSubscriptionEvent) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubscriptionID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.SubscriptionID)))
+		i += copy(dAtA[i:], m.SubscriptionID)
+	}
+	if m.SubscriptionEventType != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.SubscriptionEventType))
+	}
+	if len(m.GroupID) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.GroupID)))
+		i += copy(dAtA[i:], m.GroupID)
+	}
+	if len(m.MemberID) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.MemberID)))
+		i += copy(dAtA[i:], m.MemberID)
+	}
+	if len(m.Assigned) > 0 {
+		for _, msg := range m.Assigned {
+			dAtA[i] = 0x2a
+			i++
+			i = encodeVarintKubemqGo(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.ReSyncAt != 0 {
+		dAtA[i] = 0x30
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.ReSyncAt))
+	}
+	if m.IsError {
+		dAtA[i] = 0x78
+		i++
+		if m.IsError {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.Error) > 0 {
+		dAtA[i] = 0x82
+		i++
+		dAtA[i] = 0x1
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
+		i += copy(dAtA[i:], m.Error)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicsDownstreamRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicsDownstreamRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.RequestID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RequestID)))
+		i += copy(dAtA[i:], m.RequestID)
+	}
+	if m.DownstreamRequestType != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(m.DownstreamRequestType))
+	}
+	if len(m.Data) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Data)))
+		i += copy(dAtA[i:], m.Data)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *TopicsDownstreamResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TopicsDownstreamResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.TransactionID) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.TransactionID)))
+		i += copy(dAtA[i:], m.TransactionID)
+	}
+	if len(m.RefRequestID) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.RefRequestID)))
+		i += copy(dAtA[i:], m.RefRequestID)
+	}
+	if len(m.Data) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Data)))
+		i += copy(dAtA[i:], m.Data)
+	}
+	if m.IsError {
+		dAtA[i] = 0x78
+		i++
+		if m.IsError {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.Error) > 0 {
+		dAtA[i] = 0x82
+		i++
+		dAtA[i] = 0x1
+		i++
+		i = encodeVarintKubemqGo(dAtA, i, uint64(len(m.Error)))
+		i += copy(dAtA[i:], m.Error)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -4786,6 +9476,7 @@ func NewPopulatedPingResult(r randyKubemqGo, easy bool) *PingResult {
 		this.ServerUpTimeSeconds *= -1
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 5)
 	}
 	return this
 }
@@ -4793,6 +9484,7 @@ func NewPopulatedPingResult(r randyKubemqGo, easy bool) *PingResult {
 func NewPopulatedEmpty(r randyKubemqGo, easy bool) *Empty {
 	this := &Empty{}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 1)
 	}
 	return this
 }
@@ -4803,6 +9495,7 @@ func NewPopulatedResult(r randyKubemqGo, easy bool) *Result {
 	this.Sent = bool(bool(r.Intn(2) == 0))
 	this.Error = string(randStringKubemqGo(r))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 4)
 	}
 	return this
 }
@@ -4827,6 +9520,7 @@ func NewPopulatedEvent(r randyKubemqGo, easy bool) *Event {
 		}
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 8)
 	}
 	return this
 }
@@ -4854,6 +9548,7 @@ func NewPopulatedEventReceive(r randyKubemqGo, easy bool) *EventReceive {
 		}
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 8)
 	}
 	return this
 }
@@ -4870,6 +9565,7 @@ func NewPopulatedSubscribe(r randyKubemqGo, easy bool) *Subscribe {
 		this.EventsStoreTypeValue *= -1
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 7)
 	}
 	return this
 }
@@ -4909,6 +9605,7 @@ func NewPopulatedRequest(r randyKubemqGo, easy bool) *Request {
 		}
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 13)
 	}
 	return this
 }
@@ -4944,6 +9641,7 @@ func NewPopulatedResponse(r randyKubemqGo, easy bool) *Response {
 		}
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 12)
 	}
 	return this
 }
@@ -4972,7 +9670,14 @@ func NewPopulatedQueueMessage(r randyKubemqGo, easy bool) *QueueMessage {
 	if r.Intn(10) != 0 {
 		this.Policy = NewPopulatedQueueMessagePolicy(r, easy)
 	}
+	this.Topic = string(randStringKubemqGo(r))
+	this.Partition = int32(r.Int31())
+	if r.Intn(2) == 0 {
+		this.Partition *= -1
+	}
+	this.PartitionKey = string(randStringKubemqGo(r))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 12)
 	}
 	return this
 }
@@ -4988,6 +9693,7 @@ func NewPopulatedQueueMessagesBatchRequest(r randyKubemqGo, easy bool) *QueueMes
 		}
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 3)
 	}
 	return this
 }
@@ -5004,6 +9710,7 @@ func NewPopulatedQueueMessagesBatchResponse(r randyKubemqGo, easy bool) *QueueMe
 	}
 	this.HaveErrors = bool(bool(r.Intn(2) == 0))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 4)
 	}
 	return this
 }
@@ -5031,6 +9738,7 @@ func NewPopulatedQueueMessageAttributes(r randyKubemqGo, easy bool) *QueueMessag
 		this.DelayedTo *= -1
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 9)
 	}
 	return this
 }
@@ -5051,6 +9759,7 @@ func NewPopulatedQueueMessagePolicy(r randyKubemqGo, easy bool) *QueueMessagePol
 	}
 	this.MaxReceiveQueue = string(randStringKubemqGo(r))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 5)
 	}
 	return this
 }
@@ -5072,7 +9781,15 @@ func NewPopulatedSendQueueMessageResult(r randyKubemqGo, easy bool) *SendQueueMe
 	}
 	this.IsError = bool(bool(r.Intn(2) == 0))
 	this.Error = string(randStringKubemqGo(r))
+	this.RefChannel = string(randStringKubemqGo(r))
+	this.RefTopic = string(randStringKubemqGo(r))
+	this.RefPartition = int32(r.Int31())
+	if r.Intn(2) == 0 {
+		this.RefPartition *= -1
+	}
+	this.RefHash = string(randStringKubemqGo(r))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 11)
 	}
 	return this
 }
@@ -5092,6 +9809,7 @@ func NewPopulatedReceiveQueueMessagesRequest(r randyKubemqGo, easy bool) *Receiv
 	}
 	this.IsPeak = bool(bool(r.Intn(2) == 0))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 7)
 	}
 	return this
 }
@@ -5118,6 +9836,7 @@ func NewPopulatedReceiveQueueMessagesResponse(r randyKubemqGo, easy bool) *Recei
 	this.IsError = bool(bool(r.Intn(2) == 0))
 	this.Error = string(randStringKubemqGo(r))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 8)
 	}
 	return this
 }
@@ -5132,6 +9851,7 @@ func NewPopulatedAckAllQueueMessagesRequest(r randyKubemqGo, easy bool) *AckAllQ
 		this.WaitTimeSeconds *= -1
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 5)
 	}
 	return this
 }
@@ -5143,6 +9863,7 @@ func NewPopulatedAckAllQueueMessagesResponse(r randyKubemqGo, easy bool) *AckAll
 	this.IsError = bool(bool(r.Intn(2) == 0))
 	this.Error = string(randStringKubemqGo(r))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 5)
 	}
 	return this
 }
@@ -5166,6 +9887,7 @@ func NewPopulatedStreamQueueMessagesRequest(r randyKubemqGo, easy bool) *StreamQ
 		this.ModifiedMessage = NewPopulatedQueueMessage(r, easy)
 	}
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 9)
 	}
 	return this
 }
@@ -5180,6 +9902,411 @@ func NewPopulatedStreamQueueMessagesResponse(r randyKubemqGo, easy bool) *Stream
 	this.IsError = bool(bool(r.Intn(2) == 0))
 	this.Error = string(randStringKubemqGo(r))
 	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 6)
+	}
+	return this
+}
+
+func NewPopulatedQueuesUpstreamRequest(r randyKubemqGo, easy bool) *QueuesUpstreamRequest {
+	this := &QueuesUpstreamRequest{}
+	this.RequestID = string(randStringKubemqGo(r))
+	if r.Intn(10) != 0 {
+		v16 := r.Intn(5)
+		this.Messages = make([]*QueueMessage, v16)
+		for i := 0; i < v16; i++ {
+			this.Messages[i] = NewPopulatedQueueMessage(r, easy)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedQueuesUpstreamResponse(r randyKubemqGo, easy bool) *QueuesUpstreamResponse {
+	this := &QueuesUpstreamResponse{}
+	this.RefRequestID = string(randStringKubemqGo(r))
+	if r.Intn(10) != 0 {
+		v17 := r.Intn(5)
+		this.Results = make([]*SendQueueMessageResult, v17)
+		for i := 0; i < v17; i++ {
+			this.Results[i] = NewPopulatedSendQueueMessageResult(r, easy)
+		}
+	}
+	this.IsError = bool(bool(r.Intn(2) == 0))
+	this.Error = string(randStringKubemqGo(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 5)
+	}
+	return this
+}
+
+func NewPopulatedQueuesDownstreamRequest(r randyKubemqGo, easy bool) *QueuesDownstreamRequest {
+	this := &QueuesDownstreamRequest{}
+	this.RequestID = string(randStringKubemqGo(r))
+	this.ClientID = string(randStringKubemqGo(r))
+	this.RequestTypeData = QueuesDownstreamRequestType([]int32{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}[r.Intn(12)])
+	this.Channel = string(randStringKubemqGo(r))
+	this.MaxItems = int32(r.Int31())
+	if r.Intn(2) == 0 {
+		this.MaxItems *= -1
+	}
+	this.WaitTimeout = int32(r.Int31())
+	if r.Intn(2) == 0 {
+		this.WaitTimeout *= -1
+	}
+	this.AutoAck = bool(bool(r.Intn(2) == 0))
+	this.ReQueueChannel = string(randStringKubemqGo(r))
+	v18 := r.Intn(10)
+	this.SequenceRange = make([]int64, v18)
+	for i := 0; i < v18; i++ {
+		this.SequenceRange[i] = int64(r.Int63())
+		if r.Intn(2) == 0 {
+			this.SequenceRange[i] *= -1
+		}
+	}
+	this.RefTransactionId = string(randStringKubemqGo(r))
+	if r.Intn(10) != 0 {
+		v19 := r.Intn(10)
+		this.Metadata = make(map[string]string)
+		for i := 0; i < v19; i++ {
+			this.Metadata[randStringKubemqGo(r)] = randStringKubemqGo(r)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 13)
+	}
+	return this
+}
+
+func NewPopulatedQueuesDownstreamResponse(r randyKubemqGo, easy bool) *QueuesDownstreamResponse {
+	this := &QueuesDownstreamResponse{}
+	this.TransactionId = string(randStringKubemqGo(r))
+	this.RefRequestId = string(randStringKubemqGo(r))
+	this.RequestTypeData = QueuesDownstreamRequestType([]int32{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}[r.Intn(12)])
+	if r.Intn(10) != 0 {
+		v20 := r.Intn(5)
+		this.Messages = make([]*QueueMessage, v20)
+		for i := 0; i < v20; i++ {
+			this.Messages[i] = NewPopulatedQueueMessage(r, easy)
+		}
+	}
+	v21 := r.Intn(10)
+	this.ActiveOffsets = make([]int64, v21)
+	for i := 0; i < v21; i++ {
+		this.ActiveOffsets[i] = int64(r.Int63())
+		if r.Intn(2) == 0 {
+			this.ActiveOffsets[i] *= -1
+		}
+	}
+	this.IsError = bool(bool(r.Intn(2) == 0))
+	this.Error = string(randStringKubemqGo(r))
+	this.TransactionComplete = bool(bool(r.Intn(2) == 0))
+	if r.Intn(10) != 0 {
+		v22 := r.Intn(10)
+		this.Metadata = make(map[string]string)
+		for i := 0; i < v22; i++ {
+			this.Metadata[randStringKubemqGo(r)] = randStringKubemqGo(r)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 10)
+	}
+	return this
+}
+
+func NewPopulatedQueueInfo(r randyKubemqGo, easy bool) *QueueInfo {
+	this := &QueueInfo{}
+	this.Name = string(randStringKubemqGo(r))
+	this.Messages = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Messages *= -1
+	}
+	this.Bytes = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Bytes *= -1
+	}
+	this.FirstSequence = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.FirstSequence *= -1
+	}
+	this.LastSequence = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.LastSequence *= -1
+	}
+	this.Sent = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Sent *= -1
+	}
+	this.Delivered = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Delivered *= -1
+	}
+	this.Waiting = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Waiting *= -1
+	}
+	this.Subscribers = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Subscribers *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 10)
+	}
+	return this
+}
+
+func NewPopulatedQueuesInfo(r randyKubemqGo, easy bool) *QueuesInfo {
+	this := &QueuesInfo{}
+	this.TotalQueue = int32(r.Int31())
+	if r.Intn(2) == 0 {
+		this.TotalQueue *= -1
+	}
+	this.Sent = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Sent *= -1
+	}
+	this.Delivered = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Delivered *= -1
+	}
+	this.Waiting = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Waiting *= -1
+	}
+	if r.Intn(10) != 0 {
+		v23 := r.Intn(5)
+		this.Queues = make([]*QueueInfo, v23)
+		for i := 0; i < v23; i++ {
+			this.Queues[i] = NewPopulatedQueueInfo(r, easy)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 6)
+	}
+	return this
+}
+
+func NewPopulatedQueuesInfoRequest(r randyKubemqGo, easy bool) *QueuesInfoRequest {
+	this := &QueuesInfoRequest{}
+	this.RequestID = string(randStringKubemqGo(r))
+	this.QueueName = string(randStringKubemqGo(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedQueuesInfoResponse(r randyKubemqGo, easy bool) *QueuesInfoResponse {
+	this := &QueuesInfoResponse{}
+	this.RefRequestID = string(randStringKubemqGo(r))
+	if r.Intn(10) != 0 {
+		this.Info = NewPopulatedQueuesInfo(r, easy)
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedTopicsUpstreamRequest(r randyKubemqGo, easy bool) *TopicsUpstreamRequest {
+	this := &TopicsUpstreamRequest{}
+	this.RequestID = string(randStringKubemqGo(r))
+	this.RequestTypeData = TopicsUpstreamRequestType([]int32{0, 1, 2, 3}[r.Intn(4)])
+	this.ClientID = string(randStringKubemqGo(r))
+	if r.Intn(10) != 0 {
+		v24 := r.Intn(5)
+		this.Messages = make([]*QueueMessage, v24)
+		for i := 0; i < v24; i++ {
+			this.Messages[i] = NewPopulatedQueueMessage(r, easy)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 5)
+	}
+	return this
+}
+
+func NewPopulatedTopicsUpstreamResponse(r randyKubemqGo, easy bool) *TopicsUpstreamResponse {
+	this := &TopicsUpstreamResponse{}
+	this.RefRequestID = string(randStringKubemqGo(r))
+	this.RequestTypeData = TopicsUpstreamRequestType([]int32{0, 1, 2, 3}[r.Intn(4)])
+	if r.Intn(10) != 0 {
+		v25 := r.Intn(10)
+		this.TopicResults = make(map[string]*SendTopicResults)
+		for i := 0; i < v25; i++ {
+			this.TopicResults[randStringKubemqGo(r)] = NewPopulatedSendTopicResults(r, easy)
+		}
+	}
+	this.IsError = bool(bool(r.Intn(2) == 0))
+	this.Error = string(randStringKubemqGo(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 6)
+	}
+	return this
+}
+
+func NewPopulatedSendPartitionResults(r randyKubemqGo, easy bool) *SendPartitionResults {
+	this := &SendPartitionResults{}
+	if r.Intn(10) != 0 {
+		v26 := r.Intn(5)
+		this.PartitionResults = make([]*SendQueueMessageResult, v26)
+		for i := 0; i < v26; i++ {
+			this.PartitionResults[i] = NewPopulatedSendQueueMessageResult(r, easy)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 2)
+	}
+	return this
+}
+
+func NewPopulatedSendTopicResults(r randyKubemqGo, easy bool) *SendTopicResults {
+	this := &SendTopicResults{}
+	if r.Intn(10) != 0 {
+		v27 := r.Intn(10)
+		this.TopicResults = make(map[int32]*SendPartitionResults)
+		for i := 0; i < v27; i++ {
+			this.TopicResults[int32(r.Int31())] = NewPopulatedSendPartitionResults(r, easy)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 2)
+	}
+	return this
+}
+
+func NewPopulatedTopicRecordHeader(r randyKubemqGo, easy bool) *TopicRecordHeader {
+	this := &TopicRecordHeader{}
+	this.Key = string(randStringKubemqGo(r))
+	v28 := r.Intn(100)
+	this.Value = make([]byte, v28)
+	for i := 0; i < v28; i++ {
+		this.Value[i] = byte(r.Intn(256))
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedTopicRecord(r randyKubemqGo, easy bool) *TopicRecord {
+	this := &TopicRecord{}
+	if r.Intn(10) != 0 {
+		v29 := r.Intn(5)
+		this.Headers = make([]*TopicRecordHeader, v29)
+		for i := 0; i < v29; i++ {
+			this.Headers[i] = NewPopulatedTopicRecordHeader(r, easy)
+		}
+	}
+	this.Topic = string(randStringKubemqGo(r))
+	this.Partition = uint32(r.Uint32())
+	this.Timestamp = uint64(uint64(r.Uint32()))
+	v30 := r.Intn(100)
+	this.Key = make([]byte, v30)
+	for i := 0; i < v30; i++ {
+		this.Key[i] = byte(r.Intn(256))
+	}
+	v31 := r.Intn(100)
+	this.Value = make([]byte, v31)
+	for i := 0; i < v31; i++ {
+		this.Value[i] = byte(r.Intn(256))
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 7)
+	}
+	return this
+}
+
+func NewPopulatedTopicPartition(r randyKubemqGo, easy bool) *TopicPartition {
+	this := &TopicPartition{}
+	this.Topic = string(randStringKubemqGo(r))
+	this.Partition = uint32(r.Uint32())
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedTopicsSubscriptionRequest(r randyKubemqGo, easy bool) *TopicsSubscriptionRequest {
+	this := &TopicsSubscriptionRequest{}
+	this.SubscriptionRequestType = TopicsSubscriptionRequestType([]int32{0, 1, 2}[r.Intn(3)])
+	v32 := r.Intn(10)
+	this.Topics = make([]string, v32)
+	for i := 0; i < v32; i++ {
+		this.Topics[i] = string(randStringKubemqGo(r))
+	}
+	if r.Intn(10) != 0 {
+		v33 := r.Intn(5)
+		this.TopicPartitions = make([]*TopicPartition, v33)
+		for i := 0; i < v33; i++ {
+			this.TopicPartitions[i] = NewPopulatedTopicPartition(r, easy)
+		}
+	}
+	this.GroupID = string(randStringKubemqGo(r))
+	this.MemberID = string(randStringKubemqGo(r))
+	this.IsStatic = bool(bool(r.Intn(2) == 0))
+	this.SubscriptionStrategyType = TopicsSubscriptionStrategyType([]int32{0, 1, 2, 3}[r.Intn(4)])
+	this.SubscriptionOffsetType = TopicsSubscriptionOffsetType([]int32{0, 1, 2, 3, 4, 5, 6}[r.Intn(7)])
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 9)
+	}
+	return this
+}
+
+func NewPopulatedTopicsSubscriptionEvent(r randyKubemqGo, easy bool) *TopicsSubscriptionEvent {
+	this := &TopicsSubscriptionEvent{}
+	this.SubscriptionID = string(randStringKubemqGo(r))
+	this.SubscriptionEventType = TopicsSubscriptionEventType([]int32{0, 1, 2, 3, 4, 5, 6}[r.Intn(7)])
+	this.GroupID = string(randStringKubemqGo(r))
+	this.MemberID = string(randStringKubemqGo(r))
+	if r.Intn(10) != 0 {
+		v34 := r.Intn(5)
+		this.Assigned = make([]*TopicPartition, v34)
+		for i := 0; i < v34; i++ {
+			this.Assigned[i] = NewPopulatedTopicPartition(r, easy)
+		}
+	}
+	this.ReSyncAt = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.ReSyncAt *= -1
+	}
+	this.IsError = bool(bool(r.Intn(2) == 0))
+	this.Error = string(randStringKubemqGo(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 17)
+	}
+	return this
+}
+
+func NewPopulatedTopicsDownstreamRequest(r randyKubemqGo, easy bool) *TopicsDownstreamRequest {
+	this := &TopicsDownstreamRequest{}
+	this.RequestID = string(randStringKubemqGo(r))
+	this.DownstreamRequestType = TopicsDownstreamRequestType([]int32{0, 1, 2}[r.Intn(3)])
+	v35 := r.Intn(100)
+	this.Data = make([]byte, v35)
+	for i := 0; i < v35; i++ {
+		this.Data[i] = byte(r.Intn(256))
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 4)
+	}
+	return this
+}
+
+func NewPopulatedTopicsDownstreamResponse(r randyKubemqGo, easy bool) *TopicsDownstreamResponse {
+	this := &TopicsDownstreamResponse{}
+	this.TransactionID = string(randStringKubemqGo(r))
+	this.RefRequestID = string(randStringKubemqGo(r))
+	v36 := r.Intn(100)
+	this.Data = make([]byte, v36)
+	for i := 0; i < v36; i++ {
+		this.Data[i] = byte(r.Intn(256))
+	}
+	this.IsError = bool(bool(r.Intn(2) == 0))
+	this.Error = string(randStringKubemqGo(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedKubemqGo(r, 17)
 	}
 	return this
 }
@@ -5203,9 +10330,9 @@ func randUTF8RuneKubemqGo(r randyKubemqGo) rune {
 	return rune(ru + 61)
 }
 func randStringKubemqGo(r randyKubemqGo) string {
-	v16 := r.Intn(100)
-	tmps := make([]rune, v16)
-	for i := 0; i < v16; i++ {
+	v37 := r.Intn(100)
+	tmps := make([]rune, v37)
+	for i := 0; i < v37; i++ {
 		tmps[i] = randUTF8RuneKubemqGo(r)
 	}
 	return string(tmps)
@@ -5227,11 +10354,11 @@ func randFieldKubemqGo(dAtA []byte, r randyKubemqGo, fieldNumber int, wire int) 
 	switch wire {
 	case 0:
 		dAtA = encodeVarintPopulateKubemqGo(dAtA, uint64(key))
-		v17 := r.Int63()
+		v38 := r.Int63()
 		if r.Intn(2) == 0 {
-			v17 *= -1
+			v38 *= -1
 		}
-		dAtA = encodeVarintPopulateKubemqGo(dAtA, uint64(v17))
+		dAtA = encodeVarintPopulateKubemqGo(dAtA, uint64(v38))
 	case 1:
 		dAtA = encodeVarintPopulateKubemqGo(dAtA, uint64(key))
 		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
@@ -5257,6 +10384,9 @@ func encodeVarintPopulateKubemqGo(dAtA []byte, v uint64) []byte {
 	return dAtA
 }
 func (m *PingResult) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Host)
@@ -5273,16 +10403,28 @@ func (m *PingResult) Size() (n int) {
 	if m.ServerUpTimeSeconds != 0 {
 		n += 1 + sovKubemqGo(uint64(m.ServerUpTimeSeconds))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Empty) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Result) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.EventID)
@@ -5296,10 +10438,16 @@ func (m *Result) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovKubemqGo(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Event) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.EventID)
@@ -5333,10 +10481,16 @@ func (m *Event) Size() (n int) {
 			n += mapEntrySize + 1 + sovKubemqGo(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *EventReceive) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.EventID)
@@ -5369,10 +10523,16 @@ func (m *EventReceive) Size() (n int) {
 			n += mapEntrySize + 1 + sovKubemqGo(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Subscribe) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.SubscribeTypeData != 0 {
@@ -5396,10 +10556,16 @@ func (m *Subscribe) Size() (n int) {
 	if m.EventsStoreTypeValue != 0 {
 		n += 1 + sovKubemqGo(uint64(m.EventsStoreTypeValue))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Request) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.RequestID)
@@ -5451,10 +10617,16 @@ func (m *Request) Size() (n int) {
 			n += mapEntrySize + 1 + sovKubemqGo(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Response) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.ClientID)
@@ -5502,10 +10674,16 @@ func (m *Response) Size() (n int) {
 			n += mapEntrySize + 1 + sovKubemqGo(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *QueueMessage) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.MessageID)
@@ -5544,10 +10722,27 @@ func (m *QueueMessage) Size() (n int) {
 		l = m.Policy.Size()
 		n += 1 + l + sovKubemqGo(uint64(l))
 	}
+	l = len(m.Topic)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.Partition != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Partition))
+	}
+	l = len(m.PartitionKey)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *QueueMessagesBatchRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.BatchID)
@@ -5560,10 +10755,16 @@ func (m *QueueMessagesBatchRequest) Size() (n int) {
 			n += 1 + l + sovKubemqGo(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *QueueMessagesBatchResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.BatchID)
@@ -5579,10 +10780,16 @@ func (m *QueueMessagesBatchResponse) Size() (n int) {
 	if m.HaveErrors {
 		n += 2
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *QueueMessageAttributes) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Timestamp != 0 {
@@ -5611,10 +10818,16 @@ func (m *QueueMessageAttributes) Size() (n int) {
 	if m.DelayedTo != 0 {
 		n += 1 + sovKubemqGo(uint64(m.DelayedTo))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *QueueMessagePolicy) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ExpirationSeconds != 0 {
@@ -5630,10 +10843,16 @@ func (m *QueueMessagePolicy) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovKubemqGo(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *SendQueueMessageResult) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.MessageID)
@@ -5656,10 +10875,31 @@ func (m *SendQueueMessageResult) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovKubemqGo(uint64(l))
 	}
+	l = len(m.RefChannel)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.RefTopic)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.RefPartition != 0 {
+		n += 1 + sovKubemqGo(uint64(m.RefPartition))
+	}
+	l = len(m.RefHash)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ReceiveQueueMessagesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.RequestID)
@@ -5683,10 +10923,16 @@ func (m *ReceiveQueueMessagesRequest) Size() (n int) {
 	if m.IsPeak {
 		n += 2
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ReceiveQueueMessagesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.RequestID)
@@ -5715,10 +10961,16 @@ func (m *ReceiveQueueMessagesResponse) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovKubemqGo(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *AckAllQueueMessagesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.RequestID)
@@ -5736,10 +10988,16 @@ func (m *AckAllQueueMessagesRequest) Size() (n int) {
 	if m.WaitTimeSeconds != 0 {
 		n += 1 + sovKubemqGo(uint64(m.WaitTimeSeconds))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *AckAllQueueMessagesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.RequestID)
@@ -5756,10 +11014,16 @@ func (m *AckAllQueueMessagesResponse) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovKubemqGo(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *StreamQueueMessagesRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.RequestID)
@@ -5790,10 +11054,16 @@ func (m *StreamQueueMessagesRequest) Size() (n int) {
 		l = m.ModifiedMessage.Size()
 		n += 1 + l + sovKubemqGo(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *StreamQueueMessagesResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.RequestID)
@@ -5813,6 +11083,610 @@ func (m *StreamQueueMessagesResponse) Size() (n int) {
 	l = len(m.Error)
 	if l > 0 {
 		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *QueuesUpstreamRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if len(m.Messages) > 0 {
+		for _, e := range m.Messages {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *QueuesUpstreamResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RefRequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if len(m.Results) > 0 {
+		for _, e := range m.Results {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	if m.IsError {
+		n += 2
+	}
+	l = len(m.Error)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *QueuesDownstreamRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.ClientID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.RequestTypeData != 0 {
+		n += 1 + sovKubemqGo(uint64(m.RequestTypeData))
+	}
+	l = len(m.Channel)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.MaxItems != 0 {
+		n += 1 + sovKubemqGo(uint64(m.MaxItems))
+	}
+	if m.WaitTimeout != 0 {
+		n += 1 + sovKubemqGo(uint64(m.WaitTimeout))
+	}
+	if m.AutoAck {
+		n += 2
+	}
+	l = len(m.ReQueueChannel)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if len(m.SequenceRange) > 0 {
+		l = 0
+		for _, e := range m.SequenceRange {
+			l += sovKubemqGo(uint64(e))
+		}
+		n += 1 + sovKubemqGo(uint64(l)) + l
+	}
+	l = len(m.RefTransactionId)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if len(m.Metadata) > 0 {
+		for k, v := range m.Metadata {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovKubemqGo(uint64(len(k))) + 1 + len(v) + sovKubemqGo(uint64(len(v)))
+			n += mapEntrySize + 1 + sovKubemqGo(uint64(mapEntrySize))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *QueuesDownstreamResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.TransactionId)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.RefRequestId)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.RequestTypeData != 0 {
+		n += 1 + sovKubemqGo(uint64(m.RequestTypeData))
+	}
+	if len(m.Messages) > 0 {
+		for _, e := range m.Messages {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	if len(m.ActiveOffsets) > 0 {
+		l = 0
+		for _, e := range m.ActiveOffsets {
+			l += sovKubemqGo(uint64(e))
+		}
+		n += 1 + sovKubemqGo(uint64(l)) + l
+	}
+	if m.IsError {
+		n += 2
+	}
+	l = len(m.Error)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.TransactionComplete {
+		n += 2
+	}
+	if len(m.Metadata) > 0 {
+		for k, v := range m.Metadata {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovKubemqGo(uint64(len(k))) + 1 + len(v) + sovKubemqGo(uint64(len(v)))
+			n += mapEntrySize + 1 + sovKubemqGo(uint64(mapEntrySize))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *QueueInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.Messages != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Messages))
+	}
+	if m.Bytes != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Bytes))
+	}
+	if m.FirstSequence != 0 {
+		n += 1 + sovKubemqGo(uint64(m.FirstSequence))
+	}
+	if m.LastSequence != 0 {
+		n += 1 + sovKubemqGo(uint64(m.LastSequence))
+	}
+	if m.Sent != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Sent))
+	}
+	if m.Delivered != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Delivered))
+	}
+	if m.Waiting != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Waiting))
+	}
+	if m.Subscribers != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Subscribers))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *QueuesInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.TotalQueue != 0 {
+		n += 1 + sovKubemqGo(uint64(m.TotalQueue))
+	}
+	if m.Sent != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Sent))
+	}
+	if m.Delivered != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Delivered))
+	}
+	if m.Waiting != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Waiting))
+	}
+	if len(m.Queues) > 0 {
+		for _, e := range m.Queues {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *QueuesInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.QueueName)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *QueuesInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RefRequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.Info != nil {
+		l = m.Info.Size()
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicsUpstreamRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.RequestTypeData != 0 {
+		n += 1 + sovKubemqGo(uint64(m.RequestTypeData))
+	}
+	l = len(m.ClientID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if len(m.Messages) > 0 {
+		for _, e := range m.Messages {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicsUpstreamResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RefRequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.RequestTypeData != 0 {
+		n += 1 + sovKubemqGo(uint64(m.RequestTypeData))
+	}
+	if len(m.TopicResults) > 0 {
+		for k, v := range m.TopicResults {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovKubemqGo(uint64(l))
+			}
+			mapEntrySize := 1 + len(k) + sovKubemqGo(uint64(len(k))) + l
+			n += mapEntrySize + 1 + sovKubemqGo(uint64(mapEntrySize))
+		}
+	}
+	if m.IsError {
+		n += 2
+	}
+	l = len(m.Error)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *SendPartitionResults) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.PartitionResults) > 0 {
+		for _, e := range m.PartitionResults {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *SendTopicResults) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.TopicResults) > 0 {
+		for k, v := range m.TopicResults {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovKubemqGo(uint64(l))
+			}
+			mapEntrySize := 1 + sovKubemqGo(uint64(k)) + l
+			n += mapEntrySize + 1 + sovKubemqGo(uint64(mapEntrySize))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicRecordHeader) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Key)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.Value)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicRecord) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Headers) > 0 {
+		for _, e := range m.Headers {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	l = len(m.Topic)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.Partition != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Partition))
+	}
+	if m.Timestamp != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Timestamp))
+	}
+	l = len(m.Key)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.Value)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicPartition) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Topic)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.Partition != 0 {
+		n += 1 + sovKubemqGo(uint64(m.Partition))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicsSubscriptionRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubscriptionRequestType != 0 {
+		n += 1 + sovKubemqGo(uint64(m.SubscriptionRequestType))
+	}
+	if len(m.Topics) > 0 {
+		for _, s := range m.Topics {
+			l = len(s)
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	if len(m.TopicPartitions) > 0 {
+		for _, e := range m.TopicPartitions {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	l = len(m.GroupID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.MemberID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.IsStatic {
+		n += 2
+	}
+	if m.SubscriptionStrategyType != 0 {
+		n += 1 + sovKubemqGo(uint64(m.SubscriptionStrategyType))
+	}
+	if m.SubscriptionOffsetType != 0 {
+		n += 1 + sovKubemqGo(uint64(m.SubscriptionOffsetType))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicsSubscriptionEvent) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.SubscriptionID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.SubscriptionEventType != 0 {
+		n += 1 + sovKubemqGo(uint64(m.SubscriptionEventType))
+	}
+	l = len(m.GroupID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.MemberID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if len(m.Assigned) > 0 {
+		for _, e := range m.Assigned {
+			l = e.Size()
+			n += 1 + l + sovKubemqGo(uint64(l))
+		}
+	}
+	if m.ReSyncAt != 0 {
+		n += 1 + sovKubemqGo(uint64(m.ReSyncAt))
+	}
+	if m.IsError {
+		n += 2
+	}
+	l = len(m.Error)
+	if l > 0 {
+		n += 2 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicsDownstreamRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.RequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.DownstreamRequestType != 0 {
+		n += 1 + sovKubemqGo(uint64(m.DownstreamRequestType))
+	}
+	l = len(m.Data)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TopicsDownstreamResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.TransactionID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.RefRequestID)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	l = len(m.Data)
+	if l > 0 {
+		n += 1 + l + sovKubemqGo(uint64(l))
+	}
+	if m.IsError {
+		n += 2
+	}
+	l = len(m.Error)
+	if l > 0 {
+		n += 2 + l + sovKubemqGo(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -5839,6 +11713,7 @@ func (this *PingResult) String() string {
 		`Version:` + fmt.Sprintf("%v", this.Version) + `,`,
 		`ServerStartTime:` + fmt.Sprintf("%v", this.ServerStartTime) + `,`,
 		`ServerUpTimeSeconds:` + fmt.Sprintf("%v", this.ServerUpTimeSeconds) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -5848,6 +11723,7 @@ func (this *Empty) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&Empty{`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -5860,6 +11736,7 @@ func (this *Result) String() string {
 		`EventID:` + fmt.Sprintf("%v", this.EventID) + `,`,
 		`Sent:` + fmt.Sprintf("%v", this.Sent) + `,`,
 		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -5886,6 +11763,7 @@ func (this *Event) String() string {
 		`Body:` + fmt.Sprintf("%v", this.Body) + `,`,
 		`Store:` + fmt.Sprintf("%v", this.Store) + `,`,
 		`Tags:` + mapStringForTags + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -5912,6 +11790,7 @@ func (this *EventReceive) String() string {
 		`Timestamp:` + fmt.Sprintf("%v", this.Timestamp) + `,`,
 		`Sequence:` + fmt.Sprintf("%v", this.Sequence) + `,`,
 		`Tags:` + mapStringForTags + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -5927,6 +11806,7 @@ func (this *Subscribe) String() string {
 		`Group:` + fmt.Sprintf("%v", this.Group) + `,`,
 		`EventsStoreTypeData:` + fmt.Sprintf("%v", this.EventsStoreTypeData) + `,`,
 		`EventsStoreTypeValue:` + fmt.Sprintf("%v", this.EventsStoreTypeValue) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -5958,6 +11838,7 @@ func (this *Request) String() string {
 		`CacheTTL:` + fmt.Sprintf("%v", this.CacheTTL) + `,`,
 		`Span:` + fmt.Sprintf("%v", this.Span) + `,`,
 		`Tags:` + mapStringForTags + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -5988,6 +11869,7 @@ func (this *Response) String() string {
 		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
 		`Span:` + fmt.Sprintf("%v", this.Span) + `,`,
 		`Tags:` + mapStringForTags + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6015,6 +11897,10 @@ func (this *QueueMessage) String() string {
 		`Tags:` + mapStringForTags + `,`,
 		`Attributes:` + strings.Replace(fmt.Sprintf("%v", this.Attributes), "QueueMessageAttributes", "QueueMessageAttributes", 1) + `,`,
 		`Policy:` + strings.Replace(fmt.Sprintf("%v", this.Policy), "QueueMessagePolicy", "QueueMessagePolicy", 1) + `,`,
+		`Topic:` + fmt.Sprintf("%v", this.Topic) + `,`,
+		`Partition:` + fmt.Sprintf("%v", this.Partition) + `,`,
+		`PartitionKey:` + fmt.Sprintf("%v", this.PartitionKey) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6026,6 +11912,7 @@ func (this *QueueMessagesBatchRequest) String() string {
 	s := strings.Join([]string{`&QueueMessagesBatchRequest{`,
 		`BatchID:` + fmt.Sprintf("%v", this.BatchID) + `,`,
 		`Messages:` + strings.Replace(fmt.Sprintf("%v", this.Messages), "QueueMessage", "QueueMessage", 1) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6038,6 +11925,7 @@ func (this *QueueMessagesBatchResponse) String() string {
 		`BatchID:` + fmt.Sprintf("%v", this.BatchID) + `,`,
 		`Results:` + strings.Replace(fmt.Sprintf("%v", this.Results), "SendQueueMessageResult", "SendQueueMessageResult", 1) + `,`,
 		`HaveErrors:` + fmt.Sprintf("%v", this.HaveErrors) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6055,6 +11943,7 @@ func (this *QueueMessageAttributes) String() string {
 		`ReRoutedFromQueue:` + fmt.Sprintf("%v", this.ReRoutedFromQueue) + `,`,
 		`ExpirationAt:` + fmt.Sprintf("%v", this.ExpirationAt) + `,`,
 		`DelayedTo:` + fmt.Sprintf("%v", this.DelayedTo) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6068,6 +11957,7 @@ func (this *QueueMessagePolicy) String() string {
 		`DelaySeconds:` + fmt.Sprintf("%v", this.DelaySeconds) + `,`,
 		`MaxReceiveCount:` + fmt.Sprintf("%v", this.MaxReceiveCount) + `,`,
 		`MaxReceiveQueue:` + fmt.Sprintf("%v", this.MaxReceiveQueue) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6083,6 +11973,11 @@ func (this *SendQueueMessageResult) String() string {
 		`DelayedTo:` + fmt.Sprintf("%v", this.DelayedTo) + `,`,
 		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
 		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`RefChannel:` + fmt.Sprintf("%v", this.RefChannel) + `,`,
+		`RefTopic:` + fmt.Sprintf("%v", this.RefTopic) + `,`,
+		`RefPartition:` + fmt.Sprintf("%v", this.RefPartition) + `,`,
+		`RefHash:` + fmt.Sprintf("%v", this.RefHash) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6098,6 +11993,7 @@ func (this *ReceiveQueueMessagesRequest) String() string {
 		`MaxNumberOfMessages:` + fmt.Sprintf("%v", this.MaxNumberOfMessages) + `,`,
 		`WaitTimeSeconds:` + fmt.Sprintf("%v", this.WaitTimeSeconds) + `,`,
 		`IsPeak:` + fmt.Sprintf("%v", this.IsPeak) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6114,6 +12010,7 @@ func (this *ReceiveQueueMessagesResponse) String() string {
 		`IsPeak:` + fmt.Sprintf("%v", this.IsPeak) + `,`,
 		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
 		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6127,6 +12024,7 @@ func (this *AckAllQueueMessagesRequest) String() string {
 		`ClientID:` + fmt.Sprintf("%v", this.ClientID) + `,`,
 		`Channel:` + fmt.Sprintf("%v", this.Channel) + `,`,
 		`WaitTimeSeconds:` + fmt.Sprintf("%v", this.WaitTimeSeconds) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6140,6 +12038,7 @@ func (this *AckAllQueueMessagesResponse) String() string {
 		`AffectedMessages:` + fmt.Sprintf("%v", this.AffectedMessages) + `,`,
 		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
 		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6157,6 +12056,7 @@ func (this *StreamQueueMessagesRequest) String() string {
 		`WaitTimeSeconds:` + fmt.Sprintf("%v", this.WaitTimeSeconds) + `,`,
 		`RefSequence:` + fmt.Sprintf("%v", this.RefSequence) + `,`,
 		`ModifiedMessage:` + strings.Replace(fmt.Sprintf("%v", this.ModifiedMessage), "QueueMessage", "QueueMessage", 1) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6171,6 +12071,326 @@ func (this *StreamQueueMessagesResponse) String() string {
 		`Message:` + strings.Replace(fmt.Sprintf("%v", this.Message), "QueueMessage", "QueueMessage", 1) + `,`,
 		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
 		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *QueuesUpstreamRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&QueuesUpstreamRequest{`,
+		`RequestID:` + fmt.Sprintf("%v", this.RequestID) + `,`,
+		`Messages:` + strings.Replace(fmt.Sprintf("%v", this.Messages), "QueueMessage", "QueueMessage", 1) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *QueuesUpstreamResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&QueuesUpstreamResponse{`,
+		`RefRequestID:` + fmt.Sprintf("%v", this.RefRequestID) + `,`,
+		`Results:` + strings.Replace(fmt.Sprintf("%v", this.Results), "SendQueueMessageResult", "SendQueueMessageResult", 1) + `,`,
+		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
+		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *QueuesDownstreamRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	keysForMetadata := make([]string, 0, len(this.Metadata))
+	for k, _ := range this.Metadata {
+		keysForMetadata = append(keysForMetadata, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForMetadata)
+	mapStringForMetadata := "map[string]string{"
+	for _, k := range keysForMetadata {
+		mapStringForMetadata += fmt.Sprintf("%v: %v,", k, this.Metadata[k])
+	}
+	mapStringForMetadata += "}"
+	s := strings.Join([]string{`&QueuesDownstreamRequest{`,
+		`RequestID:` + fmt.Sprintf("%v", this.RequestID) + `,`,
+		`ClientID:` + fmt.Sprintf("%v", this.ClientID) + `,`,
+		`RequestTypeData:` + fmt.Sprintf("%v", this.RequestTypeData) + `,`,
+		`Channel:` + fmt.Sprintf("%v", this.Channel) + `,`,
+		`MaxItems:` + fmt.Sprintf("%v", this.MaxItems) + `,`,
+		`WaitTimeout:` + fmt.Sprintf("%v", this.WaitTimeout) + `,`,
+		`AutoAck:` + fmt.Sprintf("%v", this.AutoAck) + `,`,
+		`ReQueueChannel:` + fmt.Sprintf("%v", this.ReQueueChannel) + `,`,
+		`SequenceRange:` + fmt.Sprintf("%v", this.SequenceRange) + `,`,
+		`RefTransactionId:` + fmt.Sprintf("%v", this.RefTransactionId) + `,`,
+		`Metadata:` + mapStringForMetadata + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *QueuesDownstreamResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	keysForMetadata := make([]string, 0, len(this.Metadata))
+	for k, _ := range this.Metadata {
+		keysForMetadata = append(keysForMetadata, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForMetadata)
+	mapStringForMetadata := "map[string]string{"
+	for _, k := range keysForMetadata {
+		mapStringForMetadata += fmt.Sprintf("%v: %v,", k, this.Metadata[k])
+	}
+	mapStringForMetadata += "}"
+	s := strings.Join([]string{`&QueuesDownstreamResponse{`,
+		`TransactionId:` + fmt.Sprintf("%v", this.TransactionId) + `,`,
+		`RefRequestId:` + fmt.Sprintf("%v", this.RefRequestId) + `,`,
+		`RequestTypeData:` + fmt.Sprintf("%v", this.RequestTypeData) + `,`,
+		`Messages:` + strings.Replace(fmt.Sprintf("%v", this.Messages), "QueueMessage", "QueueMessage", 1) + `,`,
+		`ActiveOffsets:` + fmt.Sprintf("%v", this.ActiveOffsets) + `,`,
+		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
+		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`TransactionComplete:` + fmt.Sprintf("%v", this.TransactionComplete) + `,`,
+		`Metadata:` + mapStringForMetadata + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *QueueInfo) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&QueueInfo{`,
+		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
+		`Messages:` + fmt.Sprintf("%v", this.Messages) + `,`,
+		`Bytes:` + fmt.Sprintf("%v", this.Bytes) + `,`,
+		`FirstSequence:` + fmt.Sprintf("%v", this.FirstSequence) + `,`,
+		`LastSequence:` + fmt.Sprintf("%v", this.LastSequence) + `,`,
+		`Sent:` + fmt.Sprintf("%v", this.Sent) + `,`,
+		`Delivered:` + fmt.Sprintf("%v", this.Delivered) + `,`,
+		`Waiting:` + fmt.Sprintf("%v", this.Waiting) + `,`,
+		`Subscribers:` + fmt.Sprintf("%v", this.Subscribers) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *QueuesInfo) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&QueuesInfo{`,
+		`TotalQueue:` + fmt.Sprintf("%v", this.TotalQueue) + `,`,
+		`Sent:` + fmt.Sprintf("%v", this.Sent) + `,`,
+		`Delivered:` + fmt.Sprintf("%v", this.Delivered) + `,`,
+		`Waiting:` + fmt.Sprintf("%v", this.Waiting) + `,`,
+		`Queues:` + strings.Replace(fmt.Sprintf("%v", this.Queues), "QueueInfo", "QueueInfo", 1) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *QueuesInfoRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&QueuesInfoRequest{`,
+		`RequestID:` + fmt.Sprintf("%v", this.RequestID) + `,`,
+		`QueueName:` + fmt.Sprintf("%v", this.QueueName) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *QueuesInfoResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&QueuesInfoResponse{`,
+		`RefRequestID:` + fmt.Sprintf("%v", this.RefRequestID) + `,`,
+		`Info:` + strings.Replace(fmt.Sprintf("%v", this.Info), "QueuesInfo", "QueuesInfo", 1) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicsUpstreamRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TopicsUpstreamRequest{`,
+		`RequestID:` + fmt.Sprintf("%v", this.RequestID) + `,`,
+		`RequestTypeData:` + fmt.Sprintf("%v", this.RequestTypeData) + `,`,
+		`ClientID:` + fmt.Sprintf("%v", this.ClientID) + `,`,
+		`Messages:` + strings.Replace(fmt.Sprintf("%v", this.Messages), "QueueMessage", "QueueMessage", 1) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicsUpstreamResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	keysForTopicResults := make([]string, 0, len(this.TopicResults))
+	for k, _ := range this.TopicResults {
+		keysForTopicResults = append(keysForTopicResults, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForTopicResults)
+	mapStringForTopicResults := "map[string]*SendTopicResults{"
+	for _, k := range keysForTopicResults {
+		mapStringForTopicResults += fmt.Sprintf("%v: %v,", k, this.TopicResults[k])
+	}
+	mapStringForTopicResults += "}"
+	s := strings.Join([]string{`&TopicsUpstreamResponse{`,
+		`RefRequestID:` + fmt.Sprintf("%v", this.RefRequestID) + `,`,
+		`RequestTypeData:` + fmt.Sprintf("%v", this.RequestTypeData) + `,`,
+		`TopicResults:` + mapStringForTopicResults + `,`,
+		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
+		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *SendPartitionResults) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&SendPartitionResults{`,
+		`PartitionResults:` + strings.Replace(fmt.Sprintf("%v", this.PartitionResults), "SendQueueMessageResult", "SendQueueMessageResult", 1) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *SendTopicResults) String() string {
+	if this == nil {
+		return "nil"
+	}
+	keysForTopicResults := make([]int32, 0, len(this.TopicResults))
+	for k, _ := range this.TopicResults {
+		keysForTopicResults = append(keysForTopicResults, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Int32s(keysForTopicResults)
+	mapStringForTopicResults := "map[int32]*SendPartitionResults{"
+	for _, k := range keysForTopicResults {
+		mapStringForTopicResults += fmt.Sprintf("%v: %v,", k, this.TopicResults[k])
+	}
+	mapStringForTopicResults += "}"
+	s := strings.Join([]string{`&SendTopicResults{`,
+		`TopicResults:` + mapStringForTopicResults + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicRecordHeader) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TopicRecordHeader{`,
+		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
+		`Value:` + fmt.Sprintf("%v", this.Value) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicRecord) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TopicRecord{`,
+		`Headers:` + strings.Replace(fmt.Sprintf("%v", this.Headers), "TopicRecordHeader", "TopicRecordHeader", 1) + `,`,
+		`Topic:` + fmt.Sprintf("%v", this.Topic) + `,`,
+		`Partition:` + fmt.Sprintf("%v", this.Partition) + `,`,
+		`Timestamp:` + fmt.Sprintf("%v", this.Timestamp) + `,`,
+		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
+		`Value:` + fmt.Sprintf("%v", this.Value) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicPartition) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TopicPartition{`,
+		`Topic:` + fmt.Sprintf("%v", this.Topic) + `,`,
+		`Partition:` + fmt.Sprintf("%v", this.Partition) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicsSubscriptionRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TopicsSubscriptionRequest{`,
+		`SubscriptionRequestType:` + fmt.Sprintf("%v", this.SubscriptionRequestType) + `,`,
+		`Topics:` + fmt.Sprintf("%v", this.Topics) + `,`,
+		`TopicPartitions:` + strings.Replace(fmt.Sprintf("%v", this.TopicPartitions), "TopicPartition", "TopicPartition", 1) + `,`,
+		`GroupID:` + fmt.Sprintf("%v", this.GroupID) + `,`,
+		`MemberID:` + fmt.Sprintf("%v", this.MemberID) + `,`,
+		`IsStatic:` + fmt.Sprintf("%v", this.IsStatic) + `,`,
+		`SubscriptionStrategyType:` + fmt.Sprintf("%v", this.SubscriptionStrategyType) + `,`,
+		`SubscriptionOffsetType:` + fmt.Sprintf("%v", this.SubscriptionOffsetType) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicsSubscriptionEvent) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TopicsSubscriptionEvent{`,
+		`SubscriptionID:` + fmt.Sprintf("%v", this.SubscriptionID) + `,`,
+		`SubscriptionEventType:` + fmt.Sprintf("%v", this.SubscriptionEventType) + `,`,
+		`GroupID:` + fmt.Sprintf("%v", this.GroupID) + `,`,
+		`MemberID:` + fmt.Sprintf("%v", this.MemberID) + `,`,
+		`Assigned:` + strings.Replace(fmt.Sprintf("%v", this.Assigned), "TopicPartition", "TopicPartition", 1) + `,`,
+		`ReSyncAt:` + fmt.Sprintf("%v", this.ReSyncAt) + `,`,
+		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
+		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicsDownstreamRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TopicsDownstreamRequest{`,
+		`RequestID:` + fmt.Sprintf("%v", this.RequestID) + `,`,
+		`DownstreamRequestType:` + fmt.Sprintf("%v", this.DownstreamRequestType) + `,`,
+		`Data:` + fmt.Sprintf("%v", this.Data) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TopicsDownstreamResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TopicsDownstreamResponse{`,
+		`TransactionID:` + fmt.Sprintf("%v", this.TransactionID) + `,`,
+		`RefRequestID:` + fmt.Sprintf("%v", this.RefRequestID) + `,`,
+		`Data:` + fmt.Sprintf("%v", this.Data) + `,`,
+		`IsError:` + fmt.Sprintf("%v", this.IsError) + `,`,
+		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
+		`XXX_unrecognized:` + fmt.Sprintf("%v", this.XXX_unrecognized) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -6198,7 +12418,7 @@ func (m *PingResult) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -6226,7 +12446,7 @@ func (m *PingResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6236,6 +12456,9 @@ func (m *PingResult) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6255,7 +12478,7 @@ func (m *PingResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6265,6 +12488,9 @@ func (m *PingResult) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6284,7 +12510,7 @@ func (m *PingResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ServerStartTime |= (int64(b) & 0x7F) << shift
+				m.ServerStartTime |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6303,7 +12529,7 @@ func (m *PingResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ServerUpTimeSeconds |= (int64(b) & 0x7F) << shift
+				m.ServerUpTimeSeconds |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6317,9 +12543,13 @@ func (m *PingResult) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -6344,7 +12574,7 @@ func (m *Empty) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -6367,9 +12597,13 @@ func (m *Empty) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -6394,7 +12628,7 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -6422,7 +12656,7 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6432,6 +12666,9 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6451,7 +12688,7 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6471,7 +12708,7 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6481,6 +12718,9 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6495,9 +12735,13 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -6522,7 +12766,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -6550,7 +12794,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6560,6 +12804,9 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6579,7 +12826,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6589,6 +12836,9 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6608,7 +12858,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6618,6 +12868,9 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6637,7 +12890,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6647,6 +12900,9 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6666,7 +12922,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6675,6 +12931,9 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6697,7 +12956,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6717,7 +12976,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6726,6 +12985,9 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6746,7 +13008,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -6763,7 +13025,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -6773,6 +13035,9 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -6789,7 +13054,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
+						stringLenmapvalue |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -6799,6 +13064,9 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapvalue > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -6830,9 +13098,13 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -6857,7 +13129,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -6885,7 +13157,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6895,6 +13167,9 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6914,7 +13189,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6924,6 +13199,9 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6943,7 +13221,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6953,6 +13231,9 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -6972,7 +13253,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -6981,6 +13262,9 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7003,7 +13287,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Timestamp |= (int64(b) & 0x7F) << shift
+				m.Timestamp |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7022,7 +13306,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Sequence |= (uint64(b) & 0x7F) << shift
+				m.Sequence |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7041,7 +13325,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7050,6 +13334,9 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7070,7 +13357,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -7087,7 +13374,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -7097,6 +13384,9 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -7113,7 +13403,7 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
+						stringLenmapvalue |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -7123,6 +13413,9 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapvalue > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -7154,9 +13447,13 @@ func (m *EventReceive) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -7181,7 +13478,7 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -7209,7 +13506,7 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.SubscribeTypeData |= (Subscribe_SubscribeType(b) & 0x7F) << shift
+				m.SubscribeTypeData |= Subscribe_SubscribeType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7228,7 +13525,7 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7238,6 +13535,9 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7257,7 +13557,7 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7267,6 +13567,9 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7286,7 +13589,7 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7296,6 +13599,9 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7315,7 +13621,7 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.EventsStoreTypeData |= (Subscribe_EventsStoreType(b) & 0x7F) << shift
+				m.EventsStoreTypeData |= Subscribe_EventsStoreType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7334,7 +13640,7 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.EventsStoreTypeValue |= (int64(b) & 0x7F) << shift
+				m.EventsStoreTypeValue |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7348,9 +13654,13 @@ func (m *Subscribe) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -7375,7 +13685,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -7403,7 +13713,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7413,6 +13723,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7432,7 +13745,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.RequestTypeData |= (Request_RequestType(b) & 0x7F) << shift
+				m.RequestTypeData |= Request_RequestType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7451,7 +13764,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7461,6 +13774,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7480,7 +13796,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7490,6 +13806,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7509,7 +13828,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7519,6 +13838,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7538,7 +13860,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7547,6 +13869,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7569,7 +13894,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7579,6 +13904,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7598,7 +13926,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Timeout |= (int32(b) & 0x7F) << shift
+				m.Timeout |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7617,7 +13945,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7627,6 +13955,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7646,7 +13977,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CacheTTL |= (int32(b) & 0x7F) << shift
+				m.CacheTTL |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7665,7 +13996,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7674,6 +14005,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7696,7 +14030,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7705,6 +14039,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7725,7 +14062,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -7742,7 +14079,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -7752,6 +14089,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -7768,7 +14108,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
+						stringLenmapvalue |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -7778,6 +14118,9 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapvalue > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -7809,9 +14152,13 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -7836,7 +14183,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -7864,7 +14211,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7874,6 +14221,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7893,7 +14243,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7903,6 +14253,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7922,7 +14275,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7932,6 +14285,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7951,7 +14307,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7961,6 +14317,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -7980,7 +14339,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -7989,6 +14348,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8011,7 +14373,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8031,7 +14393,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Timestamp |= (int64(b) & 0x7F) << shift
+				m.Timestamp |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8050,7 +14412,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8070,7 +14432,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8080,6 +14442,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8099,7 +14464,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8108,6 +14473,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8130,7 +14498,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8139,6 +14507,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8159,7 +14530,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -8176,7 +14547,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -8186,6 +14557,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -8202,7 +14576,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
+						stringLenmapvalue |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -8212,6 +14586,9 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapvalue > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -8243,9 +14620,13 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -8270,7 +14651,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -8298,7 +14679,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8308,6 +14689,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8327,7 +14711,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8337,6 +14721,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8356,7 +14743,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8366,6 +14753,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8385,7 +14775,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8395,6 +14785,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8414,7 +14807,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8423,6 +14816,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8445,7 +14841,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8454,6 +14850,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8474,7 +14873,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -8491,7 +14890,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -8501,6 +14900,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -8517,7 +14919,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
+						stringLenmapvalue |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -8527,6 +14929,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthKubemqGo
 					}
 					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
 					if postStringIndexmapvalue > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -8563,7 +14968,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8572,6 +14977,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8596,7 +15004,7 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8605,6 +15013,9 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8615,6 +15026,89 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Topic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Topic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Partition", wireType)
+			}
+			m.Partition = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Partition |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PartitionKey", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PartitionKey = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipKubemqGo(dAtA[iNdEx:])
@@ -8624,9 +15118,13 @@ func (m *QueueMessage) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -8651,7 +15149,7 @@ func (m *QueueMessagesBatchRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -8679,7 +15177,7 @@ func (m *QueueMessagesBatchRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8689,6 +15187,9 @@ func (m *QueueMessagesBatchRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8708,7 +15209,7 @@ func (m *QueueMessagesBatchRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8717,6 +15218,9 @@ func (m *QueueMessagesBatchRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8734,9 +15238,13 @@ func (m *QueueMessagesBatchRequest) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -8761,7 +15269,7 @@ func (m *QueueMessagesBatchResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -8789,7 +15297,7 @@ func (m *QueueMessagesBatchResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8799,6 +15307,9 @@ func (m *QueueMessagesBatchResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8818,7 +15329,7 @@ func (m *QueueMessagesBatchResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8827,6 +15338,9 @@ func (m *QueueMessagesBatchResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8849,7 +15363,7 @@ func (m *QueueMessagesBatchResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8864,9 +15378,13 @@ func (m *QueueMessagesBatchResponse) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -8891,7 +15409,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -8919,7 +15437,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Timestamp |= (int64(b) & 0x7F) << shift
+				m.Timestamp |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8938,7 +15456,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Sequence |= (uint64(b) & 0x7F) << shift
+				m.Sequence |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8957,7 +15475,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -8967,6 +15485,9 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -8986,7 +15507,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ReceiveCount |= (int32(b) & 0x7F) << shift
+				m.ReceiveCount |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9005,7 +15526,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9025,7 +15546,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9035,6 +15556,9 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9054,7 +15578,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ExpirationAt |= (int64(b) & 0x7F) << shift
+				m.ExpirationAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9073,7 +15597,7 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DelayedTo |= (int64(b) & 0x7F) << shift
+				m.DelayedTo |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9087,9 +15611,13 @@ func (m *QueueMessageAttributes) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -9114,7 +15642,7 @@ func (m *QueueMessagePolicy) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -9142,7 +15670,7 @@ func (m *QueueMessagePolicy) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ExpirationSeconds |= (int32(b) & 0x7F) << shift
+				m.ExpirationSeconds |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9161,7 +15689,7 @@ func (m *QueueMessagePolicy) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DelaySeconds |= (int32(b) & 0x7F) << shift
+				m.DelaySeconds |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9180,7 +15708,7 @@ func (m *QueueMessagePolicy) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MaxReceiveCount |= (int32(b) & 0x7F) << shift
+				m.MaxReceiveCount |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9199,7 +15727,7 @@ func (m *QueueMessagePolicy) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9209,6 +15737,9 @@ func (m *QueueMessagePolicy) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9223,9 +15754,13 @@ func (m *QueueMessagePolicy) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -9250,7 +15785,7 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -9278,7 +15813,7 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9288,6 +15823,9 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9307,7 +15845,7 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.SentAt |= (int64(b) & 0x7F) << shift
+				m.SentAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9326,7 +15864,7 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ExpirationAt |= (int64(b) & 0x7F) << shift
+				m.ExpirationAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9345,7 +15883,7 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DelayedTo |= (int64(b) & 0x7F) << shift
+				m.DelayedTo |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9364,7 +15902,7 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9384,7 +15922,7 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9394,10 +15932,128 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
 			m.Error = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefChannel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefChannel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefTopic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefTopic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefPartition", wireType)
+			}
+			m.RefPartition = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RefPartition |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefHash", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefHash = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -9408,9 +16064,13 @@ func (m *SendQueueMessageResult) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -9435,7 +16095,7 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -9463,7 +16123,7 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9473,6 +16133,9 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9492,7 +16155,7 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9502,6 +16165,9 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9521,7 +16187,7 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9531,6 +16197,9 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9550,7 +16219,7 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MaxNumberOfMessages |= (int32(b) & 0x7F) << shift
+				m.MaxNumberOfMessages |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9569,7 +16238,7 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.WaitTimeSeconds |= (int32(b) & 0x7F) << shift
+				m.WaitTimeSeconds |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9588,7 +16257,7 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9603,9 +16272,13 @@ func (m *ReceiveQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -9630,7 +16303,7 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -9658,7 +16331,7 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9668,6 +16341,9 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9687,7 +16363,7 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9696,6 +16372,9 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9718,7 +16397,7 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MessagesReceived |= (int32(b) & 0x7F) << shift
+				m.MessagesReceived |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9737,7 +16416,7 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MessagesExpired |= (int32(b) & 0x7F) << shift
+				m.MessagesExpired |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9756,7 +16435,7 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9776,7 +16455,7 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9796,7 +16475,7 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9806,6 +16485,9 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9820,9 +16502,13 @@ func (m *ReceiveQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -9847,7 +16533,7 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -9875,7 +16561,7 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9885,6 +16571,9 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9904,7 +16593,7 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9914,6 +16603,9 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9933,7 +16625,7 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9943,6 +16635,9 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -9962,7 +16657,7 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.WaitTimeSeconds |= (int32(b) & 0x7F) << shift
+				m.WaitTimeSeconds |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9976,9 +16671,13 @@ func (m *AckAllQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -10003,7 +16702,7 @@ func (m *AckAllQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -10031,7 +16730,7 @@ func (m *AckAllQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10041,6 +16740,9 @@ func (m *AckAllQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10060,7 +16762,7 @@ func (m *AckAllQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AffectedMessages |= (uint64(b) & 0x7F) << shift
+				m.AffectedMessages |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10079,7 +16781,7 @@ func (m *AckAllQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10099,7 +16801,7 @@ func (m *AckAllQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10109,6 +16811,9 @@ func (m *AckAllQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10123,9 +16828,13 @@ func (m *AckAllQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -10150,7 +16859,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -10178,7 +16887,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10188,6 +16897,9 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10207,7 +16919,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10217,6 +16929,9 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10236,7 +16951,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.StreamRequestTypeData |= (StreamRequestType(b) & 0x7F) << shift
+				m.StreamRequestTypeData |= StreamRequestType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10255,7 +16970,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10265,6 +16980,9 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10284,7 +17002,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.VisibilitySeconds |= (int32(b) & 0x7F) << shift
+				m.VisibilitySeconds |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10303,7 +17021,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.WaitTimeSeconds |= (int32(b) & 0x7F) << shift
+				m.WaitTimeSeconds |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10322,7 +17040,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.RefSequence |= (uint64(b) & 0x7F) << shift
+				m.RefSequence |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10341,7 +17059,7 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10350,6 +17068,9 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10369,9 +17090,13 @@ func (m *StreamQueueMessagesRequest) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -10396,7 +17121,7 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -10424,7 +17149,7 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10434,6 +17159,9 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10453,7 +17181,7 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.StreamRequestTypeData |= (StreamRequestType(b) & 0x7F) << shift
+				m.StreamRequestTypeData |= StreamRequestType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10472,7 +17200,7 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10481,6 +17209,9 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10505,7 +17236,7 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10525,7 +17256,7 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -10535,6 +17266,9 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthKubemqGo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -10549,9 +17283,3930 @@ func (m *StreamQueueMessagesResponse) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthKubemqGo
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueuesUpstreamRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueuesUpstreamRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueuesUpstreamRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Messages", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Messages = append(m.Messages, &QueueMessage{})
+			if err := m.Messages[len(m.Messages)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueuesUpstreamResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueuesUpstreamResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueuesUpstreamResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefRequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefRequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Results", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Results = append(m.Results, &SendQueueMessageResult{})
+			if err := m.Results[len(m.Results)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsError", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsError = bool(v != 0)
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Error", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Error = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueuesDownstreamRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueuesDownstreamRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueuesDownstreamRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClientID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClientID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestTypeData", wireType)
+			}
+			m.RequestTypeData = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RequestTypeData |= QueuesDownstreamRequestType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Channel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Channel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxItems", wireType)
+			}
+			m.MaxItems = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MaxItems |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field WaitTimeout", wireType)
+			}
+			m.WaitTimeout = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.WaitTimeout |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AutoAck", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.AutoAck = bool(v != 0)
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReQueueChannel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ReQueueChannel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowKubemqGo
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= int64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.SequenceRange = append(m.SequenceRange, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowKubemqGo
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthKubemqGo
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthKubemqGo
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.SequenceRange) == 0 {
+					m.SequenceRange = make([]int64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= int64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.SequenceRange = append(m.SequenceRange, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field SequenceRange", wireType)
+			}
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefTransactionId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefTransactionId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Metadata == nil {
+				m.Metadata = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowKubemqGo
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipKubemqGo(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Metadata[mapkey] = mapvalue
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueuesDownstreamResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueuesDownstreamResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueuesDownstreamResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TransactionId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TransactionId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefRequestId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefRequestId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestTypeData", wireType)
+			}
+			m.RequestTypeData = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RequestTypeData |= QueuesDownstreamRequestType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Messages", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Messages = append(m.Messages, &QueueMessage{})
+			if err := m.Messages[len(m.Messages)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowKubemqGo
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= int64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.ActiveOffsets = append(m.ActiveOffsets, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowKubemqGo
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthKubemqGo
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthKubemqGo
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.ActiveOffsets) == 0 {
+					m.ActiveOffsets = make([]int64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= int64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.ActiveOffsets = append(m.ActiveOffsets, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field ActiveOffsets", wireType)
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsError", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsError = bool(v != 0)
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Error", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Error = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TransactionComplete", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.TransactionComplete = bool(v != 0)
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Metadata == nil {
+				m.Metadata = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowKubemqGo
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipKubemqGo(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Metadata[mapkey] = mapvalue
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueueInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueueInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueueInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Messages", wireType)
+			}
+			m.Messages = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Messages |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Bytes", wireType)
+			}
+			m.Bytes = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Bytes |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FirstSequence", wireType)
+			}
+			m.FirstSequence = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FirstSequence |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LastSequence", wireType)
+			}
+			m.LastSequence = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LastSequence |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sent", wireType)
+			}
+			m.Sent = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Sent |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Delivered", wireType)
+			}
+			m.Delivered = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Delivered |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Waiting", wireType)
+			}
+			m.Waiting = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Waiting |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subscribers", wireType)
+			}
+			m.Subscribers = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Subscribers |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueuesInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueuesInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueuesInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TotalQueue", wireType)
+			}
+			m.TotalQueue = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TotalQueue |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sent", wireType)
+			}
+			m.Sent = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Sent |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Delivered", wireType)
+			}
+			m.Delivered = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Delivered |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Waiting", wireType)
+			}
+			m.Waiting = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Waiting |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Queues", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Queues = append(m.Queues, &QueueInfo{})
+			if err := m.Queues[len(m.Queues)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueuesInfoRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueuesInfoRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueuesInfoRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field QueueName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.QueueName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueuesInfoResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueuesInfoResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueuesInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefRequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefRequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Info == nil {
+				m.Info = &QueuesInfo{}
+			}
+			if err := m.Info.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicsUpstreamRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicsUpstreamRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicsUpstreamRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestTypeData", wireType)
+			}
+			m.RequestTypeData = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RequestTypeData |= TopicsUpstreamRequestType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClientID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClientID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Messages", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Messages = append(m.Messages, &QueueMessage{})
+			if err := m.Messages[len(m.Messages)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicsUpstreamResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicsUpstreamResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicsUpstreamResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefRequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefRequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestTypeData", wireType)
+			}
+			m.RequestTypeData = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RequestTypeData |= TopicsUpstreamRequestType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicResults", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.TopicResults == nil {
+				m.TopicResults = make(map[string]*SendTopicResults)
+			}
+			var mapkey string
+			var mapvalue *SendTopicResults
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowKubemqGo
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= int(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if postmsgIndex < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &SendTopicResults{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipKubemqGo(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.TopicResults[mapkey] = mapvalue
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsError", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsError = bool(v != 0)
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Error", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Error = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *SendPartitionResults) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SendPartitionResults: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SendPartitionResults: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PartitionResults", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PartitionResults = append(m.PartitionResults, &SendQueueMessageResult{})
+			if err := m.PartitionResults[len(m.PartitionResults)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *SendTopicResults) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SendTopicResults: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SendTopicResults: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicResults", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.TopicResults == nil {
+				m.TopicResults = make(map[int32]*SendPartitionResults)
+			}
+			var mapkey int32
+			var mapvalue *SendPartitionResults
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowKubemqGo
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapkey |= int32(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowKubemqGo
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= int(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if postmsgIndex < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &SendPartitionResults{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipKubemqGo(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthKubemqGo
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.TopicResults[mapkey] = mapvalue
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicRecordHeader) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicRecordHeader: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicRecordHeader: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Key = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Value = append(m.Value[:0], dAtA[iNdEx:postIndex]...)
+			if m.Value == nil {
+				m.Value = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicRecord) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicRecord: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicRecord: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Headers", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Headers = append(m.Headers, &TopicRecordHeader{})
+			if err := m.Headers[len(m.Headers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Topic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Topic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Partition", wireType)
+			}
+			m.Partition = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Partition |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
+			}
+			m.Timestamp = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Timestamp |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Key = append(m.Key[:0], dAtA[iNdEx:postIndex]...)
+			if m.Key == nil {
+				m.Key = []byte{}
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Value = append(m.Value[:0], dAtA[iNdEx:postIndex]...)
+			if m.Value == nil {
+				m.Value = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicPartition) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicPartition: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicPartition: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Topic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Topic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Partition", wireType)
+			}
+			m.Partition = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Partition |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicsSubscriptionRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicsSubscriptionRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicsSubscriptionRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubscriptionRequestType", wireType)
+			}
+			m.SubscriptionRequestType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubscriptionRequestType |= TopicsSubscriptionRequestType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Topics", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Topics = append(m.Topics, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopicPartitions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TopicPartitions = append(m.TopicPartitions, &TopicPartition{})
+			if err := m.TopicPartitions[len(m.TopicPartitions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.GroupID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MemberID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MemberID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsStatic", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsStatic = bool(v != 0)
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubscriptionStrategyType", wireType)
+			}
+			m.SubscriptionStrategyType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubscriptionStrategyType |= TopicsSubscriptionStrategyType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubscriptionOffsetType", wireType)
+			}
+			m.SubscriptionOffsetType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubscriptionOffsetType |= TopicsSubscriptionOffsetType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicsSubscriptionEvent) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicsSubscriptionEvent: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicsSubscriptionEvent: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubscriptionID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubscriptionID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubscriptionEventType", wireType)
+			}
+			m.SubscriptionEventType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubscriptionEventType |= TopicsSubscriptionEventType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.GroupID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MemberID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MemberID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Assigned", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Assigned = append(m.Assigned, &TopicPartition{})
+			if err := m.Assigned[len(m.Assigned)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReSyncAt", wireType)
+			}
+			m.ReSyncAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ReSyncAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 15:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsError", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsError = bool(v != 0)
+		case 16:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Error", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Error = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicsDownstreamRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicsDownstreamRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicsDownstreamRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DownstreamRequestType", wireType)
+			}
+			m.DownstreamRequestType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DownstreamRequestType |= TopicsDownstreamRequestType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Data = append(m.Data[:0], dAtA[iNdEx:postIndex]...)
+			if m.Data == nil {
+				m.Data = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TopicsDownstreamResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKubemqGo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TopicsDownstreamResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TopicsDownstreamResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TransactionID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TransactionID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RefRequestID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RefRequestID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Data = append(m.Data[:0], dAtA[iNdEx:postIndex]...)
+			if m.Data == nil {
+				m.Data = []byte{}
+			}
+			iNdEx = postIndex
+		case 15:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsError", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsError = bool(v != 0)
+		case 16:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Error", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKubemqGo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Error = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKubemqGo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthKubemqGo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -10615,8 +21270,11 @@ func skipKubemqGo(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
+				return 0, ErrInvalidLengthKubemqGo
+			}
+			iNdEx += length
+			if iNdEx < 0 {
 				return 0, ErrInvalidLengthKubemqGo
 			}
 			return iNdEx, nil
@@ -10647,6 +21305,9 @@ func skipKubemqGo(dAtA []byte) (n int, err error) {
 					return 0, err
 				}
 				iNdEx = start + next
+				if iNdEx < 0 {
+					return 0, ErrInvalidLengthKubemqGo
+				}
 			}
 			return iNdEx, nil
 		case 4:
@@ -10665,127 +21326,3 @@ var (
 	ErrInvalidLengthKubemqGo = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowKubemqGo   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("kubemq_go.proto", fileDescriptor_kubemq_go_0ff2ba662d4a1703) }
-
-var fileDescriptor_kubemq_go_0ff2ba662d4a1703 = []byte{
-	// 1883 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x58, 0xbd, 0x6f, 0x1c, 0xc7,
-	0x15, 0xbf, 0xd9, 0xbd, 0x0f, 0xde, 0x23, 0x45, 0x2e, 0x87, 0x0c, 0x7d, 0x3e, 0x09, 0x17, 0x7a,
-	0x9d, 0x82, 0x90, 0xe5, 0x33, 0xc3, 0x20, 0xb0, 0x11, 0xc0, 0x46, 0x28, 0x91, 0xb6, 0x14, 0x8b,
-	0x96, 0x34, 0x47, 0x29, 0x65, 0xb2, 0xb7, 0x37, 0x3c, 0x6d, 0x78, 0xb7, 0x7b, 0xde, 0x9d, 0xa5,
-	0x75, 0x5d, 0x82, 0x20, 0x5d, 0x0a, 0x57, 0x09, 0x92, 0x2a, 0x45, 0x8a, 0xc0, 0x7f, 0x41, 0x90,
-	0x34, 0x29, 0x53, 0xba, 0x4c, 0x97, 0x88, 0x41, 0x80, 0x14, 0x29, 0x0c, 0xa4, 0x09, 0x90, 0xc6,
-	0x98, 0x8f, 0xdd, 0x9d, 0xfd, 0xb8, 0x93, 0x2c, 0x08, 0xee, 0xe6, 0xbd, 0x79, 0x6f, 0xde, 0x7b,
-	0xbf, 0xf7, 0xe6, 0xcd, 0x07, 0x6c, 0x9c, 0xc7, 0x43, 0x3a, 0xfd, 0xf8, 0x47, 0xe3, 0xa0, 0x3f,
-	0x0b, 0x03, 0x16, 0xe0, 0xa6, 0x64, 0x74, 0xdf, 0x1c, 0x7b, 0xec, 0x71, 0x3c, 0xec, 0xbb, 0xc1,
-	0xf4, 0xad, 0x71, 0x30, 0x0e, 0xde, 0x12, 0xd3, 0xc3, 0xf8, 0x4c, 0x50, 0x82, 0x10, 0x23, 0xa9,
-	0x66, 0xff, 0x0a, 0x01, 0xdc, 0xf7, 0xfc, 0x31, 0xa1, 0x51, 0x3c, 0x61, 0x18, 0x43, 0xfd, 0x76,
-	0x10, 0xb1, 0x0e, 0xda, 0x45, 0x7b, 0x6d, 0x22, 0xc6, 0xb8, 0x03, 0xad, 0x47, 0x34, 0x8c, 0xbc,
-	0xc0, 0xef, 0x18, 0x82, 0x9d, 0x90, 0x78, 0x0f, 0x36, 0x06, 0x34, 0xbc, 0xa0, 0xe1, 0x80, 0x39,
-	0x21, 0x3b, 0xf5, 0xa6, 0xb4, 0x63, 0xee, 0xa2, 0x3d, 0x93, 0x14, 0xd9, 0x78, 0x1f, 0xb6, 0x24,
-	0xeb, 0xe1, 0x8c, 0xd3, 0x03, 0xea, 0x06, 0xfe, 0x28, 0xea, 0xd4, 0x85, 0x74, 0xd5, 0x94, 0xdd,
-	0x82, 0xc6, 0xf1, 0x74, 0xc6, 0xe6, 0xf6, 0x5d, 0x68, 0x2a, 0xe7, 0x3a, 0xd0, 0x3a, 0xbe, 0xa0,
-	0x3e, 0xbb, 0x73, 0xa4, 0xfc, 0x4b, 0x48, 0xee, 0xf6, 0x80, 0xfa, 0x4c, 0xf8, 0xb7, 0x42, 0xc4,
-	0x18, 0x6f, 0x43, 0xe3, 0x38, 0x0c, 0x83, 0x50, 0xb8, 0xd4, 0x26, 0x92, 0xb0, 0x7f, 0x6e, 0x40,
-	0x43, 0x68, 0x2d, 0x59, 0xad, 0x0b, 0x2b, 0xb7, 0x26, 0x9e, 0x9c, 0x92, 0x11, 0xa7, 0x34, 0xd7,
-	0xba, 0xf5, 0xd8, 0xf1, 0x7d, 0x3a, 0x51, 0xeb, 0x26, 0x24, 0xd7, 0x3a, 0xa1, 0xcc, 0x19, 0x39,
-	0xcc, 0x11, 0x71, 0xb5, 0x49, 0x4a, 0x73, 0xff, 0x6e, 0x06, 0xa3, 0x79, 0xa7, 0xb1, 0x8b, 0xf6,
-	0xd6, 0x88, 0x18, 0x73, 0xff, 0x06, 0x2c, 0x08, 0x69, 0xa7, 0x29, 0x9c, 0x96, 0x04, 0x7e, 0x03,
-	0xea, 0xa7, 0xce, 0x38, 0xea, 0xb4, 0x76, 0xcd, 0xbd, 0xd5, 0x83, 0x57, 0xfa, 0x32, 0xab, 0x7d,
-	0xe1, 0x5a, 0x9f, 0xcf, 0x1c, 0xfb, 0x2c, 0x9c, 0x13, 0x21, 0xd4, 0x7d, 0x1b, 0xda, 0x29, 0x0b,
-	0x5b, 0x60, 0x9e, 0xd3, 0xb9, 0x8a, 0x85, 0x0f, 0xb9, 0x85, 0x0b, 0x67, 0x12, 0x53, 0x15, 0x84,
-	0x24, 0xbe, 0x67, 0xbc, 0x83, 0xec, 0xdf, 0x18, 0xb0, 0x26, 0x96, 0x24, 0xd4, 0xa5, 0xde, 0x05,
-	0x5d, 0x02, 0x86, 0x16, 0xb0, 0xb1, 0x38, 0x60, 0x73, 0x41, 0xc0, 0x75, 0x2d, 0xe0, 0x6b, 0xd0,
-	0xe6, 0x09, 0x8e, 0x98, 0x33, 0x9d, 0x09, 0x24, 0x4c, 0x92, 0x31, 0xf8, 0x6a, 0x03, 0xfa, 0x71,
-	0x4c, 0x7d, 0x57, 0x22, 0x52, 0x27, 0x29, 0x8d, 0x0f, 0x72, 0xa0, 0xf4, 0x72, 0xa0, 0xa8, 0x08,
-	0x5e, 0x1e, 0x36, 0x7f, 0xae, 0x43, 0x7b, 0x10, 0x0f, 0x23, 0x37, 0xf4, 0x86, 0x14, 0x9f, 0xc0,
-	0x66, 0x4a, 0x9c, 0xce, 0x67, 0xf4, 0x88, 0x47, 0xcb, 0xd7, 0x59, 0x3f, 0xf8, 0x66, 0xe2, 0x47,
-	0x2a, 0xd0, 0xcf, 0x89, 0x92, 0xb2, 0xe6, 0x0b, 0x96, 0xd6, 0x36, 0x34, 0x3e, 0x08, 0x83, 0x78,
-	0xa6, 0xea, 0x4a, 0x12, 0x78, 0x00, 0x5b, 0x02, 0x81, 0x48, 0x54, 0x4e, 0xea, 0x5c, 0x43, 0x38,
-	0xf7, 0x5a, 0xd9, 0xb9, 0x82, 0x30, 0xa9, 0xd2, 0xc6, 0x07, 0xb0, 0x5d, 0x60, 0x3f, 0x12, 0x30,
-	0x35, 0x45, 0xbe, 0x2a, 0xe7, 0x6c, 0x17, 0xae, 0xe4, 0x22, 0xc5, 0x5d, 0xd8, 0xc9, 0x31, 0x1e,
-	0xfa, 0x23, 0x7a, 0xe6, 0xf9, 0x74, 0x64, 0xd5, 0x30, 0x40, 0x53, 0x2e, 0x62, 0x21, 0xbc, 0x01,
-	0xab, 0xda, 0x82, 0x96, 0x81, 0xd7, 0x60, 0xe5, 0x56, 0x30, 0x9d, 0x3a, 0xfe, 0x28, 0xb2, 0x4c,
-	0xbc, 0x0a, 0xad, 0x07, 0x31, 0x0d, 0x3d, 0x1a, 0x59, 0x75, 0xfb, 0xf7, 0x08, 0x36, 0x0a, 0xd6,
-	0xf1, 0x35, 0xe8, 0x14, 0x58, 0xba, 0x25, 0x0b, 0xd6, 0x44, 0x03, 0xfa, 0x88, 0x7e, 0x72, 0xcf,
-	0x9f, 0xcc, 0x2d, 0x84, 0x31, 0xac, 0x0b, 0xce, 0xfb, 0x61, 0x30, 0x7d, 0xdf, 0x0b, 0x23, 0x66,
-	0x19, 0x78, 0x13, 0xae, 0xa4, 0xbc, 0xbb, 0x4e, 0xc4, 0x2c, 0x13, 0x6f, 0xc1, 0x86, 0x60, 0x1d,
-	0xb2, 0xa4, 0x02, 0xad, 0x3a, 0xf7, 0x55, 0x31, 0x79, 0xcd, 0x5a, 0x0d, 0xbc, 0x0d, 0x96, 0xc6,
-	0x38, 0xa2, 0x13, 0xe6, 0x58, 0x4d, 0xfb, 0x17, 0x75, 0x68, 0x11, 0xae, 0x15, 0x31, 0x5e, 0xf0,
-	0x6a, 0x98, 0x6e, 0xab, 0x8c, 0x81, 0x8f, 0x61, 0x43, 0x11, 0x69, 0xea, 0x0c, 0x91, 0xba, 0xab,
-	0x49, 0xea, 0xd4, 0x74, 0x5f, 0x13, 0x23, 0x45, 0x9d, 0x5c, 0x45, 0x99, 0x8b, 0x2b, 0xaa, 0xbe,
-	0x78, 0xef, 0x36, 0x16, 0xec, 0xdd, 0xa6, 0xb6, 0x77, 0x6d, 0x58, 0x23, 0x74, 0x36, 0x99, 0x27,
-	0xcb, 0xb5, 0x84, 0x4e, 0x8e, 0xc7, 0xad, 0x71, 0x24, 0x82, 0x98, 0x75, 0x56, 0x76, 0xd1, 0x5e,
-	0x83, 0x24, 0xa4, 0xf0, 0xd1, 0x71, 0x1f, 0xd3, 0x0f, 0xe9, 0xbc, 0xd3, 0x56, 0x3e, 0x2a, 0x3a,
-	0x9d, 0x3b, 0x3d, 0xbd, 0xdb, 0x01, 0xa1, 0x96, 0xd2, 0xa2, 0xad, 0xcf, 0x1c, 0xbf, 0xb3, 0x2a,
-	0x3d, 0xe1, 0x63, 0xfc, 0xa6, 0xea, 0x05, 0x6b, 0xa2, 0x17, 0xbc, 0x5a, 0xc4, 0xea, 0xa5, 0xb5,
-	0x81, 0x77, 0x61, 0x55, 0x83, 0x1a, 0xef, 0x00, 0xd6, 0xc8, 0x87, 0xfe, 0xb9, 0x1f, 0x7c, 0xe2,
-	0x5b, 0x35, 0x5e, 0xa3, 0xaa, 0x62, 0x2d, 0x84, 0xdb, 0xd0, 0xe0, 0x05, 0x3b, 0xb7, 0x0c, 0xfb,
-	0x67, 0x26, 0xac, 0x10, 0x1a, 0xcd, 0x02, 0x3f, 0xa2, 0xb9, 0x1c, 0xa1, 0x42, 0x8e, 0x72, 0x45,
-	0x62, 0x14, 0x8b, 0xa4, 0x88, 0xbb, 0x59, 0x81, 0xfb, 0x57, 0x3d, 0x78, 0x12, 0xc4, 0x6f, 0x7b,
-	0x4c, 0x9d, 0x3d, 0x29, 0x9d, 0xef, 0xd1, 0xad, 0x8a, 0x1e, 0x7d, 0xfc, 0x84, 0xba, 0x31, 0xa3,
-	0x23, 0x91, 0xe2, 0x15, 0x92, 0xd2, 0xd9, 0x71, 0xdb, 0xd6, 0x8e, 0xdb, 0x34, 0x83, 0xa0, 0x65,
-	0xb0, 0xaf, 0x32, 0xb8, 0x2a, 0x32, 0xd8, 0xcd, 0x32, 0x28, 0xd1, 0x7a, 0x79, 0x29, 0xfc, 0xaf,
-	0x01, 0x6b, 0x0f, 0x62, 0x1a, 0xd3, 0x13, 0x1a, 0x45, 0xce, 0x98, 0xf7, 0x8b, 0xb6, 0x1a, 0x66,
-	0x1b, 0x32, 0x65, 0x7c, 0x4d, 0xc7, 0x7e, 0x72, 0x96, 0x35, 0xf3, 0x67, 0x99, 0xee, 0x67, 0x11,
-	0x01, 0xfc, 0x1e, 0xc0, 0x21, 0x63, 0xa1, 0x37, 0x8c, 0x19, 0x8d, 0x44, 0x5a, 0x16, 0x68, 0x66,
-	0x52, 0x44, 0xd3, 0xc0, 0x07, 0xd0, 0xbc, 0x1f, 0x4c, 0x3c, 0x77, 0x2e, 0xb2, 0xa6, 0x61, 0xae,
-	0xeb, 0x4a, 0x09, 0xa2, 0x24, 0x5f, 0x1c, 0xf5, 0x31, 0xbc, 0xaa, 0x2f, 0x1b, 0xdd, 0x74, 0x98,
-	0xfb, 0x38, 0x69, 0x89, 0x1d, 0x68, 0x09, 0x3a, 0xbb, 0x67, 0x28, 0x12, 0xef, 0x73, 0x1c, 0xa5,
-	0x46, 0xc7, 0x10, 0xd8, 0x6c, 0x57, 0x79, 0x49, 0x52, 0x29, 0xfb, 0x53, 0x04, 0xdd, 0x2a, 0x4b,
-	0x6a, 0xd3, 0x2d, 0x36, 0xf5, 0x0e, 0x6f, 0xd1, 0xfc, 0x46, 0x99, 0x58, 0x4a, 0xb1, 0x1c, 0x50,
-	0x7f, 0x94, 0xb3, 0x26, 0xc4, 0x48, 0x22, 0x8e, 0x7b, 0x00, 0xb7, 0x9d, 0x0b, 0x2a, 0x6a, 0x3b,
-	0x12, 0x95, 0xb0, 0x42, 0x34, 0x8e, 0xfd, 0x3b, 0x03, 0x76, 0xaa, 0xf3, 0x91, 0xdf, 0x59, 0x68,
-	0xd9, 0xed, 0xc7, 0x28, 0xdc, 0x7e, 0x78, 0xd5, 0x1e, 0x7d, 0xf7, 0xde, 0x99, 0x28, 0x25, 0x53,
-	0x55, 0x6d, 0xc2, 0x90, 0x1d, 0x42, 0x5c, 0x81, 0x6e, 0x05, 0xb1, 0xcf, 0x44, 0x0d, 0x36, 0x48,
-	0x8e, 0xc7, 0x57, 0x27, 0x94, 0x04, 0x62, 0xdf, 0x36, 0xe4, 0xbe, 0x4d, 0x68, 0x7c, 0x03, 0x36,
-	0x93, 0x31, 0x3f, 0x02, 0x85, 0xf7, 0xa2, 0x2d, 0xb4, 0x49, 0x79, 0x82, 0x5b, 0x3b, 0x7e, 0x32,
-	0xf3, 0x42, 0x87, 0x79, 0x81, 0x7f, 0xc8, 0x54, 0x8b, 0xc8, 0xf1, 0xb8, 0xbf, 0x47, 0x74, 0xe2,
-	0xcc, 0xe9, 0xe8, 0x34, 0x10, 0x05, 0x67, 0x92, 0x8c, 0x61, 0xff, 0x09, 0x01, 0x2e, 0x97, 0x1d,
-	0x77, 0x23, 0x5b, 0x24, 0x79, 0x1e, 0x20, 0x11, 0x4b, 0x79, 0x82, 0xbb, 0x21, 0x56, 0x4c, 0x04,
-	0x0d, 0x19, 0xb4, 0xce, 0xe3, 0x8f, 0x93, 0x13, 0xe7, 0x49, 0x0e, 0x1b, 0x53, 0x88, 0x15, 0xd9,
-	0x79, 0x49, 0x09, 0x80, 0xdc, 0xc9, 0x45, 0xb6, 0xfd, 0x17, 0x04, 0x3b, 0xd5, 0x35, 0xf2, 0x8c,
-	0xde, 0xb2, 0x03, 0x4d, 0xfe, 0x28, 0x39, 0x94, 0x4f, 0x14, 0x93, 0x28, 0xaa, 0x84, 0xa7, 0xf9,
-	0x2c, 0x3c, 0xeb, 0x05, 0x3c, 0x79, 0x99, 0xdf, 0x89, 0x64, 0xe7, 0x95, 0xa9, 0x4d, 0xc8, 0xac,
-	0x23, 0x37, 0xf5, 0x07, 0xd0, 0xbf, 0x10, 0x5c, 0xd5, 0x63, 0x4a, 0x36, 0xcf, 0xf3, 0x5d, 0x5a,
-	0x5e, 0xac, 0x47, 0xee, 0xc3, 0xd6, 0x89, 0xf3, 0xe4, 0xa3, 0x78, 0x3a, 0xa4, 0xe1, 0xbd, 0xb3,
-	0x74, 0x9b, 0xcb, 0x52, 0xad, 0x9a, 0xe2, 0x29, 0xf9, 0xa1, 0xe3, 0x31, 0xfd, 0xad, 0xd8, 0x90,
-	0xc9, 0x2b, 0xb0, 0x39, 0xb2, 0x77, 0xa2, 0xfb, 0xd4, 0x39, 0x57, 0x67, 0x99, 0xa2, 0xec, 0x5f,
-	0x1a, 0x70, 0xad, 0x3a, 0x4e, 0xd5, 0x1f, 0x96, 0x07, 0xfa, 0x95, 0xdb, 0x11, 0xbe, 0x0e, 0x56,
-	0x66, 0x43, 0xd8, 0x1d, 0xa9, 0x82, 0x2b, 0xf1, 0x45, 0xc5, 0x29, 0x9e, 0x48, 0x35, 0x1d, 0x29,
-	0x30, 0x8a, 0x6c, 0x2d, 0xbc, 0x86, 0x1e, 0x9e, 0x9e, 0xf6, 0xe6, 0x82, 0xb4, 0xb7, 0xf4, 0xb4,
-	0xff, 0x16, 0x41, 0xf7, 0xd0, 0x3d, 0x3f, 0x9c, 0x4c, 0xbe, 0xb6, 0xac, 0x57, 0xe4, 0xb0, 0x5e,
-	0x99, 0x43, 0xfb, 0xd7, 0x08, 0xae, 0x56, 0x3a, 0xf7, 0x5c, 0xa9, 0xba, 0x0e, 0xd6, 0xe1, 0xd9,
-	0x19, 0x75, 0x19, 0x1d, 0x69, 0x29, 0xe3, 0x3d, 0xb4, 0xc4, 0xd7, 0x61, 0x33, 0x17, 0xc0, 0x56,
-	0xd7, 0x61, 0xfb, 0xbf, 0x01, 0xdd, 0x01, 0x0b, 0xa9, 0x33, 0x7d, 0xc9, 0xb0, 0xdd, 0x83, 0x6f,
-	0xc8, 0x75, 0x8b, 0x6f, 0x00, 0x53, 0xbc, 0x01, 0xd2, 0x7b, 0x6d, 0x49, 0x88, 0x54, 0xeb, 0x2d,
-	0xb9, 0xeb, 0xdf, 0x80, 0xcd, 0x47, 0x5e, 0xe4, 0x0d, 0xbd, 0x89, 0xc7, 0xe6, 0xf9, 0xdd, 0x54,
-	0x9e, 0xa8, 0xca, 0x5a, 0xb3, 0x7a, 0xe7, 0xed, 0xf2, 0x1b, 0xf2, 0x59, 0x7a, 0x6c, 0xb5, 0x04,
-	0xe4, 0x3a, 0x0b, 0xbf, 0x07, 0x1b, 0x27, 0xc1, 0xc8, 0x3b, 0xf3, 0xd2, 0x0c, 0xa8, 0x0b, 0x48,
-	0xf5, 0x5e, 0x2a, 0x0a, 0xdb, 0xff, 0x41, 0x70, 0xb5, 0x12, 0xfd, 0xe7, 0xaa, 0x8b, 0x85, 0x10,
-	0x1b, 0x2f, 0x08, 0x71, 0x1f, 0x5a, 0x49, 0x18, 0xe6, 0x92, 0x30, 0x12, 0x21, 0xbd, 0xd8, 0xea,
-	0x0b, 0x8a, 0xad, 0xa1, 0x15, 0xdb, 0xf5, 0xcf, 0x10, 0x6c, 0x96, 0x2c, 0xf3, 0x47, 0x6e, 0x89,
-	0x99, 0xbd, 0x3f, 0x30, 0xac, 0xab, 0xae, 0xa2, 0xac, 0x5a, 0x08, 0xaf, 0x03, 0x1c, 0xba, 0xe7,
-	0x09, 0x2d, 0x9e, 0xb8, 0x84, 0xfe, 0x84, 0xba, 0x2c, 0x61, 0x99, 0xfc, 0xf1, 0x2a, 0xc0, 0x9e,
-	0x67, 0x05, 0x60, 0xd5, 0xa5, 0x60, 0x44, 0xfd, 0x24, 0x01, 0x56, 0x03, 0xbf, 0x02, 0x5b, 0xfc,
-	0xc0, 0x2b, 0x64, 0xc6, 0x6a, 0x1e, 0xfc, 0xbd, 0x09, 0xea, 0xcb, 0x11, 0xdf, 0x80, 0x36, 0x97,
-	0x91, 0xdf, 0x6a, 0x57, 0x72, 0xbf, 0x33, 0xdd, 0x75, 0xed, 0x7a, 0x1f, 0x4f, 0x98, 0x5d, 0xc3,
-	0x6f, 0x83, 0x95, 0x4a, 0x47, 0x32, 0xb2, 0x67, 0x2a, 0xed, 0xa1, 0x7d, 0x84, 0xbf, 0xaf, 0x7f,
-	0xc5, 0x04, 0x52, 0x1f, 0x6f, 0x96, 0xfe, 0x39, 0xba, 0xdb, 0x55, 0xff, 0x43, 0x76, 0x6d, 0x1f,
-	0xe1, 0x77, 0x61, 0x4b, 0x5b, 0x41, 0xe1, 0x59, 0xb9, 0xc6, 0x46, 0xe1, 0x5d, 0x29, 0xd4, 0x0f,
-	0x60, 0x95, 0x7b, 0x9e, 0x6c, 0xfe, 0xa2, 0x4c, 0xd7, 0x2a, 0x3e, 0x65, 0xec, 0x1a, 0xfe, 0x36,
-	0xac, 0x49, 0x1d, 0x55, 0xb2, 0x25, 0x99, 0x6e, 0x16, 0xbb, 0xf8, 0xee, 0xac, 0xe1, 0x1f, 0x48,
-	0x80, 0x72, 0x2f, 0x97, 0xca, 0x4a, 0xeb, 0x3e, 0xe3, 0xde, 0x6a, 0xd7, 0xb0, 0x53, 0xbe, 0xaf,
-	0xc8, 0x6b, 0x32, 0x7e, 0xad, 0x6a, 0xc5, 0xdc, 0x65, 0xbd, 0x6b, 0x2f, 0x13, 0x49, 0x23, 0x74,
-	0x61, 0xbb, 0xea, 0x9c, 0xc5, 0xaf, 0x67, 0x91, 0x2e, 0xbc, 0x6d, 0x74, 0xbf, 0xb5, 0x5c, 0x48,
-	0x33, 0x82, 0xcb, 0x8d, 0x00, 0xdb, 0xf9, 0x2d, 0x5c, 0x69, 0xe1, 0xf5, 0xa5, 0x32, 0x89, 0x01,
-	0x51, 0x60, 0x3f, 0x86, 0xad, 0x8a, 0x53, 0x28, 0xb3, 0xb2, 0xf8, 0xfc, 0xcc, 0xac, 0x2c, 0x39,
-	0xc6, 0xec, 0x1a, 0x7e, 0x03, 0xea, 0xf7, 0x3d, 0x7f, 0x8c, 0xf3, 0x39, 0xef, 0xe2, 0x84, 0xcc,
-	0x7e, 0xe2, 0xed, 0xda, 0xcd, 0x9b, 0x9f, 0x3f, 0xed, 0xd5, 0xfe, 0xf6, 0xb4, 0x57, 0xfb, 0xe2,
-	0x69, 0x0f, 0xfd, 0xef, 0x69, 0x0f, 0xfd, 0xf4, 0xb2, 0x87, 0xfe, 0x70, 0xd9, 0x43, 0x7f, 0xbc,
-	0xec, 0xa1, 0xbf, 0x5e, 0xf6, 0xd0, 0xe7, 0x97, 0x3d, 0xf4, 0x8f, 0xcb, 0x1e, 0xfa, 0xf7, 0x65,
-	0xaf, 0xf6, 0xc5, 0x65, 0x0f, 0x7d, 0xfa, 0xcf, 0x5e, 0xed, 0x33, 0x63, 0xf5, 0xc3, 0x78, 0x48,
-	0x4f, 0x1e, 0xf4, 0x3f, 0x08, 0x67, 0xee, 0xb0, 0x29, 0x7e, 0xf9, 0xbf, 0xf3, 0x65, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0xde, 0x47, 0x08, 0x17, 0x2f, 0x18, 0x00, 0x00,
-}

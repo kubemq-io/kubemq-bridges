@@ -22,11 +22,8 @@ type Binder struct {
 func NewBinder() *Binder {
 	return &Binder{}
 }
-func (b *Binder) buildMiddleware(target targets.Target, cfg config.BindingConfig, exporter *metrics.Exporter) (middleware.Middleware, error) {
-	log, err := middleware.NewLogMiddleware(cfg.Name, cfg.Properties)
-	if err != nil {
-		return nil, err
-	}
+func (b *Binder) buildMiddleware(target targets.Target, cfg config.BindingConfig, exporter *metrics.Exporter, log *middleware.LogMiddleware) (middleware.Middleware, error) {
+
 	retry, err := middleware.NewRetryMiddleware(cfg.Properties, b.log)
 	if err != nil {
 		return nil, err
@@ -50,13 +47,17 @@ func (b *Binder) buildMiddleware(target targets.Target, cfg config.BindingConfig
 }
 func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *metrics.Exporter) error {
 	b.name = cfg.Name
-	b.log = logger.NewLogger(b.name)
+	log, err := middleware.NewLogMiddleware(cfg.Name, cfg.Properties)
+	if err != nil {
+		return err
+	}
+	b.log = log.Logger
 	for _, connection := range cfg.Targets.Connections {
-		target, err := targets.Init(ctx, cfg.Targets.Kind, connection)
+		target, err := targets.Init(ctx, cfg.Targets.Kind, connection, b.log)
 		if err != nil {
 			return fmt.Errorf("error loading targets conntector on binding %s, %w", b.name, err)
 		}
-		md, err := b.buildMiddleware(target, cfg, exporter)
+		md, err := b.buildMiddleware(target, cfg, exporter, log)
 		if err != nil {
 			return fmt.Errorf("error loading middlewares on binding %s, %w", b.name, err)
 		}
@@ -65,7 +66,7 @@ func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *m
 	}
 
 	for _, connection := range cfg.Sources.Connections {
-		source, err := sources.Init(ctx, cfg.Sources.Kind, connection, cfg.Properties)
+		source, err := sources.Init(ctx, cfg.Sources.Kind, connection, cfg.Properties, b.log)
 		if err != nil {
 			return fmt.Errorf("error loading sources conntector on binding %s, %w", b.name, err)
 		}
@@ -84,7 +85,7 @@ func (b *Binder) Start(ctx context.Context) error {
 	}
 
 	for _, source := range b.sources {
-		err := source.Start(ctx, b.targetsMiddleware, b.log)
+		err := source.Start(ctx, b.targetsMiddleware)
 		if err != nil {
 			return err
 		}

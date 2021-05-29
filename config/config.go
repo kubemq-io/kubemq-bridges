@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
+	"github.com/kubemq-hub/kubemq-bridges/global"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
 	"io/ioutil"
 	"log"
@@ -16,7 +17,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const defaultApiPort = 8080
+const defaultApiPort = global.DefaultApiPort
 
 var configFile string
 var logr = logger.NewLogger("config")
@@ -170,7 +171,6 @@ func load() (*Config, error) {
 		return nil, err
 	}
 	logr.Infof("%d bindings loaded", len(cfg.Bindings))
-	logger.SetLogLevel(cfg.LogLevel)
 	return cfg, err
 }
 

@@ -6,7 +6,7 @@ Kubemq Queue stream source provides a queue subscriber for processing messages w
 The following are required to run queue source connector:
 
 - kubemq cluster
-- kubemq-targets deployment
+- kubemq-bridges deployment
 
 
 ## Configuration

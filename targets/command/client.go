@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/kubemq-hub/kubemq-bridges/config"
+	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
 	"github.com/kubemq-io/kubemq-go"
 	"time"
 )
 
 type Client struct {
+	log    *logger.Logger
 	opts   options
 	client *kubemq.Client
 }
@@ -18,8 +20,11 @@ func New() *Client {
 
 }
 
-func (c *Client) Init(ctx context.Context, connection config.Metadata) error {
-
+func (c *Client) Init(ctx context.Context, connection config.Metadata, log *logger.Logger) error {
+	c.log = log
+	if c.log == nil {
+		c.log = logger.NewLogger("commands")
+	}
 	var err error
 	c.opts, err = parseOptions(connection)
 	if err != nil {

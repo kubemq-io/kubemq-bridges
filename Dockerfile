@@ -7,7 +7,7 @@ ENV PATH=$GOPATH:$PATH
 ENV ADDR=0.0.0.0
 ADD . $GOPATH/github.com/kubemq-hub/kubemq-bridges
 WORKDIR $GOPATH/github.com/kubemq-hub/kubemq-bridges
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -mod=vendor -installsuffix cgo -ldflags="-w -s -X main.version=$VERSION" -o kubemq-bridges-run .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags container -a -mod=vendor -installsuffix cgo -ldflags="-w -s -X main.version=$VERSION" -o kubemq-bridges-run .
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 MAINTAINER KubeMQ info@kubemq.io
 LABEL name="KubeMQ Bridges Connectors" \

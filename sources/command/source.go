@@ -22,7 +22,11 @@ func New() *Source {
 	return &Source{}
 
 }
-func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata) error {
+func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata, log *logger.Logger) error {
+	s.log = log
+	if s.log == nil {
+		s.log = logger.NewLogger("command")
+	}
 	var err error
 	s.opts, err = parseOptions(connection)
 	if err != nil {
@@ -50,15 +54,13 @@ func (s *Source) Init(ctx context.Context, connection config.Metadata, propertie
 	}
 	return nil
 }
-func (s *Source) Start(ctx context.Context, targets []middleware.Middleware, log *logger.Logger) error {
-	s.targets = targets
-	s.log = log
-
+func (s *Source) Start(ctx context.Context, target []middleware.Middleware) error {
+	s.targets = target
 	if s.opts.sources > 1 && s.opts.group == "" {
 		s.opts.group = uuid.New().String()
 	}
 	for _, client := range s.clients {
-		for _, target := range targets {
+		for _, target := range target {
 			err := s.runSubscriber(ctx, s.opts.channel, s.opts.group, target, client)
 			if err != nil {
 				return err

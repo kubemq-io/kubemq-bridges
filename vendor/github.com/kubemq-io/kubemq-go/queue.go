@@ -3,6 +3,7 @@ package kubemq
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	pb "github.com/kubemq-io/protobuf/go"
@@ -75,6 +76,9 @@ func (qm *QueueMessage) SetTags(tags map[string]string) *QueueMessage {
 
 // AddTag - add key value tags to query message
 func (qm *QueueMessage) AddTag(key, value string) *QueueMessage {
+	if qm.Tags == nil {
+		qm.Tags = map[string]string{}
+	}
 	qm.Tags[key] = value
 	return qm
 }
@@ -220,6 +224,10 @@ type ReceiveQueueMessagesRequest struct {
 	trace               *Trace
 }
 
+func NewReceiveQueueMessagesRequest() *ReceiveQueueMessagesRequest {
+	return &ReceiveQueueMessagesRequest{}
+}
+
 // SetId - set receive queue message request id, otherwise new random uuid will be set
 func (req *ReceiveQueueMessagesRequest) SetId(id string) *ReceiveQueueMessagesRequest {
 	req.RequestID = id
@@ -268,6 +276,30 @@ func (req *ReceiveQueueMessagesRequest) Send(ctx context.Context) (*ReceiveQueue
 		return nil, ErrNoTransportDefined
 	}
 	return req.transport.ReceiveQueueMessages(ctx, req)
+}
+func (req *ReceiveQueueMessagesRequest) Complete(opts *Options) *ReceiveQueueMessagesRequest {
+	if req.ClientID == "" {
+		req.ClientID = opts.clientId
+	}
+	return req
+}
+func (req *ReceiveQueueMessagesRequest) Validate() error {
+	if req.Channel == "" {
+		return fmt.Errorf("request must have a channel")
+	}
+	if req.ClientID == "" {
+		return fmt.Errorf("request must have a clientId")
+	}
+
+	if req.WaitTimeSeconds <= 0 {
+		return fmt.Errorf("request must have a wait time seconds >0")
+	}
+
+	if req.MaxNumberOfMessages <= 0 {
+		return fmt.Errorf("request must have a max number of messages >0")
+	}
+
+	return nil
 }
 
 type ReceiveQueueMessagesResponse struct {
@@ -325,6 +357,26 @@ func (req *AckAllQueueMessagesRequest) Send(ctx context.Context) (*AckAllQueueMe
 		return nil, ErrNoTransportDefined
 	}
 	return req.transport.AckAllQueueMessages(ctx, req)
+}
+func (req *AckAllQueueMessagesRequest) Complete(opts *Options) *AckAllQueueMessagesRequest {
+	if req.ClientID == "" {
+		req.ClientID = opts.clientId
+	}
+	return req
+}
+func (req *AckAllQueueMessagesRequest) Validate() error {
+	if req.Channel == "" {
+		return fmt.Errorf("ack all must have a channel")
+	}
+	if req.ClientID == "" {
+		return fmt.Errorf("ack all must have a clientId")
+	}
+
+	if req.WaitTimeSeconds <= 0 {
+		return fmt.Errorf("queues subscription must have a wait time seconds >0")
+	}
+
+	return nil
 }
 
 type AckAllQueueMessagesResponse struct {
@@ -422,7 +474,7 @@ func (req *StreamQueueMessage) Next(ctx context.Context, visibility, wait int32)
 	getRequest := &pb.StreamQueueMessagesRequest{
 		RequestID:             req.RequestID,
 		ClientID:              req.ClientID,
-		StreamRequestTypeData: pb.ReceiveMessage,
+		StreamRequestTypeData: pb.StreamRequestType_ReceiveMessage,
 		Channel:               req.Channel,
 		VisibilitySeconds:     visibility,
 		WaitTimeSeconds:       wait,
@@ -462,7 +514,7 @@ func (req *StreamQueueMessage) ack() error {
 	ackRequest := &pb.StreamQueueMessagesRequest{
 		RequestID:             req.RequestID,
 		ClientID:              req.ClientID,
-		StreamRequestTypeData: pb.AckMessage,
+		StreamRequestTypeData: pb.StreamRequestType_AckMessage,
 		Channel:               req.Channel,
 		VisibilitySeconds:     0,
 		WaitTimeSeconds:       0,
@@ -493,7 +545,7 @@ func (req *StreamQueueMessage) reject() error {
 	rejRequest := &pb.StreamQueueMessagesRequest{
 		RequestID:             req.RequestID,
 		ClientID:              req.ClientID,
-		StreamRequestTypeData: pb.RejectMessage,
+		StreamRequestTypeData: pb.StreamRequestType_RejectMessage,
 		Channel:               req.Channel,
 		VisibilitySeconds:     0,
 		WaitTimeSeconds:       0,
@@ -524,7 +576,7 @@ func (req *StreamQueueMessage) extendVisibility(value int32) error {
 	extRequest := &pb.StreamQueueMessagesRequest{
 		RequestID:             req.RequestID,
 		ClientID:              req.ClientID,
-		StreamRequestTypeData: pb.ModifyVisibility,
+		StreamRequestTypeData: pb.StreamRequestType_ModifyVisibility,
 		Channel:               req.Channel,
 		VisibilitySeconds:     value,
 		WaitTimeSeconds:       0,
@@ -555,7 +607,7 @@ func (req *StreamQueueMessage) resend(channel string) error {
 	extRequest := &pb.StreamQueueMessagesRequest{
 		RequestID:             req.RequestID,
 		ClientID:              req.ClientID,
-		StreamRequestTypeData: pb.ResendMessage,
+		StreamRequestTypeData: pb.StreamRequestType_ResendMessage,
 		Channel:               channel,
 		VisibilitySeconds:     0,
 		WaitTimeSeconds:       0,
@@ -585,7 +637,7 @@ func (req *StreamQueueMessage) ResendWithNewMessage(msg *QueueMessage) error {
 	extRequest := &pb.StreamQueueMessagesRequest{
 		RequestID:             req.RequestID,
 		ClientID:              req.ClientID,
-		StreamRequestTypeData: pb.SendModifiedMessage,
+		StreamRequestTypeData: pb.StreamRequestType_SendModifiedMessage,
 		Channel:               "",
 		VisibilitySeconds:     0,
 		WaitTimeSeconds:       0,
@@ -618,4 +670,47 @@ func (req *StreamQueueMessage) ResendWithNewMessage(msg *QueueMessage) error {
 		return nil
 	}
 	return nil
+}
+
+type QueueInfo struct {
+	Name          string `json:"name"`
+	Messages      int64  `json:"messages"`
+	Bytes         int64  `json:"bytes"`
+	FirstSequence int64  `json:"first_sequence"`
+	LastSequence  int64  `json:"last_sequence"`
+	Sent          int64  `json:"sent"`
+	Subscribers   int    `json:"subscribers"`
+	Waiting       int64  `json:"waiting"`
+	Delivered     int64  `json:"delivered"`
+}
+type QueuesInfo struct {
+	TotalQueues int          `json:"total_queues"`
+	Sent        int64        `json:"sent"`
+	Waiting     int64        `json:"waiting"`
+	Delivered   int64        `json:"delivered"`
+	Queues      []*QueueInfo `json:"queues"`
+}
+
+func fromQueuesInfoPb(info *pb.QueuesInfo) *QueuesInfo {
+	q := &QueuesInfo{
+		TotalQueues: int(info.TotalQueue),
+		Sent:        info.Sent,
+		Waiting:     info.Waiting,
+		Delivered:   info.Delivered,
+		Queues:      nil,
+	}
+	for _, queue := range info.Queues {
+		q.Queues = append(q.Queues, &QueueInfo{
+			Name:          queue.Name,
+			Messages:      queue.Messages,
+			Bytes:         queue.Bytes,
+			FirstSequence: queue.FirstSequence,
+			LastSequence:  queue.LastSequence,
+			Sent:          queue.Sent,
+			Subscribers:   int(queue.Subscribers),
+			Waiting:       queue.Waiting,
+			Delivered:     queue.Delivered,
+		})
+	}
+	return q
 }
