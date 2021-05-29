@@ -1,0 +1,1 @@
+2021-05-29T16:24:36.129+0300	ERROR	error received from target, %!w(*errors.errorString=&{some-error})	{"source": "events-store"}
