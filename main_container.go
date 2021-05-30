@@ -1,4 +1,4 @@
-// +build !container
+// +build container
 
 package main
 
@@ -6,14 +6,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/ghodss/yaml"
 	"github.com/kubemq-hub/kubemq-bridges/api"
 	"github.com/kubemq-hub/kubemq-bridges/binding"
 	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/browser"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/builder"
 	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
-	"io/ioutil"
 	"os"
 	"os/signal"
 	"syscall"
@@ -26,36 +22,11 @@ var (
 )
 
 var (
-	log         *logger.Logger
-	build       = flag.Bool("build", false, "build bridges configuration")
-	buildUrl    = flag.String("get", "", "get config file from url")
-	configFile  = flag.String("config", "config.yaml", "set config file name")
-	svcFlag     = flag.String("service", "", "control the app service")
-	svcUsername = flag.String("username", "", "kubemq-targets service username")
-	svcPassword = flag.String("password", "", "kubemq-targets service password")
+	log        *logger.Logger
+	configFile = flag.String("config", "config.yaml", "set config file name")
 )
 
-func downloadUrl() error {
-	c, err := builder.GetBuildManifest(*buildUrl)
-	if err != nil {
-		return err
-	}
-	cfg := &config.Config{}
-	err = yaml.Unmarshal([]byte(c.Spec.Config), &cfg)
-	if err != nil {
-		return err
-	}
-	data, err := yaml.Marshal(cfg)
-	if err != nil {
-		return err
-	}
-	err = ioutil.WriteFile("config.yaml", data, 0644)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-func runInteractive(serviceExit chan bool) error {
+func run() error {
 	var gracefulShutdown = make(chan os.Signal, 1)
 	signal.Notify(gracefulShutdown, syscall.SIGTERM)
 	signal.Notify(gracefulShutdown, syscall.SIGINT)
@@ -111,42 +82,18 @@ func runInteractive(serviceExit chan bool) error {
 			_ = apiServer.Stop()
 			bindingsService.Stop()
 			return nil
-		case <-serviceExit:
-			_ = apiServer.Stop()
-			bindingsService.Stop()
-			return nil
 		}
 	}
 
 }
 
-func preRun() {
-	if *build {
-		err := browser.OpenURL("https://build.kubemq.io/#/bridges")
-		if err != nil {
-			log.Error(err)
-			os.Exit(1)
-		} else {
-			os.Exit(0)
-		}
-	}
-	if *buildUrl != "" {
-		err := downloadUrl()
-		if err != nil {
-			log.Error(err)
-			os.Exit(1)
-		}
-	}
-}
 func main() {
 	log = logger.NewLogger("kubemq-bridges")
 	flag.Parse()
 	config.SetConfigFile(*configFile)
-	app := newAppService()
-	if err := app.init(*svcFlag, *svcUsername, *svcPassword); err != nil {
+	log.Infof("starting kubemq bridges connector version: %s, commit: %s, date %s", version, commit, date)
+	if err := run(); err != nil {
 		log.Error(err)
 		os.Exit(1)
-	} else {
-		os.Exit(0)
 	}
 }

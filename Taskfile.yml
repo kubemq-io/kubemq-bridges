@@ -18,6 +18,13 @@ tasks:
   test:
     cmds:
       - go test -timeout 30m ./...
+  build_container:
+    env:
+      GOOS: '{{OS}}'
+      GOARCH: '{{ARCH}}'
+    cmds:
+      - go build -tags container -o  "{{.BINARY_NAME}}.exe" -ldflags "-X main.version={{.VERSION}}"
+
   goreleaser:
     cmds:
       - goreleaser --snapshot --skip-publish --rm-dist
@@ -38,6 +45,9 @@ tasks:
       - go mod vendor
       - docker build --build-arg VERSION={{.VERSION}} . -t kubemq/{{.BINARY_NAME}}:{{.VERSION}}
       - docker tag kubemq/{{.BINARY_NAME}}:{{.VERSION}} kubemq/{{.BINARY_NAME}}:latest
+  run_docker:
+    cmds:
+      - docker run -it --rm kubemq/{{.BINARY_NAME}}:latest
   push:
       cmds:
         - docker push kubemq/{{.BINARY_NAME}}:{{.VERSION}}

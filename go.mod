@@ -9,6 +9,7 @@ require (
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/json-iterator/go v1.1.10
+	github.com/kardianos/service v1.2.0
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/kubemq-io/kubemq-go v1.7.0
 	github.com/labstack/echo/v4 v4.1.17
@@ -16,7 +17,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.7.1
 	github.com/smartystreets/assertions v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
 	go.opencensus.io v0.22.3 // indirect
@@ -26,7 +26,6 @@ require (
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/tools v0.0.0-20200630154851-b2d8b0336632 // indirect
 	google.golang.org/genproto v0.0.0-20200626011028-ee7919e894b5 // indirect
-	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 )
 
