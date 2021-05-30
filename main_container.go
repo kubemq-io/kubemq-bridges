@@ -89,7 +89,7 @@ func main() {
 	log = logger.NewLogger("kubemq-bridges")
 	flag.Parse()
 	config.SetConfigFile(*configFile)
-	log.Infof("starting kubemq bridges connector version: %s, commit: %s, date %s", version, commit, date)
+	log.Infof("starting kubemq bridges connector version: %s", version)
 	if err := run(); err != nil {
 		log.Error(err)
 		os.Exit(1)
