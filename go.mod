@@ -11,7 +11,7 @@ require (
 	github.com/json-iterator/go v1.1.10
 	github.com/kardianos/service v1.2.0
 	github.com/kr/pretty v0.2.0 // indirect
-	github.com/kubemq-io/kubemq-go v1.7.0
+	github.com/kubemq-io/kubemq-go v1.7.2
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

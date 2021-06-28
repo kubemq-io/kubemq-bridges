@@ -11,7 +11,6 @@ import (
 	events_store "github.com/kubemq-hub/kubemq-bridges/sources/events-store"
 	"github.com/kubemq-hub/kubemq-bridges/sources/query"
 	"github.com/kubemq-hub/kubemq-bridges/sources/queue"
-	"github.com/kubemq-hub/kubemq-bridges/sources/queue_stream"
 )
 
 type Source interface {
@@ -48,12 +47,6 @@ func Init(ctx context.Context, kind string, connection config.Metadata, properti
 		return source, nil
 	case "source.queue", "kubemq.queue":
 		source := queue.New()
-		if err := source.Init(ctx, connection, properties, log); err != nil {
-			return nil, err
-		}
-		return source, nil
-	case "source.queue-stream", "kubemq.queue-stream":
-		source := queue_stream.New()
 		if err := source.Init(ctx, connection, properties, log); err != nil {
 			return nil, err
 		}

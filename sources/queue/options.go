@@ -8,8 +8,7 @@ import (
 
 const (
 	defaultAddress     = "0.0.0.0:50000"
-	defaultBatchSize   = 1
-	defaultWaitTimeout = 60
+	defaultWaitTimeout = 5
 	defaultSources     = 1
 )
 
@@ -22,7 +21,6 @@ type options struct {
 	sources     int
 	batchSize   int
 	waitTimeout int
-	maxRequeue  int
 }
 
 func parseOptions(cfg config.Metadata) (options, error) {
@@ -40,22 +38,18 @@ func parseOptions(cfg config.Metadata) (options, error) {
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing channel value, %w", err)
 	}
-	o.sources, err = cfg.ParseIntWithRange("sources", defaultSources, 1, 1024)
+	o.sources, err = cfg.ParseIntWithRange("sources", defaultSources, 1, 100)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing sources value, %w", err)
 	}
 
-	o.batchSize, err = cfg.ParseIntWithRange("batch_size", defaultBatchSize, 1, 1024)
+	o.batchSize, err = cfg.ParseIntWithRange("batch_size", 1, 1, 1024)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing batch size value, %w", err)
 	}
 	o.waitTimeout, err = cfg.ParseIntWithRange("wait_timeout", defaultWaitTimeout, 1, 24*60*60)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing wait timeout value, %w", err)
-	}
-	o.maxRequeue, err = cfg.ParseIntWithRange("max_requeue", 0, 0, 1024)
-	if err != nil {
-		return options{}, fmt.Errorf("error parsing max requeue value, %w", err)
 	}
 	return o, nil
 }

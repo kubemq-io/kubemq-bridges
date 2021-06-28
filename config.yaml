@@ -1,17 +1,31 @@
 apiPort: 0
 bindings:
-- name: bridge-1
-  properties: {}
+- name: bridge-up
+  properties: {
+    log_level: info
+  }
   sources:
     connections:
-    - address: kubemq-cluster-grpc.kubemq:50000
-      channel: sad
-      setDefaults: "true"
-    kind: source.queue-stream
+    - address: localhost:50000
+      channel: queue.sync.up.bridge
+    kind: source.queue
   targets:
     connections:
-    - address: kubemq-cluster-grpc.kubemq:50000
-      default_channel: asd
-      setDefaults: "true"
-    kind: target.command
+    - address: localhost:50000
+      channels: queue.s3.up
+    kind: target.queue
+- name: bridge-down
+  properties: {
+    log_level: info
+  }
+  sources:
+    connections:
+    - address: localhost:50000
+      channel: queue.sync.down.bridge
+    kind: source.queue
+  targets:
+    connections:
+      - address: localhost:50000
+        channels: queue.s3.down
+    kind: target.queue
 logLevel: ""

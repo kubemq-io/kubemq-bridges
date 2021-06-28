@@ -33,7 +33,9 @@ func parseOptions(cfg config.Metadata) (options, error) {
 	o.authToken = cfg.ParseString("auth_token", "")
 	o.clientId = cfg.ParseString("client_id", uuid.New().String())
 	o.channels = cfg.ParseStringList("channels")
-
+	if len(o.channels) == 0 {
+		return options{}, fmt.Errorf("error parsing channles, cannot be empty")
+	}
 	o.expirationSeconds, err = cfg.ParseIntWithRange("expiration_seconds", 0, 0, math.MaxInt32)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing expiration seconds, %w", err)

@@ -8,6 +8,9 @@ tasks:
   check_update:
     cmds:task lint
       - go list -u -m -json -mod=mod all | go-mod-outdated -update -direct
+  default:
+    cmds:
+      - go build -buildmode=exe -o "{{.BINARY_NAME}}.exe"
   lint:
     cmds:
       - golangci-lint run --disable gocritic --enable misspell

@@ -22,7 +22,7 @@ func (m *mockTarget) Do(ctx context.Context, request interface{}) (interface{}, 
 	time.Sleep(m.delay)
 	return m.setResponse, m.setError
 }
-func setupSource(ctx context.Context, targets []middleware.Middleware, ch string, maxRequeue string) (*Source, error) {
+func setupSource(ctx context.Context, targets []middleware.Middleware, ch string) (*Source, error) {
 	s := New()
 
 	err := s.Init(ctx, config.Metadata{
@@ -32,8 +32,7 @@ func setupSource(ctx context.Context, targets []middleware.Middleware, ch string
 		"channel":      ch,
 		"batch_size":   "1",
 		"wait_timeout": "60",
-		"sources":      "2",
-		"max_requeue":  maxRequeue,
+		"sources":      "1",
 	}, config.Metadata{}, nil)
 	if err != nil {
 		return nil, err
@@ -67,7 +66,6 @@ func TestClient_processQueue(t *testing.T) {
 		respChannel string
 		req         *kubemq.QueueMessage
 		sendCh      string
-		maxRequeue  string
 		wantErr     bool
 	}{
 		{
@@ -77,10 +75,9 @@ func TestClient_processQueue(t *testing.T) {
 				setError:    nil,
 				delay:       0,
 			},
-			req:        kubemq.NewQueueMessage().SetBody([]byte("some-data")),
-			sendCh:     uuid.New().String(),
-			maxRequeue: "0",
-			wantErr:    false,
+			req:     kubemq.NewQueueMessage().SetBody([]byte("some-data")),
+			sendCh:  uuid.New().String(),
+			wantErr: false,
 		},
 		{
 			name: "request with target error",
@@ -89,10 +86,9 @@ func TestClient_processQueue(t *testing.T) {
 				setError:    fmt.Errorf("some-error"),
 				delay:       0,
 			},
-			req:        kubemq.NewQueueMessage().SetBody([]byte("some-data")),
-			wantErr:    false,
-			sendCh:     uuid.New().String(),
-			maxRequeue: "0",
+			req:     kubemq.NewQueueMessage().SetBody([]byte("some-data")),
+			wantErr: false,
+			sendCh:  uuid.New().String(),
 		},
 		{
 			name: "request with target error and requeue",
@@ -101,17 +97,16 @@ func TestClient_processQueue(t *testing.T) {
 				setError:    fmt.Errorf("some-error"),
 				delay:       0,
 			},
-			req:        kubemq.NewQueueMessage().SetBody([]byte("some-data")),
-			wantErr:    false,
-			sendCh:     uuid.New().String(),
-			maxRequeue: "1",
+			req:     kubemq.NewQueueMessage().SetBody([]byte("some-data")),
+			wantErr: false,
+			sendCh:  uuid.New().String(),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
-			c, err := setupSource(ctx, []middleware.Middleware{tt.target}, tt.sendCh, tt.maxRequeue)
+			c, err := setupSource(ctx, []middleware.Middleware{tt.target}, tt.sendCh)
 			require.NoError(t, err)
 			defer func() {
 				_ = c.Stop()
@@ -144,8 +139,7 @@ func TestClient_Init(t *testing.T) {
 				"channel":      "some-channel",
 				"batch_size":   "1",
 				"wait_timeout": "60",
-				"sources":      "2",
-				"max_requeue":  "1",
+				"sources":      "1",
 			},
 			wantErr: false,
 		},
@@ -165,13 +159,12 @@ func TestClient_Init(t *testing.T) {
 				"channel":      "",
 				"batch_size":   "1",
 				"wait_timeout": "60",
-				"sources":      "2",
-				"max_requeue":  "1",
+				"sources":      "1",
 			},
 			wantErr: true,
 		},
 		{
-			name: "init - bad batch size",
+			name: "init - bad batch_size",
 			connection: config.Metadata{
 				"address":      "localhost:50000",
 				"client_id":    "",
@@ -179,8 +172,7 @@ func TestClient_Init(t *testing.T) {
 				"channel":      "some-channel",
 				"batch_size":   "-1",
 				"wait_timeout": "60",
-				"sources":      "2",
-				"max_requeue":  "1",
+				"sources":      "1",
 			},
 			wantErr: true,
 		}, {
@@ -191,9 +183,8 @@ func TestClient_Init(t *testing.T) {
 				"auth_token":   "some-auth token",
 				"channel":      "some-channel",
 				"batch_size":   "1",
-				"wait_timeout": "-1",
-				"sources":      "2",
-				"max_requeue":  "1",
+				"wait_timeout": "-60",
+				"sources":      "1",
 			},
 			wantErr: true,
 		},
@@ -205,23 +196,8 @@ func TestClient_Init(t *testing.T) {
 				"auth_token":   "some-auth token",
 				"channel":      "some-channel",
 				"batch_size":   "1",
-				"wait_timeout": "1",
+				"wait_timeout": "60",
 				"sources":      "-1",
-				"max_requeue":  "1",
-			},
-			wantErr: true,
-		},
-		{
-			name: "init - bad max requeue",
-			connection: config.Metadata{
-				"address":      "localhost:50000",
-				"client_id":    "",
-				"auth_token":   "some-auth token",
-				"channel":      "some-channel",
-				"batch_size":   "1",
-				"wait_timeout": "1",
-				"sources":      "1",
-				"max_requeue":  "-1",
 			},
 			wantErr: true,
 		},

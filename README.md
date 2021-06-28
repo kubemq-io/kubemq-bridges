@@ -292,7 +292,6 @@ Sources section contains sources configuration for binding as follows:
 |             |                                                   | source.events                                                 |
 |             |                                                   | source.events-store                                           |
 | connections | an array of connection properties for each source | [queue configuration](/sources/queue)               |
-|             |                                                   | [queue-stream configuration](/sources/queue_stream)             |
 |             |                                                   | [query configuration](/sources/query)               |
 |             |                                                   | [command configuration](/sources/command)           |
 |             |                                                   | [events configuration](/sources/events)             |
