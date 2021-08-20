@@ -153,8 +153,6 @@ github.com/kr/pretty v0.2.0/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfn
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/kubemq-io/kubemq-go v1.7.0 h1:ujYHCShuohhH47vEpxEv795bAjohK6WnMbfQv3Xz3M4=
-github.com/kubemq-io/kubemq-go v1.7.0/go.mod h1:WP2VL6bibnCzTmlTKFtb5RWFvB/V9WPl/0psamE/2kI=
 github.com/kubemq-io/kubemq-go v1.7.2 h1:BvG91h2He+t5nr1i9xfvGHL0XLw9cp96r6e6U7Wp5Zg=
 github.com/kubemq-io/kubemq-go v1.7.2/go.mod h1:WP2VL6bibnCzTmlTKFtb5RWFvB/V9WPl/0psamE/2kI=
 github.com/kubemq-io/protobuf v1.3.1 h1:b4QcnpujV8U3go8pa2+FTESl6ygU6hY8APYibRtyemo=
