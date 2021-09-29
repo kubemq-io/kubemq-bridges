@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/uuid"
+	"github.com/kubemq-io/kubemq-bridges/pkg/uuid"
 	"github.com/kubemq-io/kubemq-go"
 	"log"
 	"math/rand"

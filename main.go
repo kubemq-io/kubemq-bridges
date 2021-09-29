@@ -1,3 +1,4 @@
+//go:build !container
 // +build !container
 
 package main
@@ -7,12 +8,12 @@ import (
 	"flag"
 	"fmt"
 	"github.com/ghodss/yaml"
-	"github.com/kubemq-hub/kubemq-bridges/api"
-	"github.com/kubemq-hub/kubemq-bridges/binding"
-	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/browser"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/builder"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/api"
+	"github.com/kubemq-io/kubemq-bridges/binding"
+	"github.com/kubemq-io/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/pkg/browser"
+	"github.com/kubemq-io/kubemq-bridges/pkg/builder"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 	"io/ioutil"
 	"os"
 	"os/signal"

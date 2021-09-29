@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/fortytw2/leaktest"
-	"github.com/kubemq-hub/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/config"
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/stretchr/testify/require"
 	"testing"

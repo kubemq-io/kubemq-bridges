@@ -3,13 +3,13 @@ package targets
 import (
 	"context"
 	"fmt"
-	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
-	"github.com/kubemq-hub/kubemq-bridges/targets/command"
-	"github.com/kubemq-hub/kubemq-bridges/targets/events"
-	events_store "github.com/kubemq-hub/kubemq-bridges/targets/events-store"
-	"github.com/kubemq-hub/kubemq-bridges/targets/query"
-	"github.com/kubemq-hub/kubemq-bridges/targets/queue"
+	"github.com/kubemq-io/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/targets/command"
+	"github.com/kubemq-io/kubemq-bridges/targets/events"
+	events_store "github.com/kubemq-io/kubemq-bridges/targets/events-store"
+	"github.com/kubemq-io/kubemq-bridges/targets/query"
+	"github.com/kubemq-io/kubemq-bridges/targets/queue"
 )
 
 type Target interface {

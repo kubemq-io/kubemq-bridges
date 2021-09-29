@@ -3,9 +3,9 @@ package binding
 import (
 	"context"
 	"fmt"
-	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/metrics"
+	"github.com/kubemq-io/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/pkg/metrics"
 	"net/http"
 	"sync"
 	"time"

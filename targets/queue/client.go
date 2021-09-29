@@ -3,8 +3,8 @@ package queue
 import (
 	"context"
 	"fmt"
-	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 	"github.com/kubemq-io/kubemq-go"
 	"github.com/kubemq-io/kubemq-go/queues_stream"
 )

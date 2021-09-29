@@ -21,7 +21,7 @@
 package ratelimit
 
 import (
-	"github.com/kubemq-hub/kubemq-bridges/pkg/ratelimit/internal/clock"
+	"github.com/kubemq-io/kubemq-bridges/pkg/ratelimit/internal/clock"
 	"sync"
 	"time"
 )

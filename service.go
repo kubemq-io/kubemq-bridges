@@ -1,10 +1,11 @@
+//go:build !container
 // +build !container
 
 package main
 
 import (
 	"github.com/kardianos/service"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 	"os"
 )
 

@@ -1,3 +1,4 @@
+//go:build container
 // +build container
 
 package main
@@ -6,10 +7,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/kubemq-hub/kubemq-bridges/api"
-	"github.com/kubemq-hub/kubemq-bridges/binding"
-	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/api"
+	"github.com/kubemq-io/kubemq-bridges/binding"
+	"github.com/kubemq-io/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 	"os"
 	"os/signal"
 	"syscall"

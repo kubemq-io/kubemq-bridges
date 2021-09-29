@@ -3,7 +3,7 @@ package events
 import (
 	"context"
 	"fmt"
-	"github.com/kubemq-hub/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/config"
 	"github.com/kubemq-io/kubemq-go"
 
 	"github.com/stretchr/testify/require"

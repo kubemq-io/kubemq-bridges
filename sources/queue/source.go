@@ -3,12 +3,12 @@ package queue
 import (
 	"context"
 	"fmt"
-	"github.com/kubemq-hub/kubemq-bridges/middleware"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/roundrobin"
+	"github.com/kubemq-io/kubemq-bridges/middleware"
+	"github.com/kubemq-io/kubemq-bridges/pkg/roundrobin"
 	"time"
 
-	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 	"github.com/kubemq-io/kubemq-go/queues_stream"
 )
 

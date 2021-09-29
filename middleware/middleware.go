@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/retry"
+	"github.com/kubemq-io/kubemq-bridges/pkg/retry"
 	"reflect"
 )
 

@@ -1,7 +1,7 @@
 package binding
 
 import (
-	"github.com/kubemq-hub/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/config"
 )
 
 type Status struct {

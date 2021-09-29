@@ -3,9 +3,9 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"github.com/kubemq-hub/kubemq-bridges/config"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/metrics"
+	"github.com/kubemq-io/kubemq-bridges/config"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/pkg/metrics"
 	"github.com/stretchr/testify/require"
 	"math"
 	"testing"

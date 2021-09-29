@@ -6,8 +6,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
-	"github.com/kubemq-hub/kubemq-bridges/global"
-	"github.com/kubemq-hub/kubemq-bridges/pkg/logger"
+	"github.com/kubemq-io/kubemq-bridges/global"
+	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 	"io/ioutil"
 	"log"
 	"os"
@@ -23,7 +23,6 @@ const defaultApiPort = global.DefaultApiPort
 var configFile string
 var logr = logger.NewLogger("config")
 var lastConf *Config
-
 
 type Config struct {
 	Bindings []BindingConfig `json:"bindings"`
@@ -147,7 +146,7 @@ func load() (*Config, error) {
 	}
 	loadedConfigFile, err := getConfigFile()
 	if err != nil {
-		return nil,err
+		return nil, err
 	} else {
 		viper.SetConfigFile(filepath.Join(filepath.Dir(path), loadedConfigFile))
 	}
