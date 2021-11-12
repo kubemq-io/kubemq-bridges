@@ -9,11 +9,11 @@ ADD . $GOPATH/github.com/kubemq-io/kubemq-bridges
 WORKDIR $GOPATH/github.com/kubemq-io/kubemq-bridges
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags container -a -mod=vendor -installsuffix cgo -ldflags="-w -s -X main.version=$VERSION" -o kubemq-bridges-run .
 FROM registry.access.redhat.com/ubi8/ubi-minimal
-RUN microdnf install yum \
-  && yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical \
-  && yum clean all \
-  && microdnf remove yum \
-  && microdnf clean all
+#RUN microdnf install yum \
+#  && yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical \
+#  && yum clean all \
+#  && microdnf remove yum \
+#  && microdnf clean all
 MAINTAINER KubeMQ info@kubemq.io
 LABEL name="KubeMQ Bridges Connectors" \
       maintainer="info@kubemq.io" \
