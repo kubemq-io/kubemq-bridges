@@ -2,12 +2,12 @@ version: '3'
 
 vars:
   BINARY_NAME: kubemq-bridges
-  VERSION: v1.3.4
+  VERSION: v1.4.0
 
 tasks:
   check_update:
-    cmds:task lint
-      - go list -u -m -json -mod=mod all | go-mod-outdated -update -direct
+    cmds:
+      - go-mod-upgrade
   default:
     cmds:
       - go build -buildmode=exe -o "{{.BINARY_NAME}}.exe"
@@ -67,8 +67,8 @@ tasks:
   release:
       cmds:
         - go mod vendor
-        - task: lint
         - task: commit-modifed
         - task: docker
         - task: push
         - task: tag
+        - task: goreleaser
