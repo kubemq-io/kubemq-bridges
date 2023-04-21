@@ -2,7 +2,7 @@ version: '3'
 
 vars:
   BINARY_NAME: kubemq-bridges
-  VERSION: v1.4.0
+  VERSION: v1.4.1
 
 tasks:
   check_update:
@@ -72,3 +72,6 @@ tasks:
         - task: push
         - task: tag
         - task: goreleaser
+  trivy:
+    cmds:
+      - trivy image --exit-code 1 --severity HIGH,CRITICAL kubemq/{{.BINARY_NAME}}:{{.VERSION}}
