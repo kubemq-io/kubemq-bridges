@@ -36,7 +36,7 @@ func setupSource(ctx context.Context, targets []middleware.Middleware) (*Source,
 		"reconnect_interval_seconds": "1",
 		"max_reconnects":             "0",
 		"sources":                    "1",
-	}, config.Metadata{}, nil)
+	}, config.Metadata{}, "", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -241,7 +241,6 @@ func TestClient_processQuery(t *testing.T) {
 	}
 }
 
-//
 func TestClient_Init(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -338,7 +337,7 @@ func TestClient_Init(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 			c := New()
-			if err := c.Init(ctx, tt.connection, config.Metadata{}, nil); (err != nil) != tt.wantErr {
+			if err := c.Init(ctx, tt.connection, config.Metadata{}, "", nil); (err != nil) != tt.wantErr {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

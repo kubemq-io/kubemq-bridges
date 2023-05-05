@@ -45,7 +45,7 @@ func (s *Source) getQueuesClient(ctx context.Context, id int) (*queues_stream.Qu
 func (s *Source) onError(err error) {
 	s.log.Error(err.Error())
 }
-func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata, log *logger.Logger) error {
+func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata, bindingName string, log *logger.Logger) error {
 	s.log = log
 	if s.log == nil {
 		s.log = logger.NewLogger("queue-stream")

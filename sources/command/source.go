@@ -22,7 +22,7 @@ func New() *Source {
 	return &Source{}
 
 }
-func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata, log *logger.Logger) error {
+func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata, bindingName string, log *logger.Logger) error {
 	s.log = log
 	if s.log == nil {
 		s.log = logger.NewLogger("command")
@@ -36,7 +36,7 @@ func (s *Source) Init(ctx context.Context, connection config.Metadata, propertie
 	for i := 0; i < s.opts.sources; i++ {
 		clientId := s.opts.clientId
 		if s.opts.sources > 1 {
-			clientId = fmt.Sprintf("%s-%d", clientId, i)
+			clientId = fmt.Sprintf("kubemq-bridges/%s/%s/%d", bindingName, clientId, i)
 		}
 		client, err := kubemq.NewClient(ctx,
 			kubemq.WithAddress(s.opts.host, s.opts.port),

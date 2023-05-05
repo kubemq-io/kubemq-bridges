@@ -13,41 +13,41 @@ import (
 )
 
 type Target interface {
-	Init(ctx context.Context, connection config.Metadata, log *logger.Logger) error
+	Init(ctx context.Context, connection config.Metadata, bindingName string, log *logger.Logger) error
 	Do(ctx context.Context, request interface{}) (interface{}, error)
 	Stop() error
 }
 
-func Init(ctx context.Context, kind string, connection config.Metadata, log *logger.Logger) (Target, error) {
+func Init(ctx context.Context, kind string, connection config.Metadata, bindingName string, log *logger.Logger) (Target, error) {
 
 	switch kind {
 	case "target.command", "kubemq.command":
 		target := command.New()
-		if err := target.Init(ctx, connection, log); err != nil {
+		if err := target.Init(ctx, connection, bindingName, log); err != nil {
 			return nil, err
 		}
 		return target, nil
 	case "target.query", "kubemq.query":
 		target := query.New()
-		if err := target.Init(ctx, connection, log); err != nil {
+		if err := target.Init(ctx, connection, bindingName, log); err != nil {
 			return nil, err
 		}
 		return target, nil
 	case "target.events", "kubemq.events":
 		target := events.New()
-		if err := target.Init(ctx, connection, log); err != nil {
+		if err := target.Init(ctx, connection, bindingName, log); err != nil {
 			return nil, err
 		}
 		return target, nil
 	case "target.events-store", "kubemq.events-store":
 		target := events_store.New()
-		if err := target.Init(ctx, connection, log); err != nil {
+		if err := target.Init(ctx, connection, bindingName, log); err != nil {
 			return nil, err
 		}
 		return target, nil
 	case "target.queue", "kubemq.queue":
 		target := queue.New()
-		if err := target.Init(ctx, connection, log); err != nil {
+		if err := target.Init(ctx, connection, bindingName, log); err != nil {
 			return nil, err
 		}
 		return target, nil

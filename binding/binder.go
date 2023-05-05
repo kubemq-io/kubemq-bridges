@@ -53,7 +53,7 @@ func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *m
 	}
 	b.log = log.Logger
 	for _, connection := range cfg.Targets.Connections {
-		target, err := targets.Init(ctx, cfg.Targets.Kind, connection, b.log)
+		target, err := targets.Init(ctx, cfg.Targets.Kind, connection, cfg.Name, b.log)
 		if err != nil {
 			return fmt.Errorf("error loading targets conntector on binding %s, %w", b.name, err)
 		}
@@ -66,7 +66,7 @@ func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *m
 	}
 
 	for _, connection := range cfg.Sources.Connections {
-		source, err := sources.Init(ctx, cfg.Sources.Kind, connection, cfg.Properties, b.log)
+		source, err := sources.Init(ctx, cfg.Sources.Kind, connection, cfg.Properties, cfg.Name, b.log)
 		if err != nil {
 			return fmt.Errorf("error loading sources conntector on binding %s, %w", b.name, err)
 		}

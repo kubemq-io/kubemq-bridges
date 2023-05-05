@@ -19,7 +19,7 @@ func New() *Client {
 	return &Client{}
 }
 
-func (c *Client) Init(ctx context.Context, connection config.Metadata, log *logger.Logger) error {
+func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingName string, log *logger.Logger) error {
 	c.log = log
 	if c.log == nil {
 		c.log = logger.NewLogger("queue")

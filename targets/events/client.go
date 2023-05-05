@@ -26,7 +26,7 @@ func New() *Client {
 
 }
 
-func (c *Client) Init(ctx context.Context, connection config.Metadata, log *logger.Logger) error {
+func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingName string, log *logger.Logger) error {
 	c.log = log
 	if c.log == nil {
 		c.log = logger.NewLogger("events")
@@ -38,7 +38,7 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata, log *logg
 	}
 	c.client, err = kubemq.NewClient(ctx,
 		kubemq.WithAddress(c.opts.host, c.opts.port),
-		kubemq.WithClientId(c.opts.clientId),
+		kubemq.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s",bindingName, c.opts.clientId)),,
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithAuthToken(c.opts.authToken),
 		kubemq.WithCheckConnection(true),
