@@ -2,7 +2,7 @@ version: '3'
 
 vars:
   BINARY_NAME: kubemq-bridges
-  VERSION: v1.5.0
+  VERSION: v1.5.1
 
 tasks:
   check_update:
@@ -16,8 +16,8 @@ tasks:
       - golangci-lint run --disable gocritic --enable misspell
   run:
     cmds:
-      - go mod vendor
-      - go run ./main.go
+      - go build -buildmode=exe -o "{{.BINARY_NAME}}.exe"
+      - ./kubemq-bridges.exe
   test:
     cmds:
       - go test -timeout 30m ./...
@@ -67,7 +67,7 @@ tasks:
   release:
       cmds:
         - go mod vendor
-        - task: commit-modifed
+##        - task: commit-modifed
         - task: docker
         - task: push
         - task: tag

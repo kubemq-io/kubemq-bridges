@@ -3,11 +3,12 @@ package events_store
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/kubemq-io/kubemq-bridges/config"
 	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 
 	"github.com/kubemq-io/kubemq-go"
-	"time"
 )
 
 const (
@@ -24,7 +25,6 @@ type Client struct {
 
 func New() *Client {
 	return &Client{}
-
 }
 
 func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingName string, log *logger.Logger) error {
@@ -39,7 +39,7 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingNa
 	}
 	c.client, err = kubemq.NewClient(ctx,
 		kubemq.WithAddress(c.opts.host, c.opts.port),
-		kubemq.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s",bindingName, c.opts.clientId)),,
+		kubemq.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s", bindingName, c.opts.clientId)),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithAuthToken(c.opts.authToken),
 		kubemq.WithCheckConnection(true),
@@ -52,12 +52,14 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingNa
 	go c.runStreamProcessing(ctx)
 	return nil
 }
+
 func (c *Client) Stop() error {
 	if c.client != nil {
 		return c.client.Close()
 	}
 	return nil
 }
+
 func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, error) {
 	var eventsStore []*kubemq.EventStore
 	switch val := request.(type) {
@@ -125,8 +127,8 @@ func (c *Client) parseEvent(event *kubemq.Event, channels []string) []*kubemq.Ev
 			SetTags(event.Tags))
 	}
 	return eventsStores
-
 }
+
 func (c *Client) parseEventStore(eventStore *kubemq.EventStoreReceive, channels []string) []*kubemq.EventStore {
 	var eventsStores []*kubemq.EventStore
 	if len(channels) == 0 {
@@ -158,6 +160,7 @@ func (c *Client) parseQuery(query *kubemq.QueryReceive, channels []string) []*ku
 	}
 	return eventsStores
 }
+
 func (c *Client) parseCommand(command *kubemq.CommandReceive, channels []string) []*kubemq.EventStore {
 	var eventsStores []*kubemq.EventStore
 	if len(channels) == 0 {
@@ -173,6 +176,7 @@ func (c *Client) parseCommand(command *kubemq.CommandReceive, channels []string)
 	}
 	return eventsStores
 }
+
 func (c *Client) parseQueue(message *kubemq.QueueMessage, channels []string) []*kubemq.EventStore {
 	var eventsStores []*kubemq.EventStore
 	if len(channels) == 0 {

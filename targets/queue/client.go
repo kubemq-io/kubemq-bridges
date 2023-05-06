@@ -3,6 +3,7 @@ package queue
 import (
 	"context"
 	"fmt"
+
 	"github.com/kubemq-io/kubemq-bridges/config"
 	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 	"github.com/kubemq-io/kubemq-go"
@@ -31,7 +32,7 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingNa
 	}
 	c.streamClient, err = queues_stream.NewQueuesStreamClient(ctx,
 		queues_stream.WithAddress(c.opts.host, c.opts.port),
-		queues_stream.WithClientId(c.opts.clientId),
+		queues_stream.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s", bindingName, c.opts.clientId)),
 		queues_stream.WithCheckConnection(true),
 		queues_stream.WithAutoReconnect(true),
 		queues_stream.WithAuthToken(c.opts.authToken),
@@ -43,15 +44,16 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingNa
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
+
 func (c *Client) Stop() error {
 	if c.streamClient != nil {
 		return c.streamClient.Close()
 	}
 	return nil
 }
+
 func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, error) {
 	var messages []*queues_stream.QueueMessage
 	switch val := request.(type) {
@@ -100,8 +102,8 @@ func (c *Client) parseEvent(event *kubemq.Event, channels []string) []*queues_st
 			SetPolicyMaxReceiveQueue(c.opts.deadLetterQueue))
 	}
 	return messages
-
 }
+
 func (c *Client) parseEventStore(eventStore *kubemq.EventStoreReceive, channels []string) []*queues_stream.QueueMessage {
 	var messages []*queues_stream.QueueMessage
 
@@ -137,6 +139,7 @@ func (c *Client) parseQuery(query *kubemq.QueryReceive, channels []string) []*qu
 	}
 	return messages
 }
+
 func (c *Client) parseCommand(command *kubemq.CommandReceive, channels []string) []*queues_stream.QueueMessage {
 	var messages []*queues_stream.QueueMessage
 
@@ -154,6 +157,7 @@ func (c *Client) parseCommand(command *kubemq.CommandReceive, channels []string)
 	}
 	return messages
 }
+
 func (c *Client) parseQueue(message *kubemq.QueueMessage, channels []string) []*queues_stream.QueueMessage {
 	var messages []*queues_stream.QueueMessage
 
@@ -171,6 +175,7 @@ func (c *Client) parseQueue(message *kubemq.QueueMessage, channels []string) []*
 	}
 	return messages
 }
+
 func (c *Client) parseQueueStream(message *queues_stream.QueueMessage, channels []string) []*queues_stream.QueueMessage {
 	var messages []*queues_stream.QueueMessage
 

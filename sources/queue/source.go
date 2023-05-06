@@ -3,9 +3,10 @@ package queue
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/kubemq-io/kubemq-bridges/middleware"
 	"github.com/kubemq-io/kubemq-bridges/pkg/roundrobin"
-	"time"
 
 	"github.com/kubemq-io/kubemq-bridges/config"
 	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
@@ -21,17 +22,17 @@ type Source struct {
 	properties        config.Metadata
 	roundRobin        *roundrobin.RoundRobin
 	loadBalancingMode bool
+	bindingName       string
 }
 
 func New() *Source {
 	return &Source{}
-
 }
 
 func (s *Source) getQueuesClient(ctx context.Context, id int) (*queues_stream.QueuesStreamClient, error) {
 	return queues_stream.NewQueuesStreamClient(ctx,
 		queues_stream.WithAddress(s.opts.host, s.opts.port),
-		queues_stream.WithClientId(s.opts.clientId),
+		queues_stream.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s", s.bindingName, s.opts.clientId)),
 		queues_stream.WithCheckConnection(true),
 		queues_stream.WithAutoReconnect(true),
 		queues_stream.WithAuthToken(s.opts.authToken),
@@ -40,11 +41,12 @@ func (s *Source) getQueuesClient(ctx context.Context, id int) (*queues_stream.Qu
 				s.log.Infof(fmt.Sprintf("connection: %d, %s", id, msg))
 			}),
 	)
-
 }
+
 func (s *Source) onError(err error) {
 	s.log.Error(err.Error())
 }
+
 func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata, bindingName string, log *logger.Logger) error {
 	s.log = log
 	if s.log == nil {
@@ -56,7 +58,7 @@ func (s *Source) Init(ctx context.Context, connection config.Metadata, propertie
 	if err != nil {
 		return err
 	}
-
+	s.bindingName = bindingName
 	return nil
 }
 
@@ -100,6 +102,7 @@ func (s *Source) run(ctx context.Context, client *queues_stream.QueuesStreamClie
 		}
 	}
 }
+
 func (s *Source) processQueueMessage(ctx context.Context, client *queues_stream.QueuesStreamClient) error {
 	pr := queues_stream.NewPollRequest().
 		SetChannel(s.opts.channel).
@@ -135,7 +138,6 @@ func (s *Source) processQueueMessage(ctx context.Context, client *queues_stream.
 				if message.Policy.MaxReceiveCount < 1024 && message.Policy.MaxReceiveCount != message.Attributes.ReceiveCount {
 					return message.NAck()
 				}
-
 			}
 		}
 		err = message.Ack()

@@ -14,18 +14,4 @@ bindings:
     - address: localhost:50000
       channels: queue.s3.up
     kind: target.queue
-- name: bridge-down
-  properties: {
-    log_level: info
-  }
-  sources:
-    connections:
-    - address: localhost:50000
-      channel: queue.sync.down.bridge
-    kind: source.queue
-  targets:
-    connections:
-      - address: localhost:50000
-        channels: queue.s3.down
-    kind: target.queue
 logLevel: ""

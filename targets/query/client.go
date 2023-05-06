@@ -31,7 +31,7 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingNa
 	}
 	c.client, err = kubemq.NewClient(ctx,
 		kubemq.WithAddress(c.opts.host, c.opts.port),
-		kubemq.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s",bindingName, c.opts.clientId)),,
+		kubemq.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s", bindingName, c.opts.clientId)),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithAuthToken(c.opts.authToken),
 		kubemq.WithCheckConnection(true),
