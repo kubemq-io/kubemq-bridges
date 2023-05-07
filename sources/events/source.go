@@ -3,6 +3,7 @@ package events
 import (
 	"context"
 	"fmt"
+
 	"github.com/kubemq-io/kubemq-bridges/config"
 	"github.com/kubemq-io/kubemq-bridges/middleware"
 	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
@@ -24,8 +25,8 @@ type Source struct {
 
 func New() *Source {
 	return &Source{}
-
 }
+
 func (s *Source) Init(ctx context.Context, connection config.Metadata, properties config.Metadata, bindingName string, log *logger.Logger) error {
 	s.log = log
 	if s.log == nil {
@@ -38,9 +39,9 @@ func (s *Source) Init(ctx context.Context, connection config.Metadata, propertie
 	}
 	s.properties = properties
 	for i := 0; i < s.opts.sources; i++ {
-		clientId := s.opts.clientId
+		clientId := fmt.Sprintf("kubemq-bridges_%s_%s", bindingName, s.opts.clientId)
 		if s.opts.sources > 1 {
-			clientId = fmt.Sprintf("kubemq-bridges/%s/%s/%d", bindingName, clientId, i)
+			clientId = fmt.Sprintf("kubemq-bridges_%s_%s-%d", bindingName, clientId, i)
 		}
 		client, err := kubemq.NewClient(ctx,
 			kubemq.WithAddress(s.opts.host, s.opts.port),

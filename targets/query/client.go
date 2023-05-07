@@ -3,10 +3,11 @@ package query
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/kubemq-io/kubemq-bridges/config"
 	"github.com/kubemq-io/kubemq-bridges/pkg/logger"
 	"github.com/kubemq-io/kubemq-go"
-	"time"
 )
 
 type Client struct {
@@ -17,8 +18,8 @@ type Client struct {
 
 func New() *Client {
 	return &Client{}
-
 }
+
 func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingName string, log *logger.Logger) error {
 	c.log = log
 	if c.log == nil {
@@ -31,7 +32,7 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingNa
 	}
 	c.client, err = kubemq.NewClient(ctx,
 		kubemq.WithAddress(c.opts.host, c.opts.port),
-		kubemq.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s", bindingName, c.opts.clientId)),
+		kubemq.WithClientId(fmt.Sprintf("kubemq-bridges_%s_%s", bindingName, c.opts.clientId)),
 		kubemq.WithTransportType(kubemq.TransportTypeGRPC),
 		kubemq.WithAuthToken(c.opts.authToken),
 		kubemq.WithCheckConnection(true),
@@ -41,12 +42,14 @@ func (c *Client) Init(ctx context.Context, connection config.Metadata, bindingNa
 	}
 	return nil
 }
+
 func (c *Client) Stop() error {
 	if c.client != nil {
 		return c.client.Close()
 	}
 	return nil
 }
+
 func (c *Client) Do(ctx context.Context, request interface{}) (interface{}, error) {
 	var query *kubemq.Query
 	switch val := request.(type) {
@@ -84,8 +87,8 @@ func (c *Client) parseEvent(event *kubemq.Event) *kubemq.Query {
 		SetId(event.Id).
 		SetTags(event.Tags).
 		SetChannel(event.Channel)
-
 }
+
 func (c *Client) parseEventStore(eventStore *kubemq.EventStoreReceive) *kubemq.Query {
 	return kubemq.NewQuery().
 		SetBody(eventStore.Body).
@@ -103,6 +106,7 @@ func (c *Client) parseQuery(query *kubemq.QueryReceive) *kubemq.Query {
 		SetTags(query.Tags).
 		SetChannel(query.Channel)
 }
+
 func (c *Client) parseCommand(command *kubemq.CommandReceive) *kubemq.Query {
 	return kubemq.NewQuery().
 		SetBody(command.Body).
@@ -111,6 +115,7 @@ func (c *Client) parseCommand(command *kubemq.CommandReceive) *kubemq.Query {
 		SetTags(command.Tags).
 		SetChannel(command.Channel)
 }
+
 func (c *Client) parseQueue(message *kubemq.QueueMessage) *kubemq.Query {
 	return kubemq.NewQuery().
 		SetBody(message.Body).

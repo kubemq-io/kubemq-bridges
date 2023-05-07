@@ -32,7 +32,7 @@ func New() *Source {
 func (s *Source) getQueuesClient(ctx context.Context, id int) (*queues_stream.QueuesStreamClient, error) {
 	return queues_stream.NewQueuesStreamClient(ctx,
 		queues_stream.WithAddress(s.opts.host, s.opts.port),
-		queues_stream.WithClientId(fmt.Sprintf("kubemq-bridges/%s/%s", s.bindingName, s.opts.clientId)),
+		queues_stream.WithClientId(fmt.Sprintf("kubemq-bridges_%s_%s", s.bindingName, s.opts.clientId)),
 		queues_stream.WithCheckConnection(true),
 		queues_stream.WithAutoReconnect(true),
 		queues_stream.WithAuthToken(s.opts.authToken),
