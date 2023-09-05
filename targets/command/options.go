@@ -17,6 +17,7 @@ type options struct {
 	port           int
 	clientId       string
 	authToken      string
+	channel        string
 	defaultChannel string
 	timeoutSeconds int
 }
@@ -30,7 +31,15 @@ func parseOptions(cfg config.Metadata) (options, error) {
 	}
 	o.authToken = cfg.ParseString("auth_token", "")
 	o.clientId = cfg.ParseString("client_id", uuid.New().String())
-	o.defaultChannel = cfg.ParseString("default_channel", "")
+	o.channel = cfg.ParseString("channel", "")
+	if o.channel != "" {
+		o.defaultChannel = o.channel
+	} else {
+		o.defaultChannel = cfg.ParseString("default_channel", "")
+		if o.defaultChannel == "" {
+			return options{}, fmt.Errorf("error parsing channel, cannot be empty")
+		}
+	}
 	o.timeoutSeconds, err = cfg.ParseIntWithRange("timeout_seconds", defaultTimeoutSeconds, 1, math.MaxInt32)
 	if err != nil {
 		return options{}, fmt.Errorf("error parsing timeout seconds value, %w", err)

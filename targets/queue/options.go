@@ -16,6 +16,7 @@ type options struct {
 	port              int
 	clientId          string
 	authToken         string
+	channel           string
 	channels          []string
 	expirationSeconds int
 	delaySeconds      int
@@ -32,9 +33,14 @@ func parseOptions(cfg config.Metadata) (options, error) {
 	}
 	o.authToken = cfg.ParseString("auth_token", "")
 	o.clientId = cfg.ParseString("client_id", uuid.New().String())
-	o.channels = cfg.ParseStringList("channels")
-	if len(o.channels) == 0 {
-		return options{}, fmt.Errorf("error parsing channles, cannot be empty")
+	o.channel = cfg.ParseString("channel", "")
+	if o.channel != "" {
+		o.channels = append(o.channels, o.channel)
+	} else {
+		o.channels = cfg.ParseStringList("channels")
+		if len(o.channels) == 0 {
+			return options{}, fmt.Errorf("error parsing channles, cannot be empty")
+		}
 	}
 	o.expirationSeconds, err = cfg.ParseIntWithRange("expiration_seconds", 0, 0, math.MaxInt32)
 	if err != nil {
