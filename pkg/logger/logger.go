@@ -80,6 +80,7 @@ func NewLogger(name string, level ...string) *Logger {
 	if len(level) > 0 {
 		lvlStr = level[0]
 	}
+
 	zapLogger := zap.New(core, zap.IncreaseLevel(LogLevelToZapLevel(lvlStr)))
 	l := &Logger{
 		SugaredLogger: zapLogger.Sugar().With("source", name),

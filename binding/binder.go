@@ -22,7 +22,7 @@ type Binder struct {
 func NewBinder() *Binder {
 	return &Binder{}
 }
-func (b *Binder) buildMiddleware(target targets.Target, cfg config.BindingConfig, exporter *metrics.Exporter, log *middleware.LogMiddleware) (middleware.Middleware, error) {
+func (b *Binder) buildMiddleware(target targets.Target, cfg config.BindingConfig, exporter *metrics.Exporter) (middleware.Middleware, error) {
 
 	retry, err := middleware.NewRetryMiddleware(cfg.Properties, b.log)
 	if err != nil {
@@ -38,26 +38,22 @@ func (b *Binder) buildMiddleware(target targets.Target, cfg config.BindingConfig
 		if err != nil {
 			return nil, err
 		}
-		md = middleware.Chain(target, middleware.RateLimiter(rateLimiter), middleware.Retry(retry), middleware.Metric(met), middleware.Log(log))
+		md = middleware.Chain(target, middleware.RateLimiter(rateLimiter), middleware.Retry(retry), middleware.Metric(met))
 	} else {
-		md = middleware.Chain(target, middleware.RateLimiter(rateLimiter), middleware.Retry(retry), middleware.Log(log))
+		md = middleware.Chain(target, middleware.RateLimiter(rateLimiter), middleware.Retry(retry))
 	}
 
 	return md, nil
 }
-func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *metrics.Exporter) error {
+func (b *Binder) Init(ctx context.Context, cfg config.BindingConfig, exporter *metrics.Exporter, logLevel string) error {
 	b.name = cfg.Name
-	log, err := middleware.NewLogMiddleware(cfg.Name, cfg.Properties)
-	if err != nil {
-		return err
-	}
-	b.log = log.Logger
+	b.log = logger.NewLogger(cfg.Name, logLevel)
 	for _, connection := range cfg.Targets.Connections {
 		target, err := targets.Init(ctx, cfg.Targets.Kind, connection, cfg.Name, b.log)
 		if err != nil {
 			return fmt.Errorf("error loading targets conntector on binding %s, %w", b.name, err)
 		}
-		md, err := b.buildMiddleware(target, cfg, exporter, log)
+		md, err := b.buildMiddleware(target, cfg, exporter)
 		if err != nil {
 			return fmt.Errorf("error loading middlewares on binding %s, %w", b.name, err)
 		}

@@ -79,6 +79,15 @@ type (
 		// See also: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials
 		AllowCredentials bool `yaml:"allow_credentials"`
 
+		// UnsafeWildcardOriginWithAllowCredentials UNSAFE/INSECURE: allows wildcard '*' origin to be used with AllowCredentials
+		// flag. In that case we consider any origin allowed and send it back to the client with `Access-Control-Allow-Origin` header.
+		//
+		// This is INSECURE and potentially leads to [cross-origin](https://portswigger.net/research/exploiting-cors-misconfigurations-for-bitcoins-and-bounties)
+		// attacks. See: https://github.com/labstack/echo/issues/2400 for discussion on the subject.
+		//
+		// Optional. Default value is false.
+		UnsafeWildcardOriginWithAllowCredentials bool `yaml:"unsafe_wildcard_origin_with_allow_credentials"`
+
 		// ExposeHeaders determines the value of Access-Control-Expose-Headers, which
 		// defines a list of headers that clients are allowed to access.
 		//
@@ -90,8 +99,9 @@ type (
 		// MaxAge determines the value of the Access-Control-Max-Age response header.
 		// This header indicates how long (in seconds) the results of a preflight
 		// request can be cached.
+		// The header is set only if MaxAge != 0, negative value sends "0" which instructs browsers not to cache that response.
 		//
-		// Optional. Default value 0.  The header is set only if MaxAge > 0.
+		// Optional. Default value 0 - meaning header is not sent.
 		//
 		// See also: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age
 		MaxAge int `yaml:"max_age"`
@@ -141,8 +151,8 @@ func CORSWithConfig(config CORSConfig) echo.MiddlewareFunc {
 	allowOriginPatterns := []string{}
 	for _, origin := range config.AllowOrigins {
 		pattern := regexp.QuoteMeta(origin)
-		pattern = strings.Replace(pattern, "\\*", ".*", -1)
-		pattern = strings.Replace(pattern, "\\?", ".", -1)
+		pattern = strings.ReplaceAll(pattern, "\\*", ".*")
+		pattern = strings.ReplaceAll(pattern, "\\?", ".")
 		pattern = "^" + pattern + "$"
 		allowOriginPatterns = append(allowOriginPatterns, pattern)
 	}
@@ -150,7 +160,11 @@ func CORSWithConfig(config CORSConfig) echo.MiddlewareFunc {
 	allowMethods := strings.Join(config.AllowMethods, ",")
 	allowHeaders := strings.Join(config.AllowHeaders, ",")
 	exposeHeaders := strings.Join(config.ExposeHeaders, ",")
-	maxAge := strconv.Itoa(config.MaxAge)
+
+	maxAge := "0"
+	if config.MaxAge > 0 {
+		maxAge = strconv.Itoa(config.MaxAge)
+	}
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -203,7 +217,7 @@ func CORSWithConfig(config CORSConfig) echo.MiddlewareFunc {
 			} else {
 				// Check allowed origins
 				for _, o := range config.AllowOrigins {
-					if o == "*" && config.AllowCredentials {
+					if o == "*" && config.AllowCredentials && config.UnsafeWildcardOriginWithAllowCredentials {
 						allowOrigin = origin
 						break
 					}
@@ -273,7 +287,7 @@ func CORSWithConfig(config CORSConfig) echo.MiddlewareFunc {
 					res.Header().Set(echo.HeaderAccessControlAllowHeaders, h)
 				}
 			}
-			if config.MaxAge > 0 {
+			if config.MaxAge != 0 {
 				res.Header().Set(echo.HeaderAccessControlMaxAge, maxAge)
 			}
 			return c.NoContent(http.StatusNoContent)

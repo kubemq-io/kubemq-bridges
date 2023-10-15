@@ -1,17 +1,16 @@
 apiPort: 0
 bindings:
-- name: bridge-up
-  properties: {
-    log_level: info
-  }
-  sources:
-    connections:
-    - address: localhost:50000
-      channel: queue.sync.up.bridge
-    kind: source.queue
-  targets:
-    connections:
-    - address: localhost:50000
-      channels: queue.s3.up
-    kind: target.queue
-logLevel: ""
+  - name: new-bridge-iDYVu
+    properties: {}
+    sources:
+      connections:
+        - address: localhost:50000
+          channel: redis
+      kind: source.queue
+    targets:
+      connections:
+        - address: localhost:50000
+          channel: redis-2
+      kind: target.query
+logLevel: "debug"
+

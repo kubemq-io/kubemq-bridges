@@ -25,9 +25,9 @@ var logr = logger.NewLogger("config")
 var lastConf *Config
 
 type Config struct {
-	Bindings []BindingConfig `json:"bindings"`
-	ApiPort  int             `json:"apiPort"`
-	LogLevel string          `json:"logLevel"`
+	Bindings []BindingConfig `json:"bindings" json:"bindings"`
+	ApiPort  int             `json:"apiPort" yaml:"apiPort"`
+	LogLevel string          `json:"logLevel" yaml:"logLevel"`
 }
 
 func SetConfigFile(filename string) {

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/random"
 )
 
 type (
@@ -103,6 +102,7 @@ func CSRFWithConfig(config CSRFConfig) echo.MiddlewareFunc {
 	if config.TokenLength == 0 {
 		config.TokenLength = DefaultCSRFConfig.TokenLength
 	}
+
 	if config.TokenLookup == "" {
 		config.TokenLookup = DefaultCSRFConfig.TokenLookup
 	}
@@ -119,9 +119,9 @@ func CSRFWithConfig(config CSRFConfig) echo.MiddlewareFunc {
 		config.CookieSecure = true
 	}
 
-	extractors, err := createExtractors(config.TokenLookup, "")
-	if err != nil {
-		panic(err)
+	extractors, cErr := CreateExtractors(config.TokenLookup)
+	if cErr != nil {
+		panic(cErr)
 	}
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -132,7 +132,7 @@ func CSRFWithConfig(config CSRFConfig) echo.MiddlewareFunc {
 
 			token := ""
 			if k, err := c.Cookie(config.CookieName); err != nil {
-				token = random.String(config.TokenLength) // Generate token
+				token = randomString(config.TokenLength)
 			} else {
 				token = k.Value // Reuse token
 			}
