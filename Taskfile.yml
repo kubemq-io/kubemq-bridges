@@ -2,7 +2,7 @@ version: '3'
 
 vars:
   BINARY_NAME: kubemq-bridges
-  VERSION: v1.7.1
+  VERSION: v1.7.2
   REPO_GCP: europe-docker.pkg.dev/kubemq/images
   REPO_DOCKERHUB: kubemq
 
